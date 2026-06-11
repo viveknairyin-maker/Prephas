@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { auth, db, onAuthStateChanged, doc, getDoc } from '../utils/firebase';
+import { auth, db, onAuthStateChanged, doc, getDoc, isFirebaseConfigured } from '../utils/firebase';
 
 const AuthContext = createContext({
   user: null,
@@ -9,6 +9,10 @@ const AuthContext = createContext({
 });
 
 export const AuthProvider = ({ children }) => {
+  if (!isFirebaseConfigured) {
+    throw new Error("Firebase configuration keys are missing or unconfigured. Please add VITE_FIREBASE_API_KEY and other Firebase variables in your Vercel deployment settings.");
+  }
+
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);

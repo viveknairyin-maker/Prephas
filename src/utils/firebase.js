@@ -32,14 +32,26 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
-if (!firebaseConfig.apiKey || firebaseConfig.apiKey === "your_key_here") {
-  throw new Error("Firebase configuration keys are missing or unconfigured. Please add VITE_FIREBASE_API_KEY and other Firebase variables in your Vercel deployment settings.");
-}
+export let auth = null;
+export let db = null;
+export let googleProvider = null;
+export let isFirebaseConfigured = true;
 
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const googleProvider = new GoogleAuthProvider();
+const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
+if (!apiKey || apiKey === "your_key_here") {
+  isFirebaseConfigured = false;
+  console.warn("Firebase credentials are not configured. Application will display configuration notice.");
+} else {
+  try {
+    const app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+    googleProvider = new GoogleAuthProvider();
+  } catch (error) {
+    console.error("Failed to initialize Firebase:", error);
+    isFirebaseConfigured = false;
+  }
+}
 
 export {
   signInWithEmailAndPassword,
