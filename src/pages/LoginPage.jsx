@@ -46,7 +46,7 @@ function LoginPage() {
       navigate('/dashboard');
     } catch (err) {
       console.error("Google sign-in error:", err);
-      setError("Google Sign-In failed. Please try again.");
+      setError(`Google Sign-In failed: ${err.message} (${err.code || 'unknown'})`);
     } finally {
       setLoading(false);
     }
