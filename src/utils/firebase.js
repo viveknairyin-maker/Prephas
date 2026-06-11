@@ -32,6 +32,10 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
+if (!firebaseConfig.apiKey || firebaseConfig.apiKey === "your_key_here") {
+  throw new Error("Firebase configuration keys are missing or unconfigured. Please add VITE_FIREBASE_API_KEY and other Firebase variables in your Vercel deployment settings.");
+}
+
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
