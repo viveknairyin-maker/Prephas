@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PREPHAS | Build Resumes Recruiters Notice</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9f9f9;
+            color: #1b1b1b;
+        }
+        .block-shadow {
+            box-shadow: 4px 4px 0px 0px #000000;
+        }
+        .block-shadow-hover:hover {
+            box-shadow: 8px 8px 0px 0px #000000;
+            transform: translate(-2px, -2px);
+        }
+        .grid-bg {
+            background-size: 40px 40px;
+            background-image: radial-gradient(circle, #000000 1px, rgba(0,0,0,0) 1px);
+            opacity: 0.05;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "outline-variant": "#cfc4c5",
+                      "secondary-fixed": "#e4e2e2",
+                      "tertiary-fixed": "#e2e2e2",
+                      "on-background": "#1b1b1b",
+                      "on-surface-variant": "#4c4546",
+                      "secondary": "#5e5e5e",
+                      "surface-dim": "#dadada",
+                      "tertiary-container": "#1b1b1b",
+                      "on-secondary-fixed": "#1b1c1c",
+                      "surface-bright": "#f9f9f9",
+                      "error": "#ba1a1a",
+                      "surface": "#f9f9f9",
+                      "on-tertiary-fixed-variant": "#474747",
+                      "inverse-on-surface": "#f1f1f1",
+                      "surface-container": "#eeeeee",
+                      "on-primary": "#ffffff",
+                      "on-error": "#ffffff",
+                      "on-tertiary": "#ffffff",
+                      "surface-container-low": "#f3f3f3",
+                      "on-secondary-fixed-variant": "#464747",
+                      "background": "#f9f9f9",
+                      "surface-container-highest": "#e2e2e2",
+                      "secondary-container": "#e4e2e2",
+                      "on-tertiary-container": "#848484",
+                      "surface-container-lowest": "#ffffff",
+                      "primary": "#000000",
+                      "inverse-surface": "#303030",
+                      "on-secondary": "#ffffff",
+                      "on-primary-container": "#848484",
+                      "secondary-fixed-dim": "#c8c6c6",
+                      "outline": "#7e7576",
+                      "tertiary-fixed-dim": "#c6c6c6",
+                      "surface-variant": "#e2e2e2",
+                      "surface-container-high": "#e8e8e8",
+                      "on-error-container": "#93000a",
+                      "primary-container": "#1b1b1b",
+                      "on-surface": "#1b1b1b",
+                      "primary-fixed-dim": "#c6c6c6",
+                      "tertiary": "#000000",
+                      "on-primary-fixed-variant": "#474747",
+                      "on-primary-fixed": "#1b1b1b",
+                      "on-secondary-container": "#646464",
+                      "primary-fixed": "#e2e2e2",
+                      "surface-tint": "#5e5e5e",
+                      "on-tertiary-fixed": "#1b1b1b",
+                      "inverse-primary": "#c6c6c6",
+                      "error-container": "#ffdad6"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0px",
+                      "lg": "0px",
+                      "xl": "0px",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "64px",
+                      "gutter": "24px",
+                      "margin-mobile": "20px",
+                      "container-max-width": "1280px",
+                      "unit": "4px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "display": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "body-md": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                      "headline-md": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                      "display": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}]
+              }
+            }
+          }
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface antialiased overflow-x-hidden">
+<!-- TopNavBar -->
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-desktop py-6 bg-surface border-b border-primary">
+<div class="flex items-center gap-12">
+<a class="font-display text-headline-md tracking-tighter text-primary" href="/">PREPHAS</a>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-secondary font-body-md hover:opacity-70 transition-opacity" href="#">Features</a>
+<a class="text-secondary font-body-md hover:opacity-70 transition-opacity" href="#">Templates</a>
+<a class="text-secondary font-body-md hover:opacity-70 transition-opacity" href="#">Pricing</a>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<a class="hidden md:block text-primary font-label-sm hover:opacity-70 transition-opacity uppercase tracking-widest" href="#">Login</a>
+<button class="bg-primary text-on-primary px-6 py-3 font-label-sm uppercase tracking-widest hover:bg-opacity-90 transition-all duration-200">Get Started Free</button>
+</div>
+</nav>
+<main class="pt-24">
+<!-- Hero Section -->
+<section class="relative min-h-[819px] flex flex-col justify-center items-center text-center px-margin-mobile md:px-margin-desktop py-24 overflow-hidden border-b border-primary">
+<div class="absolute inset-0 grid-bg pointer-events-none"></div>
+<div class="relative z-10 max-w-4xl mx-auto">
+<h1 class="font-display text-display md:text-[80px] leading-tight mb-8">
+                    Build a Resume Recruiters Actually Notice.
+                </h1>
+<p class="font-body-lg text-secondary max-w-2xl mx-auto mb-12">
+                    ATS-optimized. AI-improved. Interview-ready. Stop sending resumes into a black hole. Let PREPHAS turn your experience into an unfair advantage.
+                </p>
+<div class="flex flex-col md:flex-row gap-6 justify-center items-center">
+<button class="w-full md:w-auto bg-primary text-on-primary px-10 py-5 font-label-sm uppercase tracking-widest hover:opacity-90 transition-all">
+                        Build My Resume
+                    </button>
+<button class="w-full md:w-auto bg-surface border border-primary text-primary px-10 py-5 font-label-sm uppercase tracking-widest hover:bg-primary hover:text-on-primary transition-all">
+                        See How It Works
+                    </button>
+</div>
+</div>
+<div class="mt-24 w-full max-w-container-max-width border border-primary p-4 bg-white block-shadow">
+<img alt="Dashboard Preview" class="w-full h-auto object-cover grayscale border border-primary" data-alt="A clean, minimalist high-end professional resume dashboard interface displayed on a sleek laptop screen. The design follows a strict monochromatic black and white aesthetic with sharp 1px borders and generous negative space. The surrounding environment is a bright, airy architectural office with soft natural lighting and minimalist decor. This visual reinforces the disciplined and ultra-functional nature of the PREPHAS brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7e8v3YYapPoF1LFs4VAAShhhViQRFHAp5Xp3sqX9hoLAwLF3U0q1WeLcXe9RK9GSX--52zaQtZ243a2vohJykhoIyOYBDqdfCwwfXoIIadWVucCsoDXdedtiRcBtvZMo_9kCEIb4w1hSlVeZRv6Si_WCyUtkFO8qZhNKIHNkKA7onZvhEfeZuEOtj-Wcmm41yDmrRUgKUuOO7_b-lZNBnzR4YP-5iJ9Yj3Fj58aYlgYW-cProdfRg6O7X8bORHHyyRki_TvxH7LVN"/>
+</div>
+</section>
+<!-- Features Bento Grid -->
+<section class="px-margin-mobile md:px-margin-desktop py-32 border-b border-primary">
+<div class="max-w-container-max-width mx-auto">
+<div class="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
+<div class="max-w-2xl">
+<span class="font-label-sm text-primary uppercase tracking-widest block mb-4">Core Modules</span>
+<h2 class="font-display text-headline-lg md:text-[48px] leading-tight">Advanced tools for the high-performance candidate.</h2>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Card 1: ATS Score -->
+<div class="md:col-span-8 border border-primary p-12 flex flex-col justify-between min-h-[400px] hover:bg-white transition-colors group">
+<div>
+<span class="material-symbols-outlined text-[48px] mb-8" data-icon="analytics">analytics</span>
+<h3 class="font-headline-lg mb-4">ATS Real-time Scoring</h3>
+<p class="font-body-lg text-secondary max-w-md">Our algorithm simulates top-tier Applicant Tracking Systems to ensure your resume passes the digital gatekeeper every single time.</p>
+</div>
+<div class="mt-12 flex items-center gap-4">
+<div class="w-full h-[2px] bg-outline-variant relative overflow-hidden">
+<div class="absolute inset-0 bg-primary w-3/4"></div>
+</div>
+<span class="font-label-sm text-primary">94% MATCH</span>
+</div>
+</div>
+<!-- Card 2: AI Improver -->
+<div class="md:col-span-4 border border-primary p-12 flex flex-col hover:bg-white transition-colors group">
+<span class="material-symbols-outlined text-[48px] mb-8" data-icon="auto_awesome">auto_awesome</span>
+<h3 class="font-headline-lg mb-4">AI Improver</h3>
+<p class="font-body-md text-secondary">Instantly rewrite weak bullet points into high-impact, results-driven achievements using industry-specific LLMs.</p>
+<div class="mt-auto pt-12">
+<button class="font-label-sm uppercase tracking-widest flex items-center gap-2 group-hover:gap-4 transition-all">
+                                Try AI Editor <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Card 3: Job Matching -->
+<div class="md:col-span-4 border border-primary p-12 flex flex-col hover:bg-white transition-colors">
+<span class="material-symbols-outlined text-[48px] mb-8" data-icon="person_search">person_search</span>
+<h3 class="font-headline-lg mb-4">Job Matching</h3>
+<p class="font-body-md text-secondary">Automatically find roles that match your skill set across 50+ major job boards with one click.</p>
+</div>
+<!-- Card 4: Detailed Insight -->
+<div class="md:col-span-8 border border-primary p-12 flex flex-col md:flex-row gap-12 items-center hover:bg-white transition-colors">
+<div class="flex-1">
+<span class="material-symbols-outlined text-[48px] mb-8" data-icon="description">description</span>
+<h3 class="font-headline-lg mb-4">Template Engineering</h3>
+<p class="font-body-md text-secondary mb-6">Designed by hiring managers. Every pixel is placed with intent to guide the recruiter's eye to your most important qualifications.</p>
+<button class="font-label-sm uppercase tracking-widest border border-primary px-6 py-3 hover:bg-primary hover:text-on-primary transition-all">View Templates</button>
+</div>
+<div class="flex-1 border border-primary grayscale opacity-80 overflow-hidden h-full min-h-[200px]">
+<img alt="Resume Templates" class="w-full h-full object-cover" data-alt="A minimalist editorial layout showing several white resume templates laid out on a dark gray concrete surface. The lighting is dramatic, coming from the side to emphasize the texture of the high-quality paper and the precision of the typography. The aesthetic is strictly professional, monochromatic, and sophisticated, matching the architectural precision of the PREPHAS brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGPIVsbLlbUTh0aodLIQL8qZJ4sDU9xOKfZk1MP7e77NPXxnCNjH1lMLZbVkLGwdPzCEBQZ_Kq3XIQjadGpRirL5a4EHxB5rRqVKgdJBJhVZJtI6w9m-1P6WQB6Wz25CIGgI0RhsibX_Fbwp-0BtuAO6onk8bsW92NdSV4GJdTzewUUDCwWAvYJb2-zbyrN5RQsyEIqcatyaZEi1acCLFXnDAAKkwPK_eMRuOjsziZNW8xvNiBWOJp69ddFZAkXRfLq3KEwH9HUSr1"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Proof Section -->
+<section class="px-margin-mobile md:px-margin-desktop py-24 border-b border-primary bg-primary text-on-primary">
+<div class="max-w-container-max-width mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
+<div class="text-center md:text-left">
+<h2 class="font-display text-display mb-4">12,400+</h2>
+<p class="font-label-sm uppercase tracking-widest opacity-70">Resumes Optimized This Month</p>
+</div>
+<div class="h-[1px] w-24 bg-on-primary md:h-24 md:w-[1px] opacity-30"></div>
+<div class="text-center md:text-left">
+<h2 class="font-display text-display mb-4">85%</h2>
+<p class="font-label-sm uppercase tracking-widest opacity-70">Interview Callback Rate Increase</p>
+</div>
+<div class="h-[1px] w-24 bg-on-primary md:h-24 md:w-[1px] opacity-30"></div>
+<div class="text-center md:text-left">
+<h2 class="font-display text-display mb-4">Top 10</h2>
+<p class="font-label-sm uppercase tracking-widest opacity-70">FAANG Placement Tool Ranking</p>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="px-margin-mobile md:px-margin-desktop py-40 flex flex-col items-center text-center">
+<h2 class="font-display text-display md:text-[64px] mb-12 max-w-4xl">Ready to land your dream role?</h2>
+<p class="font-body-lg text-secondary mb-16 max-w-xl">Join thousands of professionals who have already unlocked their potential. No credit card required to start.</p>
+<div class="relative group">
+<div class="absolute inset-0 bg-primary block-shadow translate-x-2 translate-y-2 opacity-10 group-hover:opacity-100 transition-opacity"></div>
+<button class="relative bg-primary text-on-primary px-16 py-8 font-label-sm uppercase tracking-[0.2em] text-lg hover:-translate-x-1 hover:-translate-y-1 transition-all duration-300">
+                    Get Started Now
+                </button>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-12 px-margin-desktop flex flex-col md:flex-row justify-between items-center border-t border-primary bg-surface">
+<div class="mb-8 md:mb-0">
+<span class="font-display text-headline-md text-primary tracking-tighter">PREPHAS</span>
+<p class="font-body-md text-secondary mt-2">© 2024 PREPHAS AI. All rights reserved.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-10">
+<a class="text-secondary font-label-sm uppercase tracking-widest hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-secondary font-label-sm uppercase tracking-widest hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="text-secondary font-label-sm uppercase tracking-widest hover:text-primary transition-colors" href="#">Contact</a>
+<a class="text-secondary font-label-sm uppercase tracking-widest hover:text-primary transition-colors" href="#">Twitter</a>
+<a class="text-secondary font-label-sm uppercase tracking-widest hover:text-primary transition-colors" href="#">LinkedIn</a>
+</div>
+</footer>
+<script>
+        // Simple scroll reveal for borders and elements
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('opacity-100');
+                        entry.target.classList.remove('opacity-0', 'translate-y-4');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.border-primary').forEach(el => {
+                // el.classList.add('transition-all', 'duration-700');
+            });
+        });
+    </script>
+</body></html>

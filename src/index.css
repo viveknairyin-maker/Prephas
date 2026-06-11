@@ -1,0 +1,158 @@
+
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f9f9f9;
+    color: #1b1b1b;
+}
+
+/* Custom shadow classes */
+.block-shadow {
+    box-shadow: 4px 4px 0px 0px #000000;
+}
+
+.block-shadow-hover {
+    transition: all 0.2s ease-in-out;
+}
+
+.block-shadow-hover:hover {
+    box-shadow: 8px 8px 0px 0px #000000;
+    transform: translate(-2px, -2px);
+}
+
+.block-shadow-sm {
+    box-shadow: 4px 4px 0px 0px #000000;
+}
+
+.resume-shadow {
+    box-shadow: 8px 8px 0px 0px #000000;
+}
+
+/* Grid background for Hero section */
+.grid-bg {
+    background-size: 40px 40px;
+    background-image: radial-gradient(circle, #000000 1px, rgba(0,0,0,0) 1px);
+    opacity: 0.05;
+}
+
+/* Progress ring for ATS Score Page */
+.progress-ring__circle {
+    transition: stroke-dashoffset 0.35s;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+
+/* Scrollbar tweaks */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #f9f9f9;
+}
+::-webkit-scrollbar-thumb {
+    background: #000000;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #000000;
+}
+
+/* Template CSS Overrides */
+.template-card:hover .template-btn {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Template styles applied to Live Preview */
+.preview-container {
+    width: 595px;
+    min-height: 842px;
+    background-color: #ffffff;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    transition: all 0.3s ease-in-out;
+    transform: scale(0.95);
+    transform-origin: top;
+}
+
+/* Software Engineer: Clean two-column layout */
+.template-software-engineer .preview-header {
+    border-bottom: 2px solid #000;
+    padding-bottom: 1.5rem;
+}
+.template-software-engineer .preview-body {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+}
+
+/* Data Analyst: Single column with metrics emphasis */
+.template-data-analyst .preview-header {
+    border-bottom: 2px solid #000;
+    padding-bottom: 1.5rem;
+    text-align: center;
+}
+.template-data-analyst .preview-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.template-data-analyst .metric-highlight {
+    font-weight: bold;
+    border-left: 2px solid #000;
+    padding-left: 0.5rem;
+}
+
+/* Fresher: Simple, education-first */
+.template-fresher .preview-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Designer: Bold name, minimal */
+.template-designer .preview-header h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    line-height: 1;
+}
+.template-designer .preview-body {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+}
+
+/* Marketing: Summary-first layout */
+.template-marketing .preview-header {
+    border-bottom: 1px solid #000;
+    padding-bottom: 1rem;
+}
+.template-marketing .preview-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
