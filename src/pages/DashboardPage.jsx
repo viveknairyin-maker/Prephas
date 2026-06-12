@@ -85,6 +85,7 @@ function DashboardPage() {
     printEl.innerHTML = `
       <header class="border-b-2 border-primary pb-6 preview-header">
         <h1 class="font-display text-display uppercase leading-tight tracking-tighter">${(resume.personalInfo?.name || 'YOUR NAME').toUpperCase()}</h1>
+        ${resume.personalInfo?.role ? `<p class="font-label-sm text-label-sm text-secondary uppercase tracking-widest mt-1">${resume.personalInfo.role}</p>` : ''}
         <div class="flex flex-wrap gap-4 mt-2 font-label-sm text-label-sm uppercase tracking-widest text-secondary">
           <span>${resume.personalInfo?.location || ''}</span>
           ${resume.personalInfo?.location ? '<span>•</span>' : ''}
@@ -159,6 +160,15 @@ function DashboardPage() {
                 <p class="font-body-md text-body-md text-secondary">${proj.description || ''}</p>
               </div>
             `).join('')}
+          </section>
+        ` : ''}
+
+        ${resume.achievements && resume.achievements.length > 0 ? `
+          <section class="space-y-4">
+            <h4 class="font-label-sm text-label-sm uppercase font-bold border-b border-primary pb-1 w-fit pr-8">Achievements</h4>
+            <ul class="list-disc ml-4 space-y-1">
+              ${resume.achievements.map(ach => ach ? `<li class="font-body-md text-body-md text-on-background leading-relaxed">${ach}</li>` : '').join('')}
+            </ul>
           </section>
         ` : ''}
       </div>

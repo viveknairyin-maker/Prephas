@@ -26,11 +26,12 @@ function ResumeBuilderPage() {
   // Form Collapse States
   const [collapsed, setCollapsed] = useState({
     personal: false,
-    summary: false,
     experience: false,
     education: false,
     skills: false,
-    projects: false
+    projects: false,
+    achievements: false,
+    summary: false
   });
 
   // AI Loading & Suggestion States
@@ -64,12 +65,13 @@ function ResumeBuilderPage() {
             template: 'software-engineer',
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
-            personalInfo: { name: '', email: '', phone: '', linkedin: '', location: '' },
+            personalInfo: { name: '', email: '', phone: '', linkedin: '', location: '', role: '' },
             summary: '',
             experience: [],
             education: [],
             skills: [],
             projects: [],
+            achievements: [],
             atsScore: 0,
             strengthScores: { experience: 0, projects: 0, skills: 0, education: 0 }
           });
@@ -294,6 +296,32 @@ function ResumeBuilderPage() {
     }));
   };
 
+  // repeatable Achievements
+  const addAchievement = () => {
+    setResume(prev => ({
+      ...prev,
+      achievements: [
+        ...(prev.achievements || []),
+        ''
+      ]
+    }));
+  };
+
+  const updateAchievement = (idx, val) => {
+    setResume(prev => {
+      const ach = [...(prev.achievements || [])];
+      ach[idx] = val;
+      return { ...prev, achievements: ach };
+    });
+  };
+
+  const removeAchievement = (idx) => {
+    setResume(prev => ({
+      ...prev,
+      achievements: (prev.achievements || []).filter((_, i) => i !== idx)
+    }));
+  };
+
   // AI Feature 1: Improve Bullet Point Inline
   const handleImproveBullet = async (expIdx, bIdx, text) => {
     if (!text.trim()) return;
@@ -349,7 +377,10 @@ function ResumeBuilderPage() {
         name: resume.personalInfo?.name,
         role: resume.personalInfo?.role,
         skills: resume.skills,
-        experience: resume.experience
+        experience: resume.experience,
+        education: resume.education,
+        projects: resume.projects,
+        achievements: resume.achievements
       });
       setResume(prev => ({ ...prev, summary: summaryText }));
     } catch (err) {
@@ -607,6 +638,16 @@ service cloud.firestore {
                       placeholder="Alexander Vance"
                     />
                   </div>
+                  <div className="space-y-2 col-span-2">
+                    <label className="font-label-sm text-label-sm uppercase">Target Job Title / Professional Title</label>
+                    <input 
+                      className="w-full border border-primary bg-transparent p-3 focus:ring-0 focus:border-black font-body-md"
+                      type="text" 
+                      value={resume.personalInfo?.role || ''}
+                      onChange={(e) => updatePersonalInfo('role', e.target.value)}
+                      placeholder="e.g. Senior Software Architect"
+                    />
+                  </div>
                   <div className="space-y-2">
                     <label className="font-label-sm text-label-sm uppercase">Email Address</label>
                     <input 
@@ -647,39 +688,6 @@ service cloud.firestore {
                       placeholder="linkedin.com/in/alex"
                     />
                   </div>
-                </div>
-              )}
-            </div>
-
-            {/* SECTION 2: Summary Card */}
-            <div className="border border-primary p-6 space-y-6">
-              <div className="flex justify-between items-center cursor-pointer" onClick={() => toggleSection('summary')}>
-                <h3 className="font-headline-md text-headline-md uppercase">Professional Summary</h3>
-                <div className="flex items-center gap-4">
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleGenerateSummary();
-                    }}
-                    disabled={aiLoading.summary}
-                    className="bg-primary text-on-primary px-3 py-1 font-label-sm text-[10px] flex items-center gap-1 hover:opacity-85 disabled:opacity-50"
-                  >
-                    <span className="material-symbols-outlined text-[14px]" data-icon="bolt">bolt</span>
-                    {aiLoading.summary ? 'Generating...' : '✦ Generate with AI'}
-                  </button>
-                  <span className="material-symbols-outlined text-xl">{collapsed.summary ? 'expand_more' : 'expand_less'}</span>
-                </div>
-              </div>
-
-              {!collapsed.summary && (
-                <div className="space-y-4 pt-4 border-t border-primary/10">
-                  <textarea 
-                    value={resume.summary || ''}
-                    onChange={(e) => setResume(prev => ({ ...prev, summary: e.target.value }))}
-                    className="w-full border border-primary p-3 focus:ring-0 focus:border-black font-body-md leading-relaxed"
-                    rows="5"
-                    placeholder="Describe your career highlights. Click AI Generate to write a 3-sentence summary based on your background."
-                  />
                 </div>
               )}
             </div>
@@ -997,6 +1005,77 @@ service cloud.firestore {
               )}
             </div>
 
+            {/* SECTION 6: Achievements Card */}
+            <div className="border border-primary p-6 space-y-6">
+              <div className="flex justify-between items-center cursor-pointer" onClick={() => toggleSection('achievements')}>
+                <h3 className="font-headline-md text-headline-md uppercase">Achievements</h3>
+                <span className="material-symbols-outlined text-xl">{collapsed.achievements ? 'expand_more' : 'expand_less'}</span>
+              </div>
+
+              {!collapsed.achievements && (
+                <div className="space-y-4 pt-4 border-t border-primary/10">
+                  {(resume.achievements || []).map((ach, idx) => (
+                    <div key={idx} className="flex gap-2 items-center">
+                      <input 
+                        className="border border-primary p-3 flex-grow bg-white font-body-md"
+                        placeholder="e.g. Won 1st place in Google Hackathon 2025"
+                        type="text"
+                        value={ach}
+                        onChange={(e) => updateAchievement(idx, e.target.value)}
+                      />
+                      <button 
+                        onClick={() => removeAchievement(idx)}
+                        className="text-secondary hover:text-error px-2"
+                      >
+                        <span className="material-symbols-outlined text-lg" data-icon="close">close</span>
+                      </button>
+                    </div>
+                  ))}
+
+                  <button 
+                    onClick={addAchievement}
+                    className="w-full border border-primary border-dashed py-3 font-label-sm text-[10px] uppercase hover:bg-surface transition-colors flex items-center justify-center gap-2"
+                  >
+                    <span className="material-symbols-outlined text-sm" data-icon="add">add</span>
+                    Add Achievement
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* SECTION 7: Summary Card */}
+            <div className="border border-primary p-6 space-y-6">
+              <div className="flex justify-between items-center cursor-pointer" onClick={() => toggleSection('summary')}>
+                <h3 className="font-headline-md text-headline-md uppercase">Professional Summary</h3>
+                <div className="flex items-center gap-4">
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleGenerateSummary();
+                    }}
+                    disabled={aiLoading.summary}
+                    className="bg-primary text-on-primary px-3 py-1 font-label-sm text-[10px] flex items-center gap-1 hover:opacity-85 disabled:opacity-50"
+                  >
+                    <span className="material-symbols-outlined text-[14px]" data-icon="bolt">bolt</span>
+                    {aiLoading.summary ? 'Generating...' : '✦ Generate with AI'}
+                  </button>
+                  <span className="material-symbols-outlined text-xl">{collapsed.summary ? 'expand_more' : 'expand_less'}</span>
+                </div>
+              </div>
+
+              {!collapsed.summary && (
+                <div className="space-y-4 pt-4 border-t border-primary/10">
+                  <textarea 
+                    value={resume.summary || ''}
+                    onChange={(e) => setResume(prev => ({ ...prev, summary: e.target.value }))}
+                    className="w-full border border-primary p-3 focus:ring-0 focus:border-black font-body-md leading-relaxed"
+                    rows="5"
+                    placeholder="Describe your career highlights. Click AI Generate to write a 3-sentence summary based on your background."
+                  />
+                </div>
+              )}
+            </div>
+
             <div className="h-32"></div>
           </div>
         </section>
@@ -1012,6 +1091,11 @@ service cloud.firestore {
               <h1 className="font-display text-display uppercase leading-tight tracking-tighter truncate">
                 {resume.personalInfo?.name || 'Alexander Vance'}
               </h1>
+              {resume.personalInfo?.role && (
+                <p className="font-label-sm text-label-sm text-secondary uppercase tracking-widest mt-1">
+                  {resume.personalInfo.role}
+                </p>
+              )}
               <div className="flex flex-wrap gap-4 mt-2 font-label-sm text-label-sm uppercase tracking-widest text-secondary">
                 <span>{resume.personalInfo?.location || 'New York, NY'}</span>
                 <span>•</span>
@@ -1096,6 +1180,17 @@ service cloud.firestore {
                       <p className="font-body-md text-body-md text-secondary">{proj.description}</p>
                     </div>
                   ))}
+                </section>
+              )}
+
+              {resume.achievements && resume.achievements.length > 0 && (
+                <section className="space-y-4">
+                  <h4 className="font-label-sm text-label-sm uppercase font-bold border-b border-primary pb-1 w-fit pr-8">Achievements</h4>
+                  <ul className="list-disc ml-4 font-body-md text-body-md space-y-1">
+                    {resume.achievements.map((ach, idx) => (
+                      ach ? <li key={idx}>{ach}</li> : null
+                    ))}
+                  </ul>
                 </section>
               )}
             </div>

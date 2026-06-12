@@ -92,12 +92,13 @@ function TemplatesPage() {
           template: templateId,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
-          personalInfo: { name: '', email: '', phone: '', linkedin: '', location: '' },
+          personalInfo: { name: '', email: '', phone: '', linkedin: '', location: '', role: '' },
           summary: '',
           experience: [],
           education: [],
           skills: [],
           projects: [],
+          achievements: [],
           atsScore: 0,
           strengthScores: { experience: 0, projects: 0, skills: 0, education: 0 }
         };

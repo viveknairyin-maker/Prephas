@@ -44,11 +44,23 @@ export async function improveBulletPoint(bulletText) {
  * Input: user's name, role, skills, experience entries
  * Output: fills the summary textarea
  */
-export async function generateSummary({ name, role, skills, experience }) {
+export async function generateSummary({ name, role, skills, experience, education, projects, achievements }) {
   try {
     const model = getModel();
-    const inputStr = `Name: ${name || ""}, Target Role: ${role || ""}, Skills: ${(skills || []).join(", ")}, Experience: ${JSON.stringify(experience || [])}`;
-    const prompt = `Write a 3-sentence professional resume summary for a person with this background: ${inputStr}. Keep it concise, ATS-friendly, first person avoided. Return only the summary.`;
+    const inputStr = `
+Name: ${name || ""}
+Target Role: ${role || ""}
+Skills: ${(skills || []).join(", ")}
+Experience: ${JSON.stringify(experience || [])}
+Education: ${JSON.stringify(education || [])}
+Projects: ${JSON.stringify(projects || [])}
+Achievements: ${JSON.stringify(achievements || [])}
+`;
+    const prompt = `Write a 3-sentence professional resume summary for a person with this background: ${inputStr}. 
+Make sure to summarize their actual experience, education, projects, achievements, and skills. 
+Do not invent facts, companies, or universities that are not listed in the background data. 
+If the background data is extremely sparse (e.g. empty experience or skills), write a short, clean objective statement focusing only on their target role and name, without fabricating false employment history.
+Return only the 3-sentence summary text.`;
     const result = await model.generateContent(prompt);
     return result.response.text().trim();
   } catch (error) {
