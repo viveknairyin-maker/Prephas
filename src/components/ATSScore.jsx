@@ -3,6 +3,11 @@ import { db, doc, updateDoc, collection, addDoc } from "../utils/firebase";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
 import { parseResumeFromText } from "../utils/gemini";
+import * as pdfjsLib from "pdfjs-dist";
+import pdfjsWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
+
+// Configure local worker source
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 // ─── Gemini call ─────────────────────────────────────────────────────────────
 async function analyzeWithGemini(resumeText) {
@@ -60,9 +65,6 @@ ${resumeText}
 
 // ─── PDF text extractor using pdfjs-dist ────────────────────────────────────
 async function extractTextFromPDF(file) {
-  const pdfjsLib = await import("pdfjs-dist");
-  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
-
   const arrayBuffer = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
   let fullText = "";
