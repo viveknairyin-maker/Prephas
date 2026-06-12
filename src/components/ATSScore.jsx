@@ -5,6 +5,7 @@ import { useAuth } from "../components/AuthContext";
 import { parseResumeFromText } from "../utils/gemini";
 import * as pdfjsLib from "pdfjs-dist";
 import pdfjsWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // Configure local worker source
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -12,6 +13,15 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 // ─── Gemini call ─────────────────────────────────────────────────────────────
 async function analyzeWithGemini(resumeText) {
   const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+  if (!API_KEY) {
+    throw new Error("Gemini API key is not configured.");
+  }
+  const genAI = new GoogleGenerativeAI(API_KEY);
+  const model = genAI.getGenerativeModel({
+    model: "gemini-2.5-flash",
+    generationConfig: { responseMimeType: "application/json" }
+  });
+
   const prompt = `
 You are an expert ATS (Applicant Tracking System) analyst and resume coach.
 
@@ -45,20 +55,8 @@ ${resumeText}
 """
 `;
 
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.2, maxOutputTokens: 1500 },
-      }),
-    }
-  );
-
-  const data = await response.json();
-  const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+  const result = await model.generateContent(prompt);
+  const raw = result.response.text().trim();
   const cleaned = raw.replace(/```json|```/g, "").trim();
   return JSON.parse(cleaned);
 }
