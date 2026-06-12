@@ -28,6 +28,10 @@ function ResumeBuilderPage() {
   const [activeTab, setActiveTab] = useState('edit'); // 'edit' | 'preview'
   const [previewScale, setPreviewScale] = useState(1);
 
+  // Defer preview re-renders for better mobile typing performance
+  // IMPORTANT: must be here at the top, never after a conditional return (Rules of Hooks)
+  const deferredResume = useDeferredValue(resume);
+
   // Form Collapse States
   const [collapsed, setCollapsed] = useState({
     personal: false,
@@ -648,8 +652,6 @@ service cloud.firestore {
 
   const ActiveTemplate = TEMPLATE_COMPONENTS[resume.template || 'classic'] || TEMPLATE_COMPONENTS['classic'];
   const strength = calculateStrength(resume);
-  // Defer preview re-renders for better mobile typing performance
-  const deferredResume = useDeferredValue(resume);
 
   return (
     <div className="bg-surface text-on-surface antialiased overflow-x-hidden min-h-screen flex flex-col">
