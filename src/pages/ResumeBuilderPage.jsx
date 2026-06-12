@@ -18,6 +18,7 @@ function ResumeBuilderPage() {
   // Resume State
   const [resume, setResume] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [saveState, setSaveState] = useState('Saved ✓');
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [firstLoad, setFirstLoad] = useState(true);
@@ -51,9 +52,12 @@ function ResumeBuilderPage() {
   useEffect(() => {
     if (!user) return;
 
-    if (id === 'new') {
+    const isNew = id === 'new' || !id || window.location.pathname.endsWith('/new');
+
+    if (isNew) {
       const initBlank = async () => {
         try {
+          setError(null);
           const docRef = await addDoc(collection(db, 'resumes'), {
             userId: user.uid,
             title: 'Untitled Resume',
@@ -72,6 +76,8 @@ function ResumeBuilderPage() {
           navigate(`/builder/${docRef.id}`, { replace: true });
         } catch (err) {
           console.error("Error creating blank resume:", err);
+          setError("Failed to create a new resume. This is typically caused by locked Firestore Security Rules in your Firebase Project (insufficient permissions).");
+          setLoading(false);
         }
       };
       initBlank();
@@ -80,6 +86,7 @@ function ResumeBuilderPage() {
 
     const fetchResume = async () => {
       try {
+        setError(null);
         const docRef = doc(db, 'resumes', id);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
@@ -89,6 +96,7 @@ function ResumeBuilderPage() {
         }
       } catch (err) {
         console.error("Error fetching resume:", err);
+        setError("Failed to load the resume. Please ensure your Firestore Security Rules allow read access.");
       } finally {
         setLoading(false);
       }
@@ -437,6 +445,60 @@ function ResumeBuilderPage() {
   const toggleSection = (section) => {
     setCollapsed(prev => ({ ...prev, [section]: !prev[section] }));
   };
+
+  if (error) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center bg-surface p-6">
+        <div className="border border-primary bg-white p-8 max-w-lg w-full block-shadow-sm space-y-6">
+          <div className="flex items-center gap-3 text-error">
+            <span className="material-symbols-outlined text-3xl" data-icon="warning">warning</span>
+            <h3 className="font-headline-md text-headline-md uppercase tracking-tight">Database Write Failed</h3>
+          </div>
+          <p className="font-body-md text-body-md text-secondary leading-relaxed">
+            {error}
+          </p>
+          <div className="space-y-4 pt-4 border-t border-primary/10">
+            <div className="text-[11px] font-mono text-left bg-zinc-50 p-4 border border-primary/20 overflow-x-auto text-secondary leading-normal">
+              <strong className="text-primary">How to fix this in Firebase Console:</strong>
+              <ol className="list-decimal ml-4 mt-2 space-y-1 font-sans text-[12px]">
+                <li>Go to the <a href="https://console.firebase.google.com/" target="_blank" rel="noopener noreferrer" className="underline font-bold text-primary">Firebase Console</a>.</li>
+                <li>Select your project (<strong className="font-mono">prephas</strong>).</li>
+                <li>Click on <strong className="font-semibold">Firestore Database</strong> in the left sidebar.</li>
+                <li>Go to the <strong className="font-semibold">Rules</strong> tab.</li>
+                <li>Update your security rules to allow read and write access. For testing/development, you can use:
+                  <pre className="mt-2 p-2 bg-zinc-800 text-zinc-100 font-mono text-[10px] overflow-x-auto">
+{`rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}`}
+                  </pre>
+                </li>
+                <li>Click <strong className="font-semibold">Publish</strong>.</li>
+              </ol>
+            </div>
+            <div className="flex gap-4">
+              <button 
+                onClick={() => navigate('/dashboard')}
+                className="flex-1 bg-primary text-on-primary py-3 font-label-sm uppercase tracking-widest hover:opacity-90 active:translate-y-0.5 text-label-sm text-center"
+              >
+                Dashboard
+              </button>
+              <button 
+                onClick={() => window.location.reload()}
+                className="flex-1 border border-primary bg-white text-primary py-3 font-label-sm uppercase tracking-widest hover:bg-zinc-50 active:translate-y-0.5 text-label-sm text-center"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading || !resume) {
     return (
