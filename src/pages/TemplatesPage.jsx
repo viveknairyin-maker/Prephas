@@ -8,37 +8,37 @@ const TEMPLATES = [
   {
     id: 'software-engineer',
     name: 'Software Engineer',
-    desc: 'Grid-based, technical, precise',
+    desc: 'Clean two-column technical layout optimized for developers.',
     pro: false,
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBKM3NH7JFkTtyv-tHXg9v1GI8pGdyBmNAhznSgF-HY9Es1ZgAReqSzbrp5bxOvu_frftGU67QCVUZ-vPBWzpMKRhvHoQ6viJv0FugsiIMnVQ34JemTefz34jtmEhQEvV8k5VHn3Bq4BzfPQg5uyBTp_U51-IZncnXNoJT4KTh042r6f8ZA1kk3zsqIySChg3-6ejBDo8YN59wTxc8ZvTguA590KSMDQJkA3a1qE1cHczZCt82jirwuidUdxFiB8_NfIEEL6IaoBdUr'
   },
   {
-    id: 'data-analyst',
-    name: 'Data Analyst',
-    desc: 'Single column with metrics emphasis',
-    pro: false,
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBP4cosGpfuPAXC8Q7aX-LgS5CbmP1Dgk4H1hqaZn3Z4ddI5tnW_P6PWlfmg8ftly2S7EvFqJuMq4AULEQuCKxMCRfNMbXRTXZ5b1Kz9COsZI8m7MlrM97fFZoegHBn5WP50p3JTICtGWtr4P1r_YoTOBl14sDOEN9tSbMREQkpaYk4WabpTVMpo4Wx5e4NmFKK9gEmwU_L7PONj4XoA8yOaKBMFp3mcLTYQIuwQthZnvM-v5i8YGpvo47khj3oYIqwNSSLeJ1iLSOo'
-  },
-  {
     id: 'fresher',
-    name: 'Fresher',
-    desc: 'Simple, education-first',
-    pro: true,
+    name: 'Fresher / Student',
+    desc: 'Academic-focused layout emphasizing education and projects.',
+    pro: false,
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBMVZUlpklbPLxHbn0rhKM4Zwxo0POIxIOjtbG4Jq65EZwM2DNR3hNuDe-Js3IqpN4F8Ju0mzgxL62MwS32yUihZHTFqMhD17975sCVO2ZZuT_JGtf9tHwfRBCjbLJIAlDpo5PIPKb1xhteaBsG-wKFfI9p_83GNlfgPKLn7k_vmLm_cSIvMA96GNvHKUxwywMkUE25h0CM02h66Cddm7bg2RQnYWhZ_UeASbs2bST6zVVcbKoVh6dhmW9VxFFeLgzAY5_Rqca6PA3S'
   },
   {
-    id: 'designer',
-    name: 'Designer',
-    desc: 'Bold name, minimal',
+    id: 'modern-professional',
+    name: 'Modern Professional',
+    desc: 'Stylish layout with a dedicated info sidebar and modern sans-serif typography.',
     pro: true,
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDYBH0GIfhYK-VS_42WYyujDScPfKWtMBuaXvgnQ6d6gNGL2l-zTkktUnBaPggxX4JAQfywRSr4y82c-V_wW8ktnftvliQe3JN2cwm0RQhDY2emTYZTfC_Tm8AC01WbnCAFuBZx6PX39h0KHVMBvCBAy-n5-GffinrPp4qo0iGG513f94qLFszTpxUmbXI1ZrIHg_OvMgTfEWiB82qx_qkS_68YQOimZanKFS3iiktYjVzk8jKpJ7eKb70aNqtJkqJRhNnKRWnJvTzE'
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBP4cosGpfuPAXC8Q7aX-LgS5CbmP1Dgk4H1hqaZn3Z4ddI5tnW_P6PWlfmg8ftly2S7EvFqJuMq4AULEQuCKxMCRfNMbXRTXZ5b1Kz9COsZI8m7MlrM97fFZoegHBn5WP50p3JTICtGWtr4P1r_YoTOBl14sDOEN9tSbMREQkpaYk4WabpTVMpo4Wx5e4NmFKK9gEmwU_L7PONj4XoA8yOaKBMFp3mcLTYQIuwQthZnvM-v5i8YGpvo47khj3oYIqwNSSLeJ1iLSOo'
   },
   {
-    id: 'marketing',
-    name: 'Marketing',
-    desc: 'Summary-first layout',
+    id: 'executive',
+    name: 'Executive',
+    desc: 'Elegant, classic serif layout designed for leadership and senior roles.',
     pro: true,
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBgw-ehf6R2pjUKMuBkCt0Z8nXbgEi2TuaKbRH8-BoW5TfIE95or8W7d6-JleH4XCXZnZXB1a03ZFErKcHpFpWKmcdnnLy1wr9G660nPxrG72wRYCKZqNi1OysVsg9hr1SkDbCObCIcuPwQgvVGOzx27-qxtIpCYaFpV5bgIT0G5PTSmYS1gIfnD_zRS5XfGgY0JJZo9BDI7bqlR1Wfd53Sw1BzjYoH14WHhxgSpfFyvLUAuFhqMdJbK26x583Etm-zeapjNcRWSpH8'
+  },
+  {
+    id: 'creative',
+    name: 'Creative',
+    desc: 'Asymmetric layout with bold header styling for designers and makers.',
+    pro: true,
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDYBH0GIfhYK-VS_42WYyujDScPfKWtMBuaXvgnQ6d6gNGL2l-zTkktUnBaPggxX4JAQfywRSr4y82c-V_wW8ktnftvliQe3JN2cwm0RQhDY2emTYZTfC_Tm8AC01WbnCAFuBZx6PX39h0KHVMBvCBAy-n5-GffinrPp4qo0iGG513f94qLFszTpxUmbXI1ZrIHg_OvMgTfEWiB82qx_qkS_68YQOimZanKFS3iiktYjVzk8jKpJ7eKb70aNqtJkqJRhNnKRWnJvTzE'
   }
 ];
 
@@ -100,6 +100,9 @@ function TemplatesPage() {
           skills: [],
           projects: [],
           achievements: [],
+          certifications: [],
+          languages: [],
+          links: { linkedin: '', github: '', portfolio: '', leetcode: '' },
           atsScore: 0,
           strengthScores: { experience: 0, projects: 0, skills: 0, education: 0 }
         };
@@ -119,9 +122,9 @@ function TemplatesPage() {
     
     // Filter tags logic (just mock layout filters)
     if (activeFilter === 'All') return matchesSearch;
-    if (activeFilter === 'Tech') return matchesSearch && ['software-engineer', 'data-analyst'].includes(tpl.id);
-    if (activeFilter === 'Creative') return matchesSearch && tpl.id === 'designer';
-    if (activeFilter === 'Executive') return matchesSearch && tpl.id === 'marketing';
+    if (activeFilter === 'Tech') return matchesSearch && ['software-engineer', 'modern-professional'].includes(tpl.id);
+    if (activeFilter === 'Creative') return matchesSearch && tpl.id === 'creative';
+    if (activeFilter === 'Executive') return matchesSearch && tpl.id === 'executive';
     if (activeFilter === 'Academic') return matchesSearch && tpl.id === 'fresher';
     return matchesSearch;
   });

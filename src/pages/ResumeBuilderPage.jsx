@@ -30,7 +30,11 @@ function ResumeBuilderPage() {
     education: false,
     skills: false,
     projects: false,
+    achifications: false, // Wait, achievements
     achievements: false,
+    certifications: false,
+    languages: false,
+    links: false,
     summary: false
   });
 
@@ -72,6 +76,9 @@ function ResumeBuilderPage() {
             skills: [],
             projects: [],
             achievements: [],
+            certifications: [],
+            languages: [],
+            links: { linkedin: '', github: '', portfolio: '', leetcode: '' },
             atsScore: 0,
             strengthScores: { experience: 0, projects: 0, skills: 0, education: 0 }
           });
@@ -322,6 +329,69 @@ function ResumeBuilderPage() {
     }));
   };
 
+  // Certifications repeatable
+  const addCertification = () => {
+    setResume(prev => ({
+      ...prev,
+      certifications: [
+        ...(prev.certifications || []),
+        { name: '', authority: '', year: '' }
+      ]
+    }));
+  };
+
+  const updateCertification = (idx, field, val) => {
+    setResume(prev => {
+      const certs = [...(prev.certifications || [])];
+      certs[idx] = { ...certs[idx], [field]: val };
+      return { ...prev, certifications: certs };
+    });
+  };
+
+  const removeCertification = (idx) => {
+    setResume(prev => ({
+      ...prev,
+      certifications: (prev.certifications || []).filter((_, i) => i !== idx)
+    }));
+  };
+
+  // Languages repeatable
+  const addLanguage = () => {
+    setResume(prev => ({
+      ...prev,
+      languages: [
+        ...(prev.languages || []),
+        { name: '', level: '' }
+      ]
+    }));
+  };
+
+  const updateLanguage = (idx, field, val) => {
+    setResume(prev => {
+      const langs = [...(prev.languages || [])];
+      langs[idx] = { ...langs[idx], [field]: val };
+      return { ...prev, languages: langs };
+    });
+  };
+
+  const removeLanguage = (idx) => {
+    setResume(prev => ({
+      ...prev,
+      languages: (prev.languages || []).filter((_, i) => i !== idx)
+    }));
+  };
+
+  // Links update
+  const updateLink = (field, val) => {
+    setResume(prev => ({
+      ...prev,
+      links: {
+        ...(prev.links || {}),
+        [field]: val
+      }
+    }));
+  };
+
   // AI Feature 1: Improve Bullet Point Inline
   const handleImproveBullet = async (expIdx, bIdx, text) => {
     if (!text.trim()) return;
@@ -555,6 +625,902 @@ service cloud.firestore {
     );
   }
 
+  const hasLinks = (links) => {
+    return !!(links && (links.linkedin || links.github || links.portfolio || links.leetcode));
+  };
+
+  const renderSidebarLinks = (links) => {
+    if (!links) return null;
+    const items = [];
+    if (links.linkedin) items.push({ type: 'LinkedIn', val: links.linkedin });
+    if (links.github) items.push({ type: 'GitHub', val: links.github });
+    if (links.portfolio) items.push({ type: 'Portfolio', val: links.portfolio });
+    if (links.leetcode) items.push({ type: 'LeetCode', val: links.leetcode });
+
+    return (
+      <div className="space-y-1.5">
+        {items.map((item, idx) => (
+          <div key={idx} className="text-[11px] flex flex-col">
+            <span className="font-bold uppercase text-[9px] text-secondary">{item.type}</span>
+            <span className="font-body-md text-primary break-all leading-snug select-all">{item.val}</span>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const renderSoftwareEngineer = () => {
+    return (
+      <div className="font-sans text-primary w-full flex flex-col gap-6 text-left">
+        {/* Header */}
+        <header className="border-b-2 border-primary pb-4">
+          <h1 className="font-display text-display uppercase leading-none truncate">
+            {resume.personalInfo?.name || 'Alexander Vance'}
+          </h1>
+          {resume.personalInfo?.role && (
+            <p className="font-label-sm text-label-sm text-secondary uppercase tracking-widest mt-1">
+              {resume.personalInfo.role}
+            </p>
+          )}
+          <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 font-label-sm text-[10px] uppercase tracking-widest text-secondary">
+            {resume.personalInfo?.location && <span>{resume.personalInfo.location}</span>}
+            {resume.personalInfo?.email && (
+              <>
+                <span>•</span>
+                <span>{resume.personalInfo.email}</span>
+              </>
+            )}
+            {resume.personalInfo?.phone && (
+              <>
+                <span>•</span>
+                <span>{resume.personalInfo.phone}</span>
+              </>
+            )}
+          </div>
+        </header>
+
+        {/* 2-Column Body */}
+        <div className="flex gap-8">
+          {/* Main (Left) Column */}
+          <div className="w-[60%] space-y-6">
+            {/* Summary */}
+            {resume.summary && (
+              <section className="space-y-2">
+                <h4 className="font-label-sm text-label-sm uppercase font-bold border-b border-primary pb-1 w-full">Summary</h4>
+                <p className="font-body-md text-body-md leading-relaxed whitespace-pre-wrap">{resume.summary}</p>
+              </section>
+            )}
+
+            {/* Experience */}
+            {resume.experience && resume.experience.length > 0 && (
+              <section className="space-y-4">
+                <h4 className="font-label-sm text-label-sm uppercase font-bold border-b border-primary pb-1 w-full">Experience</h4>
+                <div className="space-y-4">
+                  {resume.experience.map((exp, idx) => (
+                    <div key={idx} className="space-y-1">
+                      <div className="flex justify-between items-baseline gap-2">
+                        <h5 className="font-headline-md text-headline-md uppercase truncate">{exp.company || 'Company'}</h5>
+                        <span className="font-label-sm text-label-sm whitespace-nowrap">{exp.duration}</span>
+                      </div>
+                      {exp.role && <p className="font-label-sm text-label-sm italic text-secondary">{exp.role}</p>}
+                      {exp.bullets && exp.bullets.length > 0 && (
+                        <ul className="list-disc ml-4 font-body-md text-body-md space-y-0.5 text-secondary">
+                          {exp.bullets.filter(b => b).map((b, bIdx) => (
+                            <li key={bIdx}>{b}</li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Projects */}
+            {resume.projects && resume.projects.length > 0 && (
+              <section className="space-y-4">
+                <h4 className="font-label-sm text-label-sm uppercase font-bold border-b border-primary pb-1 w-full">Projects</h4>
+                <div className="space-y-4">
+                  {resume.projects.map((proj, idx) => (
+                    <div key={idx} className="space-y-1">
+                      <div className="flex justify-between items-baseline gap-2">
+                        <h5 className="font-headline-md text-headline-md uppercase truncate">{proj.name || 'Project Name'}</h5>
+                        {proj.link && <span className="font-label-sm text-[10px] text-secondary truncate max-w-[150px]">{proj.link}</span>}
+                      </div>
+                      <p className="font-body-md text-body-md text-secondary leading-relaxed">{proj.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+          </div>
+
+          {/* Sidebar (Right) Column */}
+          <div className="w-[40%] pl-6 border-l border-primary/20 space-y-6">
+            {/* Links */}
+            {hasLinks(resume.links) && (
+              <section className="space-y-2">
+                <h4 className="font-label-sm text-label-sm uppercase font-bold border-b border-primary pb-1 w-full">Links</h4>
+                {renderSidebarLinks(resume.links)}
+              </section>
+            )}
+
+            {/* Skills */}
+            {resume.skills && resume.skills.length > 0 && (
+              <section className="space-y-2">
+                <h4 className="font-label-sm text-label-sm uppercase font-bold border-b border-primary pb-1 w-full">Skills</h4>
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {resume.skills.map((skill, idx) => (
+                    <span key={idx} className="px-2 py-0.5 border border-primary text-[9px] font-bold uppercase bg-white">{skill}</span>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Certifications */}
+            {resume.certifications && resume.certifications.length > 0 && (
+              <section className="space-y-2">
+                <h4 className="font-label-sm text-label-sm uppercase font-bold border-b border-primary pb-1 w-full">Certifications</h4>
+                <div className="space-y-2">
+                  {resume.certifications.map((cert, idx) => (
+                    <div key={idx} className="space-y-0.5">
+                      <div className="flex justify-between items-baseline gap-1">
+                        <h5 className="font-headline-md text-[11px] uppercase font-bold truncate">{cert.name}</h5>
+                        <span className="font-label-sm text-[9px] whitespace-nowrap text-secondary">{cert.year}</span>
+                      </div>
+                      {cert.authority && <p className="font-body-md text-[10px] text-secondary leading-none">{cert.authority}</p>}
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Education */}
+            {resume.education && resume.education.length > 0 && (
+              <section className="space-y-2">
+                <h4 className="font-label-sm text-label-sm uppercase font-bold border-b border-primary pb-1 w-full">Education</h4>
+                <div className="space-y-3">
+                  {resume.education.map((edu, idx) => (
+                    <div key={idx} className="space-y-0.5">
+                      <div className="flex justify-between items-baseline gap-1">
+                        <h5 className="font-headline-md text-[11px] uppercase font-bold truncate">{edu.institution}</h5>
+                        <span className="font-label-sm text-[9px] whitespace-nowrap text-secondary">{edu.year}</span>
+                      </div>
+                      {edu.degree && <p className="font-body-md text-[10px] text-secondary leading-normal">{edu.degree}</p>}
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Languages */}
+            {resume.languages && resume.languages.length > 0 && (
+              <section className="space-y-2">
+                <h4 className="font-label-sm text-label-sm uppercase font-bold border-b border-primary pb-1 w-full">Languages</h4>
+                <div className="space-y-1">
+                  {resume.languages.map((lang, idx) => (
+                    <div key={idx} className="flex justify-between items-center text-[11px]">
+                      <span className="font-bold uppercase">{lang.name}</span>
+                      <span className="text-secondary uppercase text-[9px]">{lang.level}</span>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Achievements */}
+            {resume.achievements && resume.achievements.length > 0 && (
+              <section className="space-y-2">
+                <h4 className="font-label-sm text-label-sm uppercase font-bold border-b border-primary pb-1 w-full">Achievements</h4>
+                <ul className="list-disc ml-4 font-body-md text-[11px] space-y-1 text-secondary">
+                  {resume.achievements.filter(ach => ach).map((ach, idx) => (
+                    <li key={idx}>{ach}</li>
+                  ))}
+                </ul>
+              </section>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderFresher = () => {
+    return (
+      <div className="font-sans text-primary w-full flex flex-col gap-5 text-left text-[13px]">
+        {/* Header */}
+        <header className="text-center space-y-1.5 border-b border-primary/20 pb-3">
+          <h1 className="font-display text-[32px] font-bold uppercase leading-none tracking-tight">
+            {resume.personalInfo?.name || 'Alexander Vance'}
+          </h1>
+          {resume.personalInfo?.role && (
+            <p className="font-label-sm text-[10px] text-secondary uppercase tracking-widest">
+              {resume.personalInfo.role}
+            </p>
+          )}
+          <div className="flex flex-wrap justify-center gap-3 font-label-sm text-[10px] uppercase text-secondary">
+            {resume.personalInfo?.location && <span>{resume.personalInfo.location}</span>}
+            {resume.personalInfo?.email && <span>• {resume.personalInfo.email}</span>}
+            {resume.personalInfo?.phone && <span>• {resume.personalInfo.phone}</span>}
+          </div>
+        </header>
+
+        {/* Professional Summary */}
+        {resume.summary && (
+          <section className="space-y-1">
+            <h4 className="font-label-sm text-[11px] uppercase font-bold tracking-wider text-secondary border-b border-primary/15 pb-0.5">Summary</h4>
+            <p className="font-body-md text-[12px] leading-relaxed whitespace-pre-wrap">{resume.summary}</p>
+          </section>
+        )}
+
+        {/* Education (First for Freshers!) */}
+        {resume.education && resume.education.length > 0 && (
+          <section className="space-y-2">
+            <h4 className="font-label-sm text-[11px] uppercase font-bold tracking-wider text-secondary border-b border-primary/15 pb-0.5">Education</h4>
+            <div className="space-y-2">
+              {resume.education.map((edu, idx) => (
+                <div key={idx} className="flex justify-between items-baseline gap-4">
+                  <div>
+                    <h5 className="font-headline-md text-[13px] uppercase font-bold">{edu.institution || 'University'}</h5>
+                    {edu.degree && <p className="font-body-md text-[12px] text-secondary leading-normal">{edu.degree}</p>}
+                  </div>
+                  <span className="font-label-sm text-[11px] text-secondary whitespace-nowrap">{edu.year}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Projects */}
+        {resume.projects && resume.projects.length > 0 && (
+          <section className="space-y-2">
+            <h4 className="font-label-sm text-[11px] uppercase font-bold tracking-wider text-secondary border-b border-primary/15 pb-0.5">Projects</h4>
+            <div className="space-y-2">
+              {resume.projects.map((proj, idx) => (
+                <div key={idx} className="space-y-0.5">
+                  <div className="flex justify-between items-baseline gap-4">
+                    <h5 className="font-headline-md text-[13px] uppercase font-bold">{proj.name || 'Project Name'}</h5>
+                    {proj.link && <span className="font-label-sm text-[10px] text-secondary truncate max-w-[200px]">{proj.link}</span>}
+                  </div>
+                  <p className="font-body-md text-[12px] text-secondary leading-relaxed">{proj.description}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Skills */}
+        {resume.skills && resume.skills.length > 0 && (
+          <section className="space-y-1.5">
+            <h4 className="font-label-sm text-[11px] uppercase font-bold tracking-wider text-secondary border-b border-primary/15 pb-0.5">Skills</h4>
+            <div className="flex flex-wrap gap-1">
+              {resume.skills.map((skill, idx) => (
+                <span key={idx} className="px-2 py-0.5 border border-primary/30 text-[9px] uppercase font-semibold bg-zinc-50">{skill}</span>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Certifications */}
+        {resume.certifications && resume.certifications.length > 0 && (
+          <section className="space-y-2">
+            <h4 className="font-label-sm text-[11px] uppercase font-bold tracking-wider text-secondary border-b border-primary/15 pb-0.5">Certifications</h4>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-2">
+              {resume.certifications.map((cert, idx) => (
+                <div key={idx} className="flex justify-between items-baseline gap-2">
+                  <div>
+                    <h5 className="font-headline-md text-[12px] uppercase font-bold truncate max-w-[180px]">{cert.name}</h5>
+                    {cert.authority && <p className="font-body-md text-[11px] text-secondary leading-none">{cert.authority}</p>}
+                  </div>
+                  <span className="font-label-sm text-[10px] text-secondary whitespace-nowrap">{cert.year}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Experience */}
+        {resume.experience && resume.experience.length > 0 && (
+          <section className="space-y-2">
+            <h4 className="font-label-sm text-[11px] uppercase font-bold tracking-wider text-secondary border-b border-primary/15 pb-0.5">Experience</h4>
+            <div className="space-y-2">
+              {resume.experience.map((exp, idx) => (
+                <div key={idx} className="space-y-0.5">
+                  <div className="flex justify-between items-baseline gap-4">
+                    <h5 className="font-headline-md text-[13px] uppercase font-bold">{exp.company || 'Company'}</h5>
+                    <span className="font-label-sm text-[11px] text-secondary whitespace-nowrap">{exp.duration}</span>
+                  </div>
+                  {exp.role && <p className="font-label-sm text-[11px] italic text-secondary">{exp.role}</p>}
+                  {exp.bullets && exp.bullets.length > 0 && (
+                    <ul className="list-disc ml-4 font-body-md text-[12px] space-y-0.5 text-secondary">
+                      {exp.bullets.filter(b => b).map((b, bIdx) => (
+                        <li key={bIdx}>{b}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Languages */}
+        {resume.languages && resume.languages.length > 0 && (
+          <section className="space-y-1">
+            <h4 className="font-label-sm text-[11px] uppercase font-bold tracking-wider text-secondary border-b border-primary/15 pb-0.5">Languages</h4>
+            <div className="flex flex-wrap gap-x-6 gap-y-1">
+              {resume.languages.map((lang, idx) => (
+                <span key={idx} className="text-[12px]">
+                  <strong className="uppercase font-semibold">{lang.name}</strong> ({lang.level})
+                </span>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Achievements */}
+        {resume.achievements && resume.achievements.length > 0 && (
+          <section className="space-y-1">
+            <h4 className="font-label-sm text-[11px] uppercase font-bold tracking-wider text-secondary border-b border-primary/15 pb-0.5">Achievements</h4>
+            <ul className="list-disc ml-4 font-body-md text-[12px] space-y-0.5 text-secondary">
+              {resume.achievements.filter(ach => ach).map((ach, idx) => (
+                <li key={idx}>{ach}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {/* Links (End of Page) */}
+        {hasLinks(resume.links) && (
+          <section className="space-y-1 border-t border-primary/15 pt-3">
+            <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-[10px] font-label-sm text-secondary uppercase">
+              {resume.links.linkedin && <span>LinkedIn: <span className="text-primary font-body-md lowercase select-all">{resume.links.linkedin}</span></span>}
+              {resume.links.github && <span>• GitHub: <span className="text-primary font-body-md lowercase select-all">{resume.links.github}</span></span>}
+              {resume.links.portfolio && <span>• Portfolio: <span className="text-primary font-body-md lowercase select-all">{resume.links.portfolio}</span></span>}
+              {resume.links.leetcode && <span>• LeetCode: <span className="text-primary font-body-md lowercase select-all">{resume.links.leetcode}</span></span>}
+            </div>
+          </section>
+        )}
+      </div>
+    );
+  };
+
+  const renderModernProfessional = () => {
+    return (
+      <div className="font-sans text-primary w-full flex min-h-[842px] -mx-12 -my-12 text-left">
+        {/* Left Sidebar (Tinted) */}
+        <div className="w-[35%] bg-zinc-50 border-r border-primary p-8 space-y-6 flex flex-col justify-between">
+          <div className="space-y-6">
+            {/* Links */}
+            {hasLinks(resume.links) && (
+              <section className="space-y-2">
+                <h4 className="font-label-sm text-[10px] uppercase font-bold tracking-widest text-secondary border-b border-primary/25 pb-1">Contact Links</h4>
+                {renderSidebarLinks(resume.links)}
+              </section>
+            )}
+
+            {/* Skills */}
+            {resume.skills && resume.skills.length > 0 && (
+              <section className="space-y-2">
+                <h4 className="font-label-sm text-[10px] uppercase font-bold tracking-widest text-secondary border-b border-primary/25 pb-1">Core Skills</h4>
+                <div className="flex flex-col gap-1.5 pt-1">
+                  {resume.skills.map((skill, idx) => (
+                    <span key={idx} className="font-body-md text-[11px] font-bold uppercase border-l-2 border-primary pl-2 py-0.5">{skill}</span>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Education */}
+            {resume.education && resume.education.length > 0 && (
+              <section className="space-y-2">
+                <h4 className="font-label-sm text-[10px] uppercase font-bold tracking-widest text-secondary border-b border-primary/25 pb-1">Education</h4>
+                <div className="space-y-3">
+                  {resume.education.map((edu, idx) => (
+                    <div key={idx} className="space-y-0.5 text-[11px]">
+                      <h5 className="font-bold uppercase leading-tight">{edu.institution}</h5>
+                      {edu.degree && <p className="text-secondary leading-normal">{edu.degree}</p>}
+                      <p className="text-secondary font-label-sm text-[9px]">{edu.year}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Languages */}
+            {resume.languages && resume.languages.length > 0 && (
+              <section className="space-y-2">
+                <h4 className="font-label-sm text-[10px] uppercase font-bold tracking-widest text-secondary border-b border-primary/25 pb-1">Languages</h4>
+                <div className="space-y-1.5">
+                  {resume.languages.map((lang, idx) => (
+                    <div key={idx} className="flex justify-between items-center text-[11px]">
+                      <span className="font-bold uppercase">{lang.name}</span>
+                      <span className="text-secondary uppercase text-[9px]">{lang.level}</span>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Certifications */}
+            {resume.certifications && resume.certifications.length > 0 && (
+              <section className="space-y-2">
+                <h4 className="font-label-sm text-[10px] uppercase font-bold tracking-widest text-secondary border-b border-primary/25 pb-1">Certifications</h4>
+                <div className="space-y-2">
+                  {resume.certifications.map((cert, idx) => (
+                    <div key={idx} className="space-y-0.5 text-[11px]">
+                      <h5 className="font-bold uppercase leading-tight">{cert.name}</h5>
+                      {cert.authority && <p className="text-secondary">{cert.authority}</p>}
+                      <p className="text-secondary font-label-sm text-[9px]">{cert.year}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+          </div>
+        </div>
+
+        {/* Right Main Content */}
+        <div className="w-[65%] p-8 space-y-6 flex flex-col justify-start">
+          {/* Header */}
+          <header className="space-y-2 border-b-2 border-primary pb-4">
+            <h1 className="font-display text-[32px] font-bold uppercase leading-none truncate">
+              {resume.personalInfo?.name || 'Alexander Vance'}
+            </h1>
+            {resume.personalInfo?.role && (
+              <p className="font-label-sm text-[11px] text-secondary uppercase tracking-widest font-semibold">
+                {resume.personalInfo.role}
+              </p>
+            )}
+            <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[10px] font-label-sm uppercase text-secondary">
+              {resume.personalInfo?.location && <span>{resume.personalInfo.location}</span>}
+              {resume.personalInfo?.email && <span>• {resume.personalInfo.email}</span>}
+              {resume.personalInfo?.phone && <span>• {resume.personalInfo.phone}</span>}
+            </div>
+          </header>
+
+          {/* Professional Summary */}
+          {resume.summary && (
+            <section className="space-y-2">
+              <h4 className="font-label-sm text-[11px] uppercase font-bold border-b border-primary pb-0.5 w-fit pr-6">Summary</h4>
+              <p className="font-body-md text-[13px] leading-relaxed whitespace-pre-wrap text-secondary">{resume.summary}</p>
+            </section>
+          )}
+
+          {/* Experience */}
+          {resume.experience && resume.experience.length > 0 && (
+            <section className="space-y-4">
+              <h4 className="font-label-sm text-[11px] uppercase font-bold border-b border-primary pb-0.5 w-fit pr-6">Experience</h4>
+              <div className="space-y-4">
+                {resume.experience.map((exp, idx) => (
+                  <div key={idx} className="space-y-1">
+                    <div className="flex justify-between items-baseline gap-2">
+                      <h5 className="font-headline-md text-[14px] uppercase font-bold">{exp.company || 'Company'}</h5>
+                      <span className="font-label-sm text-[10px] text-secondary whitespace-nowrap">{exp.duration}</span>
+                    </div>
+                    {exp.role && <p className="font-label-sm text-[11px] italic text-secondary">{exp.role}</p>}
+                    {exp.bullets && exp.bullets.length > 0 && (
+                      <ul className="list-disc ml-4 font-body-md text-[12px] space-y-0.5 text-secondary">
+                        {exp.bullets.filter(b => b).map((b, bIdx) => (
+                          <li key={bIdx}>{b}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Projects */}
+          {resume.projects && resume.projects.length > 0 && (
+            <section className="space-y-4">
+              <h4 className="font-label-sm text-[11px] uppercase font-bold border-b border-primary pb-0.5 w-fit pr-6">Projects</h4>
+              <div className="space-y-4">
+                {resume.projects.map((proj, idx) => (
+                  <div key={idx} className="space-y-1">
+                    <div className="flex justify-between items-baseline gap-2">
+                      <h5 className="font-headline-md text-[14px] uppercase font-bold">{proj.name || 'Project Name'}</h5>
+                      {proj.link && <span className="font-label-sm text-[9px] text-secondary truncate max-w-[150px]">{proj.link}</span>}
+                    </div>
+                    <p className="font-body-md text-[12px] text-secondary leading-relaxed">{proj.description}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Achievements */}
+          {resume.achievements && resume.achievements.length > 0 && (
+            <section className="space-y-2">
+              <h4 className="font-label-sm text-[11px] uppercase font-bold border-b border-primary pb-0.5 w-fit pr-6">Achievements</h4>
+              <ul className="list-disc ml-4 font-body-md text-[12px] space-y-0.5 text-secondary">
+                {resume.achievements.filter(ach => ach).map((ach, idx) => (
+                  <li key={idx}>{ach}</li>
+                ))}
+              </ul>
+            </section>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const renderExecutive = () => {
+    return (
+      <div className="font-serif text-primary w-full flex flex-col gap-6 text-left text-[13px] leading-relaxed">
+        {/* Centered Header */}
+        <header className="text-center space-y-2">
+          <h1 className="font-serif text-[34px] font-bold uppercase tracking-wide leading-none">
+            {resume.personalInfo?.name || 'Alexander Vance'}
+          </h1>
+          {resume.personalInfo?.role && (
+            <p className="font-serif text-[12px] italic uppercase tracking-wider text-secondary">
+              {resume.personalInfo.role}
+            </p>
+          )}
+          
+          <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 font-serif text-[11px] text-secondary">
+            {resume.personalInfo?.location && <span>{resume.personalInfo.location}</span>}
+            {resume.personalInfo?.phone && <span>{resume.personalInfo.phone}</span>}
+            {resume.personalInfo?.email && <span className="underline select-all">{resume.personalInfo.email}</span>}
+          </div>
+
+          {hasLinks(resume.links) && (
+            <div className="flex flex-wrap justify-center gap-x-4 gap-y-0.5 font-serif text-[10px] text-secondary border-t border-primary/10 pt-2">
+              {resume.links.linkedin && <span>LinkedIn: <span className="underline select-all">{resume.links.linkedin}</span></span>}
+              {resume.links.github && <span>• GitHub: <span className="underline select-all">{resume.links.github}</span></span>}
+              {resume.links.portfolio && <span>• Portfolio: <span className="underline select-all">{resume.links.portfolio}</span></span>}
+              {resume.links.leetcode && <span>• LeetCode: <span className="underline select-all">{resume.links.leetcode}</span></span>}
+            </div>
+          )}
+        </header>
+
+        {/* Summary */}
+        {resume.summary && (
+          <section className="space-y-2">
+            <h4 className="font-serif font-bold uppercase text-[11px] tracking-widest text-center border-t border-b py-1 border-primary">Professional Summary</h4>
+            <p className="text-justify font-body-md text-[13px] leading-relaxed whitespace-pre-wrap">{resume.summary}</p>
+          </section>
+        )}
+
+        {/* Experience */}
+        {resume.experience && resume.experience.length > 0 && (
+          <section className="space-y-3">
+            <h4 className="font-serif font-bold uppercase text-[11px] tracking-widest text-center border-t border-b py-1 border-primary">Professional Experience</h4>
+            <div className="space-y-4">
+              {resume.experience.map((exp, idx) => (
+                <div key={idx} className="space-y-1">
+                  <div className="flex justify-between items-baseline gap-4">
+                    <h5 className="font-serif text-[14px] font-bold uppercase">{exp.company || 'Company'}</h5>
+                    <span className="font-serif text-[11px] italic whitespace-nowrap text-secondary">{exp.duration}</span>
+                  </div>
+                  {exp.role && <p className="font-serif text-[12px] italic text-secondary leading-none">{exp.role}</p>}
+                  {exp.bullets && exp.bullets.length > 0 && (
+                    <ul className="list-disc ml-5 font-serif text-[12.5px] space-y-1 text-secondary mt-1">
+                      {exp.bullets.filter(b => b).map((b, bIdx) => (
+                        <li key={bIdx} className="text-justify">{b}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Education */}
+        {resume.education && resume.education.length > 0 && (
+          <section className="space-y-3">
+            <h4 className="font-serif font-bold uppercase text-[11px] tracking-widest text-center border-t border-b py-1 border-primary">Education</h4>
+            <div className="space-y-3">
+              {resume.education.map((edu, idx) => (
+                <div key={idx} className="flex justify-between items-baseline gap-4">
+                  <div>
+                    <h5 className="font-serif text-[13px] font-bold uppercase">{edu.institution || 'Institution'}</h5>
+                    {edu.degree && <p className="font-serif text-[12px] text-secondary leading-normal">{edu.degree}</p>}
+                  </div>
+                  <span className="font-serif text-[11px] italic text-secondary whitespace-nowrap">{edu.year}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Projects */}
+        {resume.projects && resume.projects.length > 0 && (
+          <section className="space-y-3">
+            <h4 className="font-serif font-bold uppercase text-[11px] tracking-widest text-center border-t border-b py-1 border-primary">Key Projects</h4>
+            <div className="space-y-3">
+              {resume.projects.map((proj, idx) => (
+                <div key={idx} className="space-y-1">
+                  <div className="flex justify-between items-baseline gap-4">
+                    <h5 className="font-serif text-[13px] font-bold uppercase">{proj.name || 'Project Name'}</h5>
+                    {proj.link && <span className="font-serif text-[10px] text-secondary truncate max-w-[200px] italic">{proj.link}</span>}
+                  </div>
+                  <p className="text-justify font-serif text-[12.5px] text-secondary leading-relaxed">{proj.description}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Skills & Certifications & Languages - multi-column for space optimization */}
+        <div className="grid grid-cols-2 gap-6 pt-2">
+          {/* Left Sub-column */}
+          <div className="space-y-4">
+            {/* Skills */}
+            {resume.skills && resume.skills.length > 0 && (
+              <section className="space-y-2">
+                <h4 className="font-serif font-bold uppercase text-[10px] tracking-wider border-b border-primary pb-0.5">Skills</h4>
+                <div className="flex flex-wrap gap-x-2 gap-y-1 text-[12px]">
+                  {resume.skills.map((skill, idx) => (
+                    <span key={idx} className="text-secondary font-medium">{skill}{idx < resume.skills.length - 1 ? ',' : ''}</span>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Languages */}
+            {resume.languages && resume.languages.length > 0 && (
+              <section className="space-y-2">
+                <h4 className="font-serif font-bold uppercase text-[10px] tracking-wider border-b border-primary pb-0.5">Languages</h4>
+                <div className="space-y-1 text-[12px]">
+                  {resume.languages.map((lang, idx) => (
+                    <div key={idx} className="flex justify-between text-secondary">
+                      <span className="font-medium">{lang.name}</span>
+                      <span className="italic">{lang.level}</span>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+          </div>
+
+          {/* Right Sub-column */}
+          <div className="space-y-4">
+            {/* Certifications */}
+            {resume.certifications && resume.certifications.length > 0 && (
+              <section className="space-y-2">
+                <h4 className="font-serif font-bold uppercase text-[10px] tracking-wider border-b border-primary pb-0.5">Certifications</h4>
+                <div className="space-y-2 text-[12px]">
+                  {resume.certifications.map((cert, idx) => (
+                    <div key={idx} className="flex justify-between items-baseline text-secondary">
+                      <span className="font-medium truncate max-w-[180px]">{cert.name}</span>
+                      <span className="italic whitespace-nowrap pl-1">{cert.year}</span>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Achievements */}
+            {resume.achievements && resume.achievements.length > 0 && (
+              <section className="space-y-2">
+                <h4 className="font-serif font-bold uppercase text-[10px] tracking-wider border-b border-primary pb-0.5">Achievements</h4>
+                <ul className="list-disc ml-4 font-serif text-[12px] space-y-0.5 text-secondary">
+                  {resume.achievements.filter(ach => ach).map((ach, idx) => (
+                    <li key={idx}>{ach}</li>
+                  ))}
+                </ul>
+              </section>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderCreative = () => {
+    return (
+      <div className="font-sans-creative text-primary w-full flex flex-col gap-6 text-left">
+        {/* Creative Header */}
+        <header className="relative space-y-2 pb-4 border-b-4 border-primary">
+          <h1 className="font-sans-creative text-[42px] font-black uppercase leading-none tracking-tighter">
+            {resume.personalInfo?.name || 'Alexander Vance'}
+          </h1>
+          {resume.personalInfo?.role && (
+            <div className="inline-block bg-primary text-on-primary px-3 py-1 font-sans-creative text-[11px] font-bold uppercase tracking-widest">
+              {resume.personalInfo.role}
+            </div>
+          )}
+          <div className="flex flex-wrap gap-4 mt-3 font-sans-creative text-[10px] font-semibold uppercase tracking-wider text-secondary">
+            {resume.personalInfo?.location && <span>{resume.personalInfo.location}</span>}
+            {resume.personalInfo?.email && <span>• {resume.personalInfo.email}</span>}
+            {resume.personalInfo?.phone && <span>• {resume.personalInfo.phone}</span>}
+          </div>
+        </header>
+
+        {/* 2-Column Content */}
+        <div className="flex gap-8 mt-2">
+          {/* Left Column (Metadata/Sidebar) */}
+          <div className="w-[30%] border-r border-primary/20 pr-6 space-y-6">
+            {/* Links */}
+            {hasLinks(resume.links) && (
+              <section className="space-y-3">
+                <h4 className="font-sans-creative text-[11px] font-extrabold uppercase tracking-widest text-primary">Links</h4>
+                <div className="space-y-2">
+                  {resume.links.linkedin && (
+                    <div className="text-[11px]">
+                      <span className="font-bold block uppercase text-secondary text-[9px]">LinkedIn</span>
+                      <span className="block truncate font-medium select-all">{resume.links.linkedin}</span>
+                    </div>
+                  )}
+                  {resume.links.github && (
+                    <div className="text-[11px]">
+                      <span className="font-bold block uppercase text-secondary text-[9px]">GitHub</span>
+                      <span className="block truncate font-medium select-all">{resume.links.github}</span>
+                    </div>
+                  )}
+                  {resume.links.portfolio && (
+                    <div className="text-[11px]">
+                      <span className="font-bold block uppercase text-secondary text-[9px]">Portfolio</span>
+                      <span className="block truncate font-medium select-all">{resume.links.portfolio}</span>
+                    </div>
+                  )}
+                  {resume.links.leetcode && (
+                    <div className="text-[11px]">
+                      <span className="font-bold block uppercase text-secondary text-[9px]">LeetCode</span>
+                      <span className="block truncate font-medium select-all">{resume.links.leetcode}</span>
+                    </div>
+                  )}
+                </div>
+              </section>
+            )}
+
+            {/* Skills */}
+            {resume.skills && resume.skills.length > 0 && (
+              <section className="space-y-3">
+                <h4 className="font-sans-creative text-[11px] font-extrabold uppercase tracking-widest text-primary">Skills</h4>
+                <div className="flex flex-wrap gap-1.5">
+                  {resume.skills.map((skill, idx) => (
+                    <span key={idx} className="px-2 py-0.5 border-2 border-primary text-[9px] font-extrabold uppercase bg-white">{skill}</span>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Languages */}
+            {resume.languages && resume.languages.length > 0 && (
+              <section className="space-y-3">
+                <h4 className="font-sans-creative text-[11px] font-extrabold uppercase tracking-widest text-primary">Languages</h4>
+                <div className="space-y-1 text-[11px] font-semibold text-secondary">
+                  {resume.languages.map((lang, idx) => (
+                    <div key={idx} className="flex justify-between uppercase">
+                      <span>{lang.name}</span>
+                      <span>{lang.level}</span>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Certifications */}
+            {resume.certifications && resume.certifications.length > 0 && (
+              <section className="space-y-3">
+                <h4 className="font-sans-creative text-[11px] font-extrabold uppercase tracking-widest text-primary">Certifications</h4>
+                <div className="space-y-2 text-[11px]">
+                  {resume.certifications.map((cert, idx) => (
+                    <div key={idx} className="space-y-0.5">
+                      <h5 className="font-bold uppercase leading-tight">{cert.name}</h5>
+                      <span className="text-secondary text-[9px] block uppercase font-bold">{cert.year}</span>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+          </div>
+
+          {/* Right Column (Core Details) */}
+          <div className="w-[70%] space-y-6">
+            {/* Summary */}
+            {resume.summary && (
+              <section className="space-y-2">
+                <h4 className="font-sans-creative text-[12px] font-extrabold uppercase tracking-wider text-primary border-b-2 border-primary pb-0.5 w-fit pr-6">About Me</h4>
+                <p className="font-sans-creative text-[12.5px] leading-relaxed whitespace-pre-wrap text-secondary">{resume.summary}</p>
+              </section>
+            )}
+
+            {/* Experience */}
+            {resume.experience && resume.experience.length > 0 && (
+              <section className="space-y-4">
+                <h4 className="font-sans-creative text-[12px] font-extrabold uppercase tracking-wider text-primary border-b-2 border-primary pb-0.5 w-fit pr-6">Experience</h4>
+                <div className="space-y-4">
+                  {resume.experience.map((exp, idx) => (
+                    <div key={idx} className="space-y-1">
+                      <div className="flex justify-between items-baseline gap-4">
+                        <h5 className="font-sans-creative text-[13.5px] font-extrabold uppercase">{exp.company || 'Company'}</h5>
+                        <span className="font-sans-creative text-[10px] font-extrabold text-secondary uppercase whitespace-nowrap">{exp.duration}</span>
+                      </div>
+                      {exp.role && <p className="font-sans-creative text-[11px] font-bold text-secondary uppercase tracking-wider">{exp.role}</p>}
+                      {exp.bullets && exp.bullets.length > 0 && (
+                        <ul className="list-disc ml-4 font-sans-creative text-[12px] space-y-1 text-secondary mt-1">
+                          {exp.bullets.filter(b => b).map((b, bIdx) => (
+                            <li key={bIdx}>{b}</li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Projects */}
+            {resume.projects && resume.projects.length > 0 && (
+              <section className="space-y-4">
+                <h4 className="font-sans-creative text-[12px] font-extrabold uppercase tracking-wider text-primary border-b-2 border-primary pb-0.5 w-fit pr-6">Projects</h4>
+                <div className="space-y-4">
+                  {resume.projects.map((proj, idx) => (
+                    <div key={idx} className="space-y-1">
+                      <div className="flex justify-between items-baseline gap-4">
+                        <h5 className="font-sans-creative text-[13.5px] font-extrabold uppercase">{proj.name || 'Project Name'}</h5>
+                        {proj.link && <span className="font-sans-creative text-[9px] font-bold text-secondary truncate max-w-[150px]">{proj.link}</span>}
+                      </div>
+                      <p className="font-sans-creative text-[12px] text-secondary leading-relaxed">{proj.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Education */}
+            {resume.education && resume.education.length > 0 && (
+              <section className="space-y-3">
+                <h4 className="font-sans-creative text-[12px] font-extrabold uppercase tracking-wider text-primary border-b-2 border-primary pb-0.5 w-fit pr-6">Education</h4>
+                <div className="space-y-3">
+                  {resume.education.map((edu, idx) => (
+                    <div key={idx} className="flex justify-between items-baseline gap-4">
+                      <div>
+                        <h5 className="font-sans-creative text-[13px] font-extrabold uppercase">{edu.institution || 'Institution'}</h5>
+                        {edu.degree && <p className="font-sans-creative text-[11.5px] text-secondary font-medium leading-normal">{edu.degree}</p>}
+                      </div>
+                      <span className="font-sans-creative text-[10px] font-extrabold text-secondary uppercase whitespace-nowrap">{edu.year}</span>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Achievements */}
+            {resume.achievements && resume.achievements.length > 0 && (
+              <section className="space-y-2">
+                <h4 className="font-sans-creative text-[12px] font-extrabold uppercase tracking-wider text-primary border-b-2 border-primary pb-0.5 w-fit pr-6">Achievements</h4>
+                <ul className="list-disc ml-4 font-sans-creative text-[12px] space-y-1 text-secondary">
+                  {resume.achievements.filter(ach => ach).map((ach, idx) => (
+                    <li key={idx}>{ach}</li>
+                  ))}
+                </ul>
+              </section>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const getTemplateFontClass = (templateId) => {
+    if (templateId === 'executive') return 'font-serif';
+    if (templateId === 'creative') return 'font-sans-creative';
+    return 'font-sans';
+  };
+
+  const renderTemplateContent = () => {
+    switch (resume.template) {
+      case 'fresher':
+        return renderFresher();
+      case 'modern-professional':
+        return renderModernProfessional();
+      case 'executive':
+        return renderExecutive();
+      case 'creative':
+        return renderCreative();
+      case 'software-engineer':
+      default:
+        return renderSoftwareEngineer();
+    }
+  };
+
   // Calculate local strength
   const strength = calculateStrength(resume);
 
@@ -598,10 +1564,13 @@ service cloud.firestore {
           <div className="flex-grow space-y-1">
             {[
               { key: 'personal', label: 'Basic Info', icon: 'person' },
+              { key: 'links', label: 'Links', icon: 'link' },
               { key: 'experience', label: 'Experience', icon: 'work' },
               { key: 'education', label: 'Education', icon: 'school' },
               { key: 'skills', label: 'Skills', icon: 'psychology' },
+              { key: 'languages', label: 'Languages', icon: 'translate' },
               { key: 'projects', label: 'Projects', icon: 'folder_open' },
+              { key: 'certifications', label: 'Certifications', icon: 'verified' },
               { key: 'achievements', label: 'Achievements', icon: 'emoji_events' },
               { key: 'summary', label: 'Summary', icon: 'description' }
             ].map(sec => (
@@ -660,20 +1629,132 @@ service cloud.firestore {
               </div>
             </div>
 
-            {/* Template Selector dropdown */}
-            <div className="border border-primary p-6 space-y-4">
-              <label className="block font-label-sm text-label-sm uppercase text-primary">Active Template Preset</label>
-              <select 
-                value={resume.template || 'software-engineer'}
-                onChange={(e) => setResume(prev => ({ ...prev, template: e.target.value }))}
-                className="w-full border border-primary p-3 bg-white focus:ring-0 focus:border-black font-body-md"
-              >
-                <option value="software-engineer">Software Engineer (Clean two-column)</option>
-                <option value="data-analyst">Data Analyst (Single column, metric-focused)</option>
-                <option value="fresher">Fresher (Simple, education-first)</option>
-                <option value="designer">Designer (Asymmetric, bold name)</option>
-                <option value="marketing">Marketing (Summary-first, classic)</option>
-              </select>
+            {/* Visual Template Gallery */}
+            <div className="border border-primary p-6 space-y-6">
+              <div>
+                <h3 className="font-label-sm text-label-sm uppercase tracking-widest text-primary">Template Gallery</h3>
+                <p className="font-body-md text-secondary mt-1">Select a layout preset. Switching templates preserves all entered data.</p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[
+                  {
+                    id: 'software-engineer',
+                    name: 'Software Engineer',
+                    desc: '2-Column tech layout. Left: Exp, Projs. Right: Skills, Certs.',
+                    layout: 'split-right'
+                  },
+                  {
+                    id: 'fresher',
+                    name: 'Fresher / Student',
+                    desc: 'Education-first single column optimized for graduates.',
+                    layout: 'single-edu-first'
+                  },
+                  {
+                    id: 'modern-professional',
+                    name: 'Modern Professional',
+                    desc: 'Elegant asymmetric layout with a solid tinted left sidebar.',
+                    layout: 'sidebar-left'
+                  },
+                  {
+                    id: 'executive',
+                    name: 'Executive',
+                    desc: 'Centered serif typography, classic margins for senior roles.',
+                    layout: 'serif-centered'
+                  },
+                  {
+                    id: 'creative',
+                    name: 'Creative',
+                    desc: 'Bold visuals and modern offsets for designers and creators.',
+                    layout: 'asymmetric-creative'
+                  }
+                ].map(tpl => {
+                  const isActive = (resume.template || 'software-engineer') === tpl.id;
+                  return (
+                    <button
+                      key={tpl.id}
+                      onClick={() => setResume(prev => ({ ...prev, template: tpl.id }))}
+                      className={`text-left p-4 border transition-all flex flex-col justify-between h-40 group relative block-shadow-hover ${
+                        isActive 
+                          ? 'border-primary bg-zinc-50 border-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]' 
+                          : 'border-primary bg-white hover:border-black'
+                      }`}
+                    >
+                      <div>
+                        <div className="flex justify-between items-start">
+                          <span className={`font-label-sm text-[11px] uppercase tracking-wider ${isActive ? 'font-bold text-primary' : 'text-secondary'}`}>
+                            {tpl.name}
+                          </span>
+                          {isActive && (
+                            <span className="material-symbols-outlined text-sm text-primary" data-icon="check_circle">check_circle</span>
+                          )}
+                        </div>
+                        <p className="text-[10px] text-secondary font-body-md mt-2 leading-relaxed line-clamp-3">
+                          {tpl.desc}
+                        </p>
+                      </div>
+
+                      {/* Mini visual representation of layout */}
+                      <div className="mt-3 w-full h-8 border border-primary/20 bg-white p-1 flex gap-1 overflow-hidden pointer-events-none">
+                        {tpl.layout === 'split-right' && (
+                          <>
+                            <div className="w-2/3 h-full border border-primary/10 flex flex-col gap-1 p-0.5">
+                              <div className="w-full h-1 bg-primary/20"></div>
+                              <div className="w-5/6 h-1 bg-secondary/10"></div>
+                              <div className="w-full h-1 bg-secondary/10"></div>
+                            </div>
+                            <div className="w-1/3 h-full border border-primary/10 flex flex-col gap-1 p-0.5 bg-zinc-50">
+                              <div className="w-full h-1 bg-primary/30"></div>
+                              <div className="w-full h-1 bg-secondary/10"></div>
+                            </div>
+                          </>
+                        )}
+                        {tpl.layout === 'single-edu-first' && (
+                          <div className="w-full h-full border border-primary/10 flex flex-col gap-1 p-0.5">
+                            <div className="w-full h-1 bg-primary/30"></div>
+                            <div className="w-full h-1 bg-secondary/15"></div>
+                            <div className="w-full h-1 bg-secondary/10"></div>
+                            <div className="w-5/6 h-1 bg-secondary/10"></div>
+                          </div>
+                        )}
+                        {tpl.layout === 'sidebar-left' && (
+                          <>
+                            <div className="w-1/3 h-full border border-primary/10 flex flex-col gap-1 p-0.5 bg-zinc-200">
+                              <div className="w-full h-1 bg-primary/40"></div>
+                              <div className="w-full h-1 bg-secondary/10"></div>
+                            </div>
+                            <div className="w-2/3 h-full border border-primary/10 flex flex-col gap-1 p-0.5">
+                              <div className="w-full h-1 bg-primary/20"></div>
+                              <div className="w-full h-1 bg-secondary/10"></div>
+                            </div>
+                          </>
+                        )}
+                        {tpl.layout === 'serif-centered' && (
+                          <div className="w-full h-full border border-primary/10 flex flex-col items-center gap-1 p-0.5">
+                            <div className="w-1/2 h-1 bg-primary/40"></div>
+                            <div className="w-full h-0.5 bg-primary/20"></div>
+                            <div className="w-4/5 h-1 bg-secondary/10"></div>
+                            <div className="w-4/5 h-1 bg-secondary/10"></div>
+                          </div>
+                        )}
+                        {tpl.layout === 'asymmetric-creative' && (
+                          <>
+                            <div className="w-1/4 h-full border-r border-primary/20 flex flex-col gap-1 p-0.5">
+                              <div className="w-full h-1 bg-secondary/20"></div>
+                              <div className="w-full h-1 bg-secondary/15"></div>
+                            </div>
+                            <div className="w-3/4 h-full flex flex-col gap-1 p-0.5">
+                              <div className="w-3/4 h-1.5 bg-primary/30"></div>
+                              <div className="w-full h-1 bg-secondary/10"></div>
+                              <div className="w-5/6 h-1 bg-secondary/10"></div>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             {/* SECTION 1: Personal Info Card */}
@@ -743,6 +1824,59 @@ service cloud.firestore {
                       value={resume.personalInfo?.linkedin || ''}
                       onChange={(e) => updatePersonalInfo('linkedin', e.target.value)}
                       placeholder="linkedin.com/in/alex"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* SECTION 2: Links Card */}
+            <div id="section-links" className="border border-primary p-6 space-y-6">
+              <div className="flex justify-between items-center cursor-pointer" onClick={() => toggleSection('links')}>
+                <span className="font-label-sm text-label-sm bg-primary text-on-primary px-3 py-1 uppercase">Section: Professional Links</span>
+                <span className="material-symbols-outlined text-xl">{collapsed.links ? 'expand_more' : 'expand_less'}</span>
+              </div>
+              
+              {!collapsed.links && (
+                <div className="grid grid-cols-2 gap-6 pt-4 border-t border-primary/10">
+                  <div className="space-y-2 col-span-2 md:col-span-1">
+                    <label className="font-label-sm text-label-sm uppercase text-secondary">LinkedIn URL</label>
+                    <input 
+                      className="w-full border border-primary bg-transparent p-3 focus:ring-0 focus:border-black font-body-md"
+                      type="text" 
+                      value={resume.links?.linkedin || ''}
+                      onChange={(e) => updateLink('linkedin', e.target.value)}
+                      placeholder="linkedin.com/in/username"
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2 md:col-span-1">
+                    <label className="font-label-sm text-label-sm uppercase text-secondary">GitHub URL</label>
+                    <input 
+                      className="w-full border border-primary bg-transparent p-3 focus:ring-0 focus:border-black font-body-md"
+                      type="text" 
+                      value={resume.links?.github || ''}
+                      onChange={(e) => updateLink('github', e.target.value)}
+                      placeholder="github.com/username"
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2 md:col-span-1">
+                    <label className="font-label-sm text-label-sm uppercase text-secondary">Portfolio Website</label>
+                    <input 
+                      className="w-full border border-primary bg-transparent p-3 focus:ring-0 focus:border-black font-body-md"
+                      type="text" 
+                      value={resume.links?.portfolio || ''}
+                      onChange={(e) => updateLink('portfolio', e.target.value)}
+                      placeholder="portfolio.dev"
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2 md:col-span-1">
+                    <label className="font-label-sm text-label-sm uppercase text-secondary">LeetCode Profile</label>
+                    <input 
+                      className="w-full border border-primary bg-transparent p-3 focus:ring-0 focus:border-black font-body-md"
+                      type="text" 
+                      value={resume.links?.leetcode || ''}
+                      onChange={(e) => updateLink('leetcode', e.target.value)}
+                      placeholder="leetcode.com/username"
                     />
                   </div>
                 </div>
@@ -998,6 +2132,60 @@ service cloud.firestore {
               )}
             </div>
 
+            {/* SECTION: Languages Card */}
+            <div id="section-languages" className="border border-primary p-6 space-y-6">
+              <div className="flex justify-between items-center cursor-pointer" onClick={() => toggleSection('languages')}>
+                <h3 className="font-headline-md text-headline-md uppercase">Languages</h3>
+                <span className="material-symbols-outlined text-xl">{collapsed.languages ? 'expand_more' : 'expand_less'}</span>
+              </div>
+
+              {!collapsed.languages && (
+                <div className="space-y-4 pt-4 border-t border-primary/10">
+                  {(resume.languages || []).map((lang, idx) => (
+                    <div key={idx} className="flex gap-4 items-center bg-zinc-50 border border-primary p-4 relative group">
+                      <button 
+                        onClick={() => removeLanguage(idx)}
+                        className="absolute top-4 right-4 text-secondary hover:text-error opacity-0 group-hover:opacity-100 transition-opacity"
+                        title="Remove Language"
+                      >
+                        <span className="material-symbols-outlined text-[20px]" data-icon="delete">delete</span>
+                      </button>
+                      <div className="grid grid-cols-2 gap-4 w-full">
+                        <div className="space-y-2">
+                          <label className="font-label-sm text-label-sm uppercase text-secondary">Language Name</label>
+                          <input 
+                            className="border border-primary p-3 w-full bg-white font-body-md"
+                            placeholder="e.g. English"
+                            type="text"
+                            value={lang.name || ''}
+                            onChange={(e) => updateLanguage(idx, 'name', e.target.value)}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="font-label-sm text-label-sm uppercase text-secondary">Proficiency Level</label>
+                          <input 
+                            className="border border-primary p-3 w-full bg-white font-body-md"
+                            placeholder="e.g. Native / Fluent / Conversational"
+                            type="text"
+                            value={lang.level || ''}
+                            onChange={(e) => updateLanguage(idx, 'level', e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                  <button 
+                    onClick={addLanguage}
+                    className="w-full border border-primary border-dashed py-3 font-label-sm text-[10px] uppercase hover:bg-surface transition-colors flex items-center justify-center gap-2"
+                  >
+                    <span className="material-symbols-outlined text-sm" data-icon="add">add</span>
+                    Add Language
+                  </button>
+                </div>
+              )}
+            </div>
+
             {/* SECTION 6: Projects Card */}
             <div id="section-projects" className="border border-primary p-6 space-y-6">
               <div className="flex justify-between items-center cursor-pointer" onClick={() => toggleSection('projects')}>
@@ -1057,6 +2245,70 @@ service cloud.firestore {
                   >
                     <span className="material-symbols-outlined" data-icon="add">add</span>
                     Add Project Entry
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* SECTION: Certifications Card */}
+            <div id="section-certifications" className="border border-primary p-6 space-y-6">
+              <div className="flex justify-between items-center cursor-pointer" onClick={() => toggleSection('certifications')}>
+                <h3 className="font-headline-md text-headline-md uppercase">Certifications</h3>
+                <span className="material-symbols-outlined text-xl">{collapsed.certifications ? 'expand_more' : 'expand_less'}</span>
+              </div>
+
+              {!collapsed.certifications && (
+                <div className="space-y-4 pt-4 border-t border-primary/10">
+                  {(resume.certifications || []).map((cert, idx) => (
+                    <div key={idx} className="flex gap-4 items-center bg-zinc-50 border border-primary p-4 relative group">
+                      <button 
+                        onClick={() => removeCertification(idx)}
+                        className="absolute top-4 right-4 text-secondary hover:text-error opacity-0 group-hover:opacity-100 transition-opacity"
+                        title="Remove Certification"
+                      >
+                        <span className="material-symbols-outlined text-[20px]" data-icon="delete">delete</span>
+                      </button>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+                        <div className="space-y-2 md:col-span-1">
+                          <label className="font-label-sm text-label-sm uppercase text-secondary">Certification Name</label>
+                          <input 
+                            className="border border-primary p-3 w-full bg-white font-body-md"
+                            placeholder="e.g. AWS Cloud Practitioner"
+                            type="text"
+                            value={cert.name || ''}
+                            onChange={(e) => updateCertification(idx, 'name', e.target.value)}
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-1">
+                          <label className="font-label-sm text-label-sm uppercase text-secondary">Issuing Authority</label>
+                          <input 
+                            className="border border-primary p-3 w-full bg-white font-body-md"
+                            placeholder="e.g. Amazon Web Services"
+                            type="text"
+                            value={cert.authority || ''}
+                            onChange={(e) => updateCertification(idx, 'authority', e.target.value)}
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-1">
+                          <label className="font-label-sm text-label-sm uppercase text-secondary">Year / Date</label>
+                          <input 
+                            className="border border-primary p-3 w-full bg-white font-body-md"
+                            placeholder="e.g. 2024"
+                            type="text"
+                            value={cert.year || ''}
+                            onChange={(e) => updateCertification(idx, 'year', e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                  <button 
+                    onClick={addCertification}
+                    className="w-full border border-primary border-dashed py-3 font-label-sm text-[10px] uppercase hover:bg-surface transition-colors flex items-center justify-center gap-2"
+                  >
+                    <span className="material-symbols-outlined text-sm" data-icon="add">add</span>
+                    Add Certification
                   </button>
                 </div>
               )}
@@ -1141,116 +2393,11 @@ service cloud.firestore {
         <section className="w-1/2 h-full bg-surface-container-highest flex justify-center py-12 overflow-y-auto border-l border-primary">
           <div 
             id="resume-preview-root"
-            className={`bg-white w-[595px] min-h-[842px] resume-shadow p-12 flex flex-col gap-8 transition-all duration-300 transform scale-95 origin-top template-${resume.template || 'software-engineer'}`}
+            className={`bg-white w-[595px] min-h-[842px] resume-shadow transition-all duration-300 transform scale-95 origin-top template-${resume.template || 'software-engineer'} ${
+              resume.template === 'modern-professional' ? 'p-0' : 'p-12'
+            } ${getTemplateFontClass(resume.template)}`}
           >
-            {/* Header */}
-            <header className="border-b-2 border-primary pb-6 preview-header">
-              <h1 className="font-display text-display uppercase leading-tight tracking-tighter truncate">
-                {resume.personalInfo?.name || 'Alexander Vance'}
-              </h1>
-              {resume.personalInfo?.role && (
-                <p className="font-label-sm text-label-sm text-secondary uppercase tracking-widest mt-1">
-                  {resume.personalInfo.role}
-                </p>
-              )}
-              <div className="flex flex-wrap gap-4 mt-2 font-label-sm text-label-sm uppercase tracking-widest text-secondary">
-                <span>{resume.personalInfo?.location || 'New York, NY'}</span>
-                <span>•</span>
-                <span>{resume.personalInfo?.email || 'alex.vance@work.io'}</span>
-                <span>•</span>
-                <span>{resume.personalInfo?.phone || '+1 917 222 3443'}</span>
-                {resume.personalInfo?.linkedin && (
-                  <>
-                    <span>•</span>
-                    <span className="truncate">{resume.personalInfo.linkedin}</span>
-                  </>
-                )}
-              </div>
-            </header>
-
-            {/* Resume Content Blocks */}
-            <div className="grid grid-cols-1 gap-10 preview-body">
-              {resume.summary && (
-                <section className="space-y-2">
-                  <h4 className="font-label-sm text-label-sm uppercase font-bold border-b border-primary pb-1 w-fit pr-8">Summary</h4>
-                  <p className="font-body-md text-body-md leading-relaxed whitespace-pre-wrap">{resume.summary}</p>
-                </section>
-              )}
-
-              {resume.experience && resume.experience.length > 0 && (
-                <section className="space-y-6">
-                  <h4 className="font-label-sm text-label-sm uppercase font-bold border-b border-primary pb-1 w-fit pr-8">Experience</h4>
-                  {resume.experience.map((exp, idx) => (
-                    <div key={idx} className="space-y-2">
-                      <div className="flex justify-between items-baseline">
-                        <h5 className="font-headline-md text-headline-md uppercase">{exp.company || 'Vanguard Dynamics'}</h5>
-                        <span className="font-label-sm text-label-sm">{exp.duration || '2019 — Present'}</span>
-                      </div>
-                      <p className="font-label-sm text-label-sm italic">{exp.role || 'Principal Systems Architect'}</p>
-                      {exp.bullets && exp.bullets.length > 0 && (
-                        <ul className="list-disc ml-4 font-body-md text-body-md space-y-1">
-                          {exp.bullets.map((b, bIdx) => (
-                            b ? <li key={bIdx}>{b}</li> : null
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  ))}
-                </section>
-              )}
-
-              {resume.education && resume.education.length > 0 && (
-                <section className="space-y-4">
-                  <h4 className="font-label-sm text-label-sm uppercase font-bold border-b border-primary pb-1 w-fit pr-8">Education</h4>
-                  {resume.education.map((edu, idx) => (
-                    <div key={idx} className="flex justify-between items-baseline">
-                      <div>
-                        <h5 className="font-headline-md text-headline-md uppercase">{edu.institution || 'Stanford University'}</h5>
-                        <p className="font-body-md text-body-md text-secondary">{edu.degree || 'B.S. Computer Science'}</p>
-                      </div>
-                      <span className="font-label-sm text-label-sm">{edu.year || '2022'}</span>
-                    </div>
-                  ))}
-                </section>
-              )}
-
-              {resume.skills && resume.skills.length > 0 && (
-                <section className="space-y-4">
-                  <h4 className="font-label-sm text-label-sm uppercase font-bold border-b border-primary pb-1 w-fit pr-8">Core Skills</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {resume.skills.map((skill, idx) => (
-                      <span key={idx} className="px-3 py-1 border border-primary text-[10px] font-bold uppercase">{skill}</span>
-                    ))}
-                  </div>
-                </section>
-              )}
-
-              {resume.projects && resume.projects.length > 0 && (
-                <section className="space-y-4">
-                  <h4 className="font-label-sm text-label-sm uppercase font-bold border-b border-primary pb-1 w-fit pr-8">Projects</h4>
-                  {resume.projects.map((proj, idx) => (
-                    <div key={idx} className="space-y-1">
-                      <div className="flex justify-between items-baseline">
-                        <h5 className="font-headline-md text-headline-md uppercase">{proj.name || 'Project Name'}</h5>
-                        {proj.link && <span className="font-label-sm text-[10px] text-secondary truncate max-w-[200px]">{proj.link}</span>}
-                      </div>
-                      <p className="font-body-md text-body-md text-secondary">{proj.description}</p>
-                    </div>
-                  ))}
-                </section>
-              )}
-
-              {resume.achievements && resume.achievements.length > 0 && (
-                <section className="space-y-4">
-                  <h4 className="font-label-sm text-label-sm uppercase font-bold border-b border-primary pb-1 w-fit pr-8">Achievements</h4>
-                  <ul className="list-disc ml-4 font-body-md text-body-md space-y-1">
-                    {resume.achievements.map((ach, idx) => (
-                      ach ? <li key={idx}>{ach}</li> : null
-                    ))}
-                  </ul>
-                </section>
-              )}
-            </div>
+            {renderTemplateContent()}
           </div>
         </section>
       </main>
