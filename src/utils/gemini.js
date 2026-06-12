@@ -209,7 +209,7 @@ Note: If a section is missing, return an empty array [] or empty object as appro
 Do not fabricate information. Extract only what is present in the text.
 Raw text:
 """
-\${rawText}
+${rawText}
 """`;
     const result = await model.generateContent(prompt);
     const text = result.response.text().trim();
