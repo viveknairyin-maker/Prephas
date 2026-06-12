@@ -210,11 +210,17 @@ export default function ATSScore({ existingResumeData }) {
   const handleFixInBuilder = async () => {
     if (!user) return;
 
-    if (existingResumeData?.id) {
-      navigate(`/builder/${existingResumeData.id}`);
+    // If they analyzed their builder resume directly without uploading any PDF
+    if (!file) {
+      if (existingResumeData?.id) {
+        navigate(`/builder/${existingResumeData.id}`);
+      } else {
+        navigate(`/dashboard`);
+      }
       return;
     }
 
+    // If they uploaded a PDF, we must parse and import it!
     if (!rawText) return;
 
     setMode("loading");
@@ -223,12 +229,7 @@ export default function ATSScore({ existingResumeData }) {
     try {
       const parsedData = await parseResumeFromText(rawText);
       
-      const newResume = {
-        userId: user.uid,
-        title: file ? `Imported (${file.name.replace(/\.pdf$/i, '')})` : "Imported Resume",
-        template: "classic",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+      const resumeData = {
         personalInfo: parsedData.personalInfo || { name: '', email: '', phone: '', linkedin: '', location: '', role: '' },
         summary: parsedData.summary || '',
         experience: parsedData.experience || [],
@@ -240,11 +241,27 @@ export default function ATSScore({ existingResumeData }) {
         languages: parsedData.languages || [],
         links: parsedData.links || { linkedin: '', github: '', portfolio: '', leetcode: '' },
         atsScore: result?.score || 0,
-        strengthScores: { experience: 0, projects: 0, skills: 0, education: 0 }
+        updatedAt: new Date().toISOString()
       };
 
-      const docRef = await addDoc(collection(db, 'resumes'), newResume);
-      navigate(`/builder/${docRef.id}`);
+      if (existingResumeData?.id) {
+        // Update existing resume document in Firestore
+        const docRef = doc(db, 'resumes', existingResumeData.id);
+        await updateDoc(docRef, resumeData);
+        navigate(`/builder/${existingResumeData.id}`);
+      } else {
+        // Create new resume document in Firestore
+        const newResume = {
+          userId: user.uid,
+          title: `Imported (${file.name.replace(/\.pdf$/i, '')})`,
+          template: "classic",
+          createdAt: new Date().toISOString(),
+          strengthScores: { experience: 0, projects: 0, skills: 0, education: 0 },
+          ...resumeData
+        };
+        const docRef = await addDoc(collection(db, 'resumes'), newResume);
+        navigate(`/builder/${docRef.id}`);
+      }
     } catch (err) {
       console.error("Failed to parse and import resume:", err);
       setErrorMsg(err.message || "Failed to convert resume. You can manually copy details into the builder.");
