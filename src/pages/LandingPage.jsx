@@ -92,14 +92,14 @@ function LandingPage() {
                 <p className="font-body-md text-secondary">Automatically find roles that match your skill set across 50+ major job boards with one click.</p>
               </div>
               {/* Card 4: Detailed Insight */}
-              <div className="md:col-span-8 border border-primary p-12 flex flex-col md:flex-row gap-12 items-center hover:bg-white transition-colors">
-                <div className="flex-1">
+              <div className="md:col-span-8 border border-primary p-8 md:p-12 flex flex-col md:flex-row gap-8 md:gap-12 items-start md:items-center hover:bg-white transition-colors">
+                <div className="flex-1 w-full">
                   <span className="material-symbols-outlined text-[48px] mb-8" data-icon="description">description</span>
                   <h3 className="font-headline-lg mb-4">Template Engineering</h3>
                   <p className="font-body-md text-secondary mb-6">Designed by hiring managers. Every pixel is placed with intent to guide the recruiter's eye to your most important qualifications.</p>
                   <button onClick={() => navigate('/templates')} className="font-label-sm uppercase tracking-widest border border-primary px-6 py-3 hover:bg-primary hover:text-on-primary transition-all">View Templates</button>
                 </div>
-                <div className="flex-1 border border-primary grayscale opacity-80 overflow-hidden h-full min-h-[200px] flex items-center justify-center p-8 bg-zinc-50">
+                <div className="w-full md:flex-1 border border-primary grayscale opacity-80 overflow-hidden min-h-[180px] md:h-full flex items-center justify-center p-8 bg-zinc-50">
                   <div className="text-center font-display text-headline-md text-secondary uppercase tracking-widest">
                     5 PRESETS
                   </div>

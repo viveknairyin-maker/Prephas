@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // Helper function to extract and format links cleanly
 function getLinksArray(links) {
@@ -820,11 +820,11 @@ export default function ResumeTemplates({ resumeData, onSelectTemplate }) {
     setPreviewScale(Math.min(1, available / 595));
   };
 
-  useState(() => {
+  useEffect(() => {
     updateScale();
     window.addEventListener('resize', updateScale);
     return () => window.removeEventListener('resize', updateScale);
-  });
+  }, []);
 
   const handleSelect = (id) => {
     setSelected(id);
