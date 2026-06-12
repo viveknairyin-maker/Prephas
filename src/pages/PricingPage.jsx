@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
 import { db, doc, updateDoc } from '../utils/firebase';
+import Navbar from '../components/Navbar';
 
 function PricingPage() {
   const { user, profile, refreshProfile } = useAuth();
@@ -48,32 +49,7 @@ function PricingPage() {
 
   return (
     <div className="bg-background text-on-background min-h-screen flex flex-col">
-      {/* TopNavBar */}
-      <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-desktop py-4 bg-surface border-b border-primary">
-        <div className="flex items-center gap-8">
-          <Link className="font-display text-display tracking-tighter text-primary" to="/">PREPHAS</Link>
-          <nav className="hidden md:flex gap-6">
-            <Link className="text-secondary hover:opacity-70 transition-opacity font-body-md text-body-md" to="/">Features</Link>
-            {user && (
-              <>
-                <Link className="text-secondary hover:opacity-70 transition-opacity font-body-md text-body-md" to="/templates">Templates</Link>
-                <Link className="text-secondary hover:opacity-70 transition-opacity font-body-md text-body-md" to="/dashboard">Dashboard</Link>
-              </>
-            )}
-            <Link className="text-primary font-bold border-b-2 border-primary font-body-md text-body-md" to="/pricing">Pricing</Link>
-          </nav>
-        </div>
-        <div className="flex items-center gap-4">
-          {user ? (
-            <Link className="text-primary font-label-sm text-label-sm hover:opacity-70 transition-opacity uppercase" to="/dashboard">Dashboard</Link>
-          ) : (
-            <>
-              <Link className="text-secondary font-label-sm text-label-sm hover:opacity-70 transition-opacity uppercase" to="/login">Login</Link>
-              <Link className="bg-primary text-on-primary px-6 py-2 font-label-sm text-label-sm hover:opacity-70 transition-opacity uppercase" to="/signup">Get Started</Link>
-            </>
-          )}
-        </div>
-      </header>
+      <Navbar />
 
       {/* Toast Notification */}
       {toast && (

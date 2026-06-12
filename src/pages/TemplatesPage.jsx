@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
 import { db, doc, updateDoc, collection, query, where, orderBy, getDocs, addDoc } from '../utils/firebase';
+import Navbar from '../components/Navbar';
 
 const TEMPLATES = [
   {
@@ -127,54 +128,10 @@ function TemplatesPage() {
 
   return (
     <div className="font-body-md text-body-md bg-background min-h-screen">
-      {/* TopNavBar */}
-      <nav className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-desktop py-4 bg-surface border-b border-primary">
-        <Link className="font-display text-headline-md tracking-tighter text-primary" to="/">PREPHAS</Link>
-        <div className="hidden md:flex space-x-8">
-          <Link className="text-secondary hover:opacity-70 transition-opacity font-body-md text-body-md" to="/">Features</Link>
-          <Link className="text-primary font-bold border-b-2 border-primary transition-all duration-200 font-body-md text-body-md" to="/templates">Templates</Link>
-          <Link className="text-secondary hover:opacity-70 transition-opacity font-body-md text-body-md" to="/pricing">Pricing</Link>
-        </div>
-        <div className="flex items-center space-x-6">
-          <Link className="text-primary font-label-sm text-label-sm uppercase" to="/dashboard">Dashboard</Link>
-        </div>
-      </nav>
-
-      {/* Sidebar */}
-      <aside className="fixed left-0 top-0 h-full w-64 hidden lg:flex flex-col border-r border-primary z-40 bg-surface pt-24 pb-12">
-        <div className="px-8 mb-12">
-          <Link className="font-display text-headline-md tracking-tighter text-primary block" to="/dashboard">PREPHAS</Link>
-          <div className="text-secondary font-label-sm text-label-sm mt-1 uppercase">
-            {profile?.plan === 'premium' ? 'Pro Account' : 'Free Account'}
-          </div>
-        </div>
-        <div className="flex-1 flex flex-col px-4 space-y-2">
-          <Link className="flex items-center space-x-4 px-4 py-3 text-secondary hover:bg-surface-container transition-colors duration-150" to="/dashboard">
-            <span className="material-symbols-outlined" data-icon="dashboard">dashboard</span>
-            <span className="font-label-sm text-label-sm">Dashboard</span>
-          </Link>
-          <Link className="flex items-center space-x-4 px-4 py-3 bg-primary text-on-primary font-bold transition-colors duration-150" to="/templates">
-            <span className="material-symbols-outlined" data-icon="grid_view">grid_view</span>
-            <span className="font-label-sm text-label-sm">Templates</span>
-          </Link>
-          <Link className="flex items-center space-x-4 px-4 py-3 text-secondary hover:bg-surface-container transition-colors duration-150" to="/pricing">
-            <span className="material-symbols-outlined" data-icon="payments">payments</span>
-            <span className="font-label-sm text-label-sm">Pricing</span>
-          </Link>
-        </div>
-        <div className="px-4 pt-8 border-t border-primary mt-8">
-          <button 
-            onClick={() => navigate('/builder/new')}
-            className="w-full bg-primary text-on-primary py-3 flex items-center justify-center space-x-2 font-label-sm text-label-sm uppercase tracking-widest"
-          >
-            <span className="material-symbols-outlined text-sm" data-icon="add">add</span>
-            <span>Create New Resume</span>
-          </button>
-        </div>
-      </aside>
+      <Navbar />
 
       {/* Main Content */}
-      <main className="lg:pl-64 pt-24 min-h-screen">
+      <main className="pt-24 min-h-screen">
         <header className="px-margin-desktop py-12 border-b border-primary">
           <h1 className="font-display text-display uppercase">Choose Your Template</h1>
           <p className="mt-4 font-body-lg text-body-lg text-secondary max-w-2xl">

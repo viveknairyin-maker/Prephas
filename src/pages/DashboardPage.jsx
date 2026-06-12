@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
 import { signOut, auth, db } from '../utils/firebase';
 import { collection, query, where, orderBy, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import Navbar from '../components/Navbar';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 
@@ -250,62 +251,11 @@ function DashboardPage() {
 
   return (
     <div className="bg-background text-on-background min-h-screen">
-      {/* SideNavBar Shell */}
-      <aside className="fixed left-0 top-0 h-full w-64 flex flex-col border-r border-primary z-40 bg-surface">
-        <div className="px-8 py-10">
-          <Link className="font-display text-headline-md tracking-tighter text-primary block" to="/">PREPHAS</Link>
-          <span className="font-label-sm text-label-sm text-secondary mt-1 block uppercase">
-            {profile?.plan === 'premium' ? 'Pro Account' : 'Free Account'}
-          </span>
-        </div>
-        <nav className="flex-1 px-4 space-y-2 overflow-y-auto custom-scrollbar">
-          <Link className="flex items-center gap-3 px-4 py-3 bg-primary text-on-primary font-bold transition-colors duration-150" to="/dashboard">
-            <span className="material-symbols-outlined" data-icon="dashboard">dashboard</span>
-            <span className="font-body-md text-body-md">Dashboard</span>
-          </Link>
-          <Link className="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container transition-colors duration-150" to="/templates">
-            <span className="material-symbols-outlined" data-icon="grid_view">grid_view</span>
-            <span className="font-body-md text-body-md">Templates</span>
-          </Link>
-          {latestResumeId ? (
-            <>
-              <Link className="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container transition-colors duration-150" to={`/ats/${latestResumeId}`}>
-                <span className="material-symbols-outlined" data-icon="analytics">analytics</span>
-                <span className="font-body-md text-body-md">ATS Score</span>
-              </Link>
-              <Link className="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container transition-colors duration-150" to={`/match/${latestResumeId}`}>
-                <span className="material-symbols-outlined" data-icon="work">work</span>
-                <span className="font-body-md text-body-md">Job Match</span>
-              </Link>
-            </>
-          ) : (
-            <>
-              <button disabled className="w-full text-left flex items-center gap-3 px-4 py-3 text-secondary opacity-50 cursor-not-allowed">
-                <span className="material-symbols-outlined" data-icon="analytics">analytics</span>
-                <span className="font-body-md text-body-md">ATS Score</span>
-              </button>
-              <button disabled className="w-full text-left flex items-center gap-3 px-4 py-3 text-secondary opacity-50 cursor-not-allowed">
-                <span className="material-symbols-outlined" data-icon="work">work</span>
-                <span className="font-body-md text-body-md">Job Match</span>
-              </button>
-            </>
-          )}
-          <Link className="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container transition-colors duration-150" to="/pricing">
-            <span className="material-symbols-outlined" data-icon="payments">payments</span>
-            <span className="font-body-md text-body-md">Pricing</span>
-          </Link>
-        </nav>
-        <div className="px-4 py-8 space-y-2 border-t border-primary/10">
-          <button onClick={handleLogout} className="w-full text-left flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container transition-colors duration-150">
-            <span className="material-symbols-outlined" data-icon="logout">logout</span>
-            <span className="font-body-md text-body-md">Logout</span>
-          </button>
-        </div>
-      </aside>
+      <Navbar />
 
       {/* Main Content Canvas */}
-      <main class="ml-64 min-h-screen">
-        <header className="pt-16 pb-12 px-margin-desktop">
+      <main className="pt-24 min-h-screen">
+        <header className="pt-8 pb-12 px-margin-desktop">
           <h2 className="font-headline-lg text-headline-lg mb-2">Hello, {profile?.name || 'User'}.</h2>
           <p className="font-body-lg text-body-lg text-secondary">
             {resumes.length === 0 

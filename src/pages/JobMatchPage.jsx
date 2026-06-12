@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
 import { db, doc, getDoc, updateDoc } from '../utils/firebase';
 import { matchJobDescription } from '../utils/gemini';
+import Navbar from '../components/Navbar';
 
 function JobMatchPage() {
   const { id } = useParams();
@@ -109,36 +110,7 @@ function JobMatchPage() {
 
   return (
     <div className="bg-surface text-on-surface font-body-md min-h-screen">
-      {/* Side Navigation Shell */}
-      <nav className="fixed left-0 top-0 h-full w-64 flex flex-col border-r border-primary z-40 bg-surface hidden md:flex">
-        <div className="p-8">
-          <Link className="font-display text-headline-md tracking-tighter text-primary" to="/dashboard">PREPHAS</Link>
-          <p className="font-label-sm text-secondary mt-1 uppercase">Pro Account</p>
-        </div>
-        <div className="flex-grow px-4 space-y-2">
-          <Link className="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container transition-colors duration-150" to="/dashboard">
-            <span className="material-symbols-outlined" data-icon="dashboard">dashboard</span>
-            <span className="font-label-sm uppercase tracking-wider text-[10px]">Dashboard</span>
-          </Link>
-          <Link className="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container transition-colors duration-150" to={`/ats/${id}`}>
-            <span className="material-symbols-outlined" data-icon="analytics">analytics</span>
-            <span className="font-label-sm uppercase tracking-wider text-[10px]">ATS Analysis</span>
-          </Link>
-          <Link className="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container transition-colors duration-150" to={`/builder/${id}`}>
-            <span className="material-symbols-outlined" data-icon="description">description</span>
-            <span className="font-label-sm uppercase tracking-wider text-[10px]">Editor</span>
-          </Link>
-          <Link className="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container transition-colors duration-150" to="/templates">
-            <span className="material-symbols-outlined" data-icon="grid_view">grid_view</span>
-            <span className="font-label-sm uppercase tracking-wider text-[10px]">Templates</span>
-          </Link>
-        </div>
-        <div className="p-4 mt-auto border-t border-primary">
-          <Link className="w-full bg-primary text-on-primary py-4 block text-center font-label-sm hover:opacity-90 transition-opacity uppercase tracking-widest" to="/builder/new">
-            Create New Resume
-          </Link>
-        </div>
-      </nav>
+      <Navbar />
 
       {toast && (
         <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 bg-black text-white px-8 py-4 font-body-md text-body-md border border-white block-shadow">
@@ -147,7 +119,7 @@ function JobMatchPage() {
       )}
 
       {/* Main Content */}
-      <main className="md:ml-64 p-margin-desktop min-h-screen">
+      <main className="pt-24 p-margin-desktop min-h-screen">
         <div className="max-w-container-max-width mx-auto">
           {/* Header */}
           <header className="mb-12 border-b border-primary pb-8">

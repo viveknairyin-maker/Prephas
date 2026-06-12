@@ -480,6 +480,16 @@ function ResumeBuilderPage() {
     setCollapsed(prev => ({ ...prev, [section]: !prev[section] }));
   };
 
+  const scrollToSection = (section) => {
+    setCollapsed(prev => ({ ...prev, [section]: false }));
+    setTimeout(() => {
+      const element = document.getElementById(`section-${section}`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 150);
+  };
+
   if (error) {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-surface p-6">
@@ -553,14 +563,18 @@ service cloud.firestore {
       {/* Top Navigation Bar */}
       <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-desktop py-4 bg-surface border-b border-primary h-20">
         <div className="flex items-center gap-8">
-          <Link className="font-display text-headline-md tracking-tighter text-primary" to="/dashboard">PREPHAS</Link>
-          <div className="flex items-center gap-6">
-            <span className="font-label-sm text-[10px] uppercase tracking-widest text-secondary flex items-center gap-2">
-              Status: <span className="text-primary font-bold">{saveState}</span>
-            </span>
-          </div>
+          <Link className="font-display text-headline-md tracking-tighter text-primary" to="/">PREPHAS</Link>
+          <nav className="hidden xl:flex gap-6">
+            <a className="text-secondary hover:opacity-70 transition-opacity font-body-md text-body-md" href="/#features">Features</a>
+            <Link className="text-secondary hover:opacity-70 transition-opacity font-body-md text-body-md" to="/templates">Templates</Link>
+            <Link className="text-secondary hover:opacity-70 transition-opacity font-body-md text-body-md" to="/dashboard">Dashboard</Link>
+            <Link className="text-secondary hover:opacity-70 transition-opacity font-body-md text-body-md" to="/pricing">Pricing</Link>
+          </nav>
         </div>
         <div className="flex items-center gap-6">
+          <span className="font-label-sm text-[10px] uppercase tracking-widest text-secondary hidden lg:flex items-center gap-2">
+            Status: <span className="text-primary font-bold">{saveState}</span>
+          </span>
           <div className="flex items-center gap-3 px-4 py-2 border border-primary bg-white block-shadow-sm">
             <span className="font-label-sm text-label-sm text-secondary">ATS SCORE</span>
             <span className="font-headline-md text-headline-md">{resume.atsScore || 0}<span className="text-secondary text-body-md">/100</span></span>
@@ -576,19 +590,62 @@ service cloud.firestore {
       </header>
 
       <main className="flex h-screen pt-20">
-        {/* Left Side Navigation */}
-        <nav className="fixed left-0 top-20 h-[calc(100vh-80px)] w-20 flex flex-col items-center border-r border-primary bg-surface z-40 py-8 gap-10">
-          <Link className="material-symbols-outlined text-secondary hover:text-primary transition-colors" data-icon="dashboard" to="/dashboard">dashboard</Link>
-          <Link className="material-symbols-outlined text-secondary hover:text-primary transition-colors" data-icon="grid_view" to="/templates">grid_view</Link>
-          <Link className="material-symbols-outlined text-secondary hover:text-primary transition-colors" data-icon="analytics" to={`/ats/${id}`}>analytics</Link>
-          <Link className="material-symbols-outlined text-secondary hover:text-primary transition-colors" data-icon="work" to={`/match/${id}`}>work</Link>
-          <div className="mt-auto flex flex-col gap-8 pb-4">
-            <Link className="material-symbols-outlined text-secondary hover:text-primary transition-colors" data-icon="payments" to="/pricing">payments</Link>
+        {/* Left Side Navigation (Resume Section Navigator) */}
+        <nav className="fixed left-0 top-20 h-[calc(100vh-80px)] w-56 flex flex-col border-r border-primary bg-surface z-40 py-6 overflow-y-auto custom-scrollbar">
+          <div className="px-4 py-2 text-[9px] uppercase tracking-widest text-secondary font-bold mb-2">
+            Resume Sections
+          </div>
+          <div className="flex-grow space-y-1">
+            {[
+              { key: 'personal', label: 'Basic Info', icon: 'person' },
+              { key: 'experience', label: 'Experience', icon: 'work' },
+              { key: 'education', label: 'Education', icon: 'school' },
+              { key: 'skills', label: 'Skills', icon: 'psychology' },
+              { key: 'projects', label: 'Projects', icon: 'folder_open' },
+              { key: 'achievements', label: 'Achievements', icon: 'emoji_events' },
+              { key: 'summary', label: 'Summary', icon: 'description' }
+            ].map(sec => (
+              <button 
+                key={sec.key}
+                onClick={() => scrollToSection(sec.key)}
+                className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-secondary hover:bg-surface-container hover:text-primary transition-all duration-150 border-b border-primary/5 uppercase font-label-sm text-[11px] tracking-wider"
+              >
+                <span className="material-symbols-outlined text-lg">{sec.icon}</span>
+                <span>{sec.label}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-auto border-t border-primary/10 pt-4 px-2 space-y-1">
+            <div className="px-2 pb-1 text-[9px] uppercase tracking-widest text-secondary font-bold">
+              Resume Tools
+            </div>
+            <Link 
+              className="flex items-center gap-3 px-4 py-2.5 text-secondary hover:bg-surface-container hover:text-primary transition-all uppercase font-label-sm text-[11px]" 
+              to={`/ats/${id}`}
+            >
+              <span className="material-symbols-outlined text-lg">analytics</span>
+              <span>ATS Score</span>
+            </Link>
+            <Link 
+              className="flex items-center gap-3 px-4 py-2.5 text-secondary hover:bg-surface-container hover:text-primary transition-all uppercase font-label-sm text-[11px]" 
+              to={`/match/${id}`}
+            >
+              <span className="material-symbols-outlined text-lg">work</span>
+              <span>Job Match</span>
+            </Link>
+            <Link 
+              className="flex items-center gap-3 px-4 py-2.5 text-secondary hover:bg-surface-container hover:text-primary transition-all uppercase font-label-sm text-[11px] border-t border-primary/5 mt-2 pt-2" 
+              to="/dashboard"
+            >
+              <span className="material-symbols-outlined text-lg">dashboard</span>
+              <span>Dashboard</span>
+            </Link>
           </div>
         </nav>
 
         {/* Form Editor Column */}
-        <section className="ml-20 w-1/2 h-full overflow-y-auto px-12 py-12 bg-white pb-32">
+        <section className="ml-56 w-1/2 h-full overflow-y-auto px-12 py-12 bg-white pb-32">
           <div className="max-w-2xl mx-auto space-y-8">
             <div className="flex justify-between items-end border-b border-primary pb-4">
               <div>
@@ -620,7 +677,7 @@ service cloud.firestore {
             </div>
 
             {/* SECTION 1: Personal Info Card */}
-            <div className="border border-primary p-6 space-y-6">
+            <div id="section-personal" className="border border-primary p-6 space-y-6">
               <div className="flex justify-between items-center cursor-pointer" onClick={() => toggleSection('personal')}>
                 <span className="font-label-sm text-label-sm bg-primary text-on-primary px-3 py-1 uppercase">Section: Basic info</span>
                 <span className="material-symbols-outlined text-xl">{collapsed.personal ? 'expand_more' : 'expand_less'}</span>
@@ -693,7 +750,7 @@ service cloud.firestore {
             </div>
 
             {/* SECTION 3: Experience Card */}
-            <div className="border border-primary p-6 space-y-6">
+            <div id="section-experience" className="border border-primary p-6 space-y-6">
               <div className="flex justify-between items-center cursor-pointer" onClick={() => toggleSection('experience')}>
                 <h3 className="font-headline-md text-headline-md uppercase">Experience</h3>
                 <span className="material-symbols-outlined text-xl">{collapsed.experience ? 'expand_more' : 'expand_less'}</span>
@@ -844,7 +901,7 @@ service cloud.firestore {
             </div>
 
             {/* SECTION 4: Education Card */}
-            <div className="border border-primary p-6 space-y-6">
+            <div id="section-education" className="border border-primary p-6 space-y-6">
               <div className="flex justify-between items-center cursor-pointer" onClick={() => toggleSection('education')}>
                 <h3 className="font-headline-md text-headline-md uppercase">Education</h3>
                 <span className="material-symbols-outlined text-xl">{collapsed.education ? 'expand_more' : 'expand_less'}</span>
@@ -908,7 +965,7 @@ service cloud.firestore {
             </div>
 
             {/* SECTION 5: Skills Card */}
-            <div className="border border-primary p-6 space-y-6">
+            <div id="section-skills" className="border border-primary p-6 space-y-6">
               <div className="flex justify-between items-center cursor-pointer" onClick={() => toggleSection('skills')}>
                 <h3 className="font-headline-md text-headline-md uppercase">Skills</h3>
                 <span className="material-symbols-outlined text-xl">{collapsed.skills ? 'expand_more' : 'expand_less'}</span>
@@ -942,7 +999,7 @@ service cloud.firestore {
             </div>
 
             {/* SECTION 6: Projects Card */}
-            <div className="border border-primary p-6 space-y-6">
+            <div id="section-projects" className="border border-primary p-6 space-y-6">
               <div className="flex justify-between items-center cursor-pointer" onClick={() => toggleSection('projects')}>
                 <h3 className="font-headline-md text-headline-md uppercase">Projects</h3>
                 <span className="material-symbols-outlined text-xl">{collapsed.projects ? 'expand_more' : 'expand_less'}</span>
@@ -1006,7 +1063,7 @@ service cloud.firestore {
             </div>
 
             {/* SECTION 6: Achievements Card */}
-            <div className="border border-primary p-6 space-y-6">
+            <div id="section-achievements" className="border border-primary p-6 space-y-6">
               <div className="flex justify-between items-center cursor-pointer" onClick={() => toggleSection('achievements')}>
                 <h3 className="font-headline-md text-headline-md uppercase">Achievements</h3>
                 <span className="material-symbols-outlined text-xl">{collapsed.achievements ? 'expand_more' : 'expand_less'}</span>
@@ -1044,7 +1101,7 @@ service cloud.firestore {
             </div>
 
             {/* SECTION 7: Summary Card */}
-            <div className="border border-primary p-6 space-y-6">
+            <div id="section-summary" className="border border-primary p-6 space-y-6">
               <div className="flex justify-between items-center cursor-pointer" onClick={() => toggleSection('summary')}>
                 <h3 className="font-headline-md text-headline-md uppercase">Professional Summary</h3>
                 <div className="flex items-center gap-4">

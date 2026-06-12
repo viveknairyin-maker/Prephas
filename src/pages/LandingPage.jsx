@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
+import Navbar from '../components/Navbar';
 
 function LandingPage() {
   const { user } = useAuth();
@@ -16,30 +17,9 @@ function LandingPage() {
 
   return (
     <div className="bg-surface text-on-surface antialiased overflow-x-hidden min-h-screen">
-      {/* TopNavBar */}
-      <nav className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-desktop py-6 bg-surface border-b border-primary">
-        <div className="flex items-center gap-12">
-          <Link className="font-display text-headline-md tracking-tighter text-primary" to="/">PREPHAS</Link>
-          <div className="hidden md:flex items-center gap-8">
-            <a className="text-secondary font-body-md hover:opacity-70 transition-opacity" href="#features">Features</a>
-            <Link className="text-secondary font-body-md hover:opacity-70 transition-opacity" to="/pricing">Pricing</Link>
-          </div>
-        </div>
-        <div className="flex items-center gap-6">
-          {user ? (
-            <Link className="text-primary font-label-sm hover:opacity-70 transition-opacity uppercase tracking-widest" to="/dashboard">Dashboard</Link>
-          ) : (
-            <>
-              <Link className="hidden md:block text-primary font-label-sm hover:opacity-70 transition-opacity uppercase tracking-widest" to="/login">Login</Link>
-              <button onClick={handleCtaClick} className="bg-primary text-on-primary px-6 py-3 font-label-sm uppercase tracking-widest hover:bg-opacity-90 transition-all duration-200">
-                Get Started Free
-              </button>
-            </>
-          )}
-        </div>
-      </nav>
+      <Navbar />
 
-      <main className="pt-24">
+      <main className="pt-20">
         {/* Hero Section */}
         <section className="relative min-h-[819px] flex flex-col justify-center items-center text-center px-margin-mobile md:px-margin-desktop py-24 overflow-hidden border-b border-primary">
           <div className="absolute inset-0 grid-bg pointer-events-none"></div>
