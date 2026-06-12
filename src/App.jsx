@@ -40,6 +40,11 @@ function App() {
               <ResumeBuilderPage />
             </ProtectedRoute>
           } />
+          <Route path="/ats" element={
+            <ProtectedRoute>
+              <AtsScorePage />
+            </ProtectedRoute>
+          } />
           <Route path="/ats/:id" element={
             <ProtectedRoute>
               <AtsScorePage />

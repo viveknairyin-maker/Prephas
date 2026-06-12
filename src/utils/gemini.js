@@ -141,3 +141,82 @@ Job Description: ${jobDescriptionText}`;
     throw error;
   }
 }
+
+/**
+ * 6. Parse Resume from Raw Text
+ * Input: raw extracted resume text
+ * Output: structured resume JSON object
+ */
+export async function parseResumeFromText(rawText) {
+  try {
+    const model = getJsonModel();
+    const prompt = `Analyze this raw resume text and extract the information into a structured JSON object matching this exact schema:
+{
+  "personalInfo": {
+    "name": "string",
+    "email": "string",
+    "phone": "string",
+    "linkedin": "string",
+    "location": "string",
+    "role": "string"
+  },
+  "summary": "string",
+  "experience": [
+    {
+      "company": "string",
+      "role": "string",
+      "duration": "string",
+      "bullets": [ "string" ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "string",
+      "degree": "string",
+      "year": "string"
+    }
+  ],
+  "skills": [ "string" ],
+  "projects": [
+    {
+      "name": "string",
+      "description": "string",
+      "link": "string"
+    }
+  ],
+  "achievements": [ "string" ],
+  "certifications": [
+    {
+      "name": "string",
+      "authority": "string",
+      "year": "string"
+    }
+  ],
+  "languages": [
+    {
+      "name": "string",
+      "level": "string"
+    }
+  ],
+  "links": {
+    "linkedin": "string",
+    "github": "string",
+    "portfolio": "string",
+    "leetcode": "string"
+  }
+}
+Note: If a section is missing, return an empty array [] or empty object as appropriate.
+Do not fabricate information. Extract only what is present in the text.
+Raw text:
+"""
+\${rawText}
+"""`;
+    const result = await model.generateContent(prompt);
+    const text = result.response.text().trim();
+    return JSON.parse(text);
+  } catch (error) {
+    console.error("Error in parseResumeFromText:", error);
+    throw error;
+  }
+}
+

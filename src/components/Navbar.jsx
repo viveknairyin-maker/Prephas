@@ -51,6 +51,14 @@ function Navbar() {
               </Link>
               <Link 
                 className={`font-body-md text-body-md transition-opacity hover:opacity-70 ${
+                  location.pathname.startsWith('/ats') ? 'text-primary font-bold border-b-2 border-primary' : 'text-secondary'
+                }`} 
+                to="/ats"
+              >
+                ATS Analyser
+              </Link>
+              <Link 
+                className={`font-body-md text-body-md transition-opacity hover:opacity-70 ${
                   location.pathname === '/dashboard' ? 'text-primary font-bold border-b-2 border-primary' : 'text-secondary'
                 }`} 
                 to="/dashboard"

@@ -1,5 +1,8 @@
 import { useState, useRef } from "react";
-import { db, doc, updateDoc } from "../utils/firebase";
+import { db, doc, updateDoc, collection, addDoc } from "../utils/firebase";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../components/AuthContext";
+import { parseResumeFromText } from "../utils/gemini";
 
 // ─── Gemini call ─────────────────────────────────────────────────────────────
 async function analyzeWithGemini(resumeText) {
@@ -128,13 +131,17 @@ function ProgressBar({ label, score, status }) {
 // MAIN COMPONENT
 // ══════════════════════════════════════════════════════════════════════════════
 export default function ATSScore({ existingResumeData }) {
-  const [mode, setMode] = useState("choose"); // choose | upload | builder | loading | result | error
+  const [mode, setMode] = useState(existingResumeData ? "choose" : "upload"); // choose | upload | builder | loading | result | error
   const [file, setFile] = useState(null);
   const [dragOver, setDragOver] = useState(false);
   const [result, setResult] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [loadingMsg, setLoadingMsg] = useState("");
+  const [rawText, setRawText] = useState("");
   const fileInputRef = useRef();
+  
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
   // ── Analyze uploaded PDF ──────────────────────────────────────────────────
   const analyzeFile = async (f) => {
@@ -146,6 +153,7 @@ export default function ATSScore({ existingResumeData }) {
     try {
       const text = await extractTextFromPDF(f);
       if (!text || text.length < 100) throw new Error("Could not extract text. Please ensure the PDF is not scanned/image-based.");
+      setRawText(text);
       setLoadingMsg("Analysing with AI...");
       const analysis = await analyzeWithGemini(text);
       setResult(analysis);
@@ -169,6 +177,7 @@ export default function ATSScore({ existingResumeData }) {
       delete resumeCopy.atsScore;
 
       const text = JSON.stringify(resumeCopy, null, 2);
+      setRawText(text);
       setLoadingMsg("Analysing with AI...");
       const analysis = await analyzeWithGemini(text);
 
@@ -189,6 +198,52 @@ export default function ATSScore({ existingResumeData }) {
       setMode("result");
     } catch (err) {
       setErrorMsg(err.message || "Something went wrong. Please try again.");
+      setMode("error");
+    }
+  };
+
+  // ── Convert uploaded PDF to builder resume document ──────────────────────
+  const handleFixInBuilder = async () => {
+    if (!user) return;
+
+    if (existingResumeData?.id) {
+      navigate(`/builder/${existingResumeData.id}`);
+      return;
+    }
+
+    if (!rawText) return;
+
+    setMode("loading");
+    setLoadingMsg("Extracting resume fields into builder schema...");
+
+    try {
+      const parsedData = await parseResumeFromText(rawText);
+      
+      const newResume = {
+        userId: user.uid,
+        title: file ? `Imported (${file.name.replace(/\.pdf$/i, '')})` : "Imported Resume",
+        template: "classic",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        personalInfo: parsedData.personalInfo || { name: '', email: '', phone: '', linkedin: '', location: '', role: '' },
+        summary: parsedData.summary || '',
+        experience: parsedData.experience || [],
+        education: parsedData.education || [],
+        skills: parsedData.skills || [],
+        projects: parsedData.projects || [],
+        achievements: parsedData.achievements || [],
+        certifications: parsedData.certifications || [],
+        languages: parsedData.languages || [],
+        links: parsedData.links || { linkedin: '', github: '', portfolio: '', leetcode: '' },
+        atsScore: result?.score || 0,
+        strengthScores: { experience: 0, projects: 0, skills: 0, education: 0 }
+      };
+
+      const docRef = await addDoc(collection(db, 'resumes'), newResume);
+      navigate(`/builder/${docRef.id}`);
+    } catch (err) {
+      console.error("Failed to parse and import resume:", err);
+      setErrorMsg(err.message || "Failed to convert resume. You can manually copy details into the builder.");
       setMode("error");
     }
   };
@@ -422,7 +477,13 @@ export default function ATSScore({ existingResumeData }) {
         </div>
 
         {/* CTA */}
-        <div style={{ textAlign: "center", marginTop: 36, display: "flex", gap: 12, justifyContent: "center" }}>
+        <div style={{ textAlign: "center", marginTop: 36, display: "flex", gap: 12, justifyContent: "center", alignItems: "center" }}>
+          <button 
+            onClick={handleFixInBuilder} 
+            style={{ background: "#000", color: "#fff", border: "none", padding: "10px 28px", cursor: "pointer", fontSize: 13, fontWeight: 600 }}
+          >
+            {existingResumeData?.id ? "Fix this resume in Builder" : "Import & Fix in Builder ✦"}
+          </button>
           <button onClick={reset} style={{ background: "#fff", border: "1px solid #000", padding: "10px 24px", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>
             Check Another Resume
           </button>
