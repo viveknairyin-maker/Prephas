@@ -14,7 +14,12 @@ function AtsScorePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user || !id) return;
+    if (!user) return;
+
+    if (!id) {
+      setLoading(false);
+      return;
+    }
 
     const fetchResume = async () => {
       try {
