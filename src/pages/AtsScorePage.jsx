@@ -46,7 +46,7 @@ function AtsScorePage() {
     return (
       <div className="bg-surface text-on-surface font-body-md min-h-screen">
         <Navbar />
-        <main className="pt-24 flex items-center justify-center min-h-[50vh]">
+        <main className="pt-20 md:pt-24 flex items-center justify-center min-h-[50vh]">
           <div className="flex items-center gap-3 font-label-sm text-label-sm uppercase tracking-widest text-primary">
             <span>Loading Resume...</span>
             <div className="h-2 w-2 bg-primary animate-pulse"></div>
@@ -59,7 +59,7 @@ function AtsScorePage() {
   return (
     <div className="bg-surface text-on-surface font-body-md min-h-screen">
       <Navbar />
-      <main className="pt-20">
+      <main className="pt-16 md:pt-20">
         <ATSScore existingResumeData={resume} />
       </main>
     </div>

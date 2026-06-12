@@ -58,7 +58,7 @@ function PricingPage() {
         </div>
       )}
 
-      <main className="flex-grow pt-32 pb-24 px-margin-desktop max-w-container-max-width mx-auto w-full">
+      <main className="flex-grow pt-20 md:pt-32 pb-16 md:pb-24 px-4 md:px-margin-desktop max-w-container-max-width mx-auto w-full">
         {/* Header Section */}
         <section className="text-center mb-16">
           <h1 className="font-display text-display mb-4">Precision Pricing.</h1>
@@ -188,7 +188,7 @@ function PricingPage() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full py-12 px-margin-desktop flex flex-col md:flex-row justify-between items-center border-t border-primary bg-surface">
+      <footer className="w-full py-10 px-4 md:px-margin-desktop flex flex-col md:flex-row justify-between items-center border-t border-primary bg-surface gap-6">
         <div className="mb-8 md:mb-0">
           <span className="font-display text-headline-md text-primary">PREPHAS AI</span>
           <p className="font-body-md text-body-md text-secondary mt-2">© 2024 PREPHAS AI. All rights reserved.</p>

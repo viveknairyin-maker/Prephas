@@ -162,8 +162,8 @@ function DashboardPage() {
       <Navbar />
 
       {/* Main Content Canvas */}
-      <main className="pt-24 min-h-screen">
-        <header className="pt-8 pb-12 px-margin-desktop">
+      <main className="pt-20 md:pt-24 min-h-screen">
+        <header className="pt-6 md:pt-8 pb-8 md:pb-12 px-4 md:px-margin-desktop">
           <h2 className="font-headline-lg text-headline-lg mb-2">Hello, {profile?.name || 'User'}.</h2>
           <p className="font-body-lg text-body-lg text-secondary">
             {resumes.length === 0 
@@ -173,7 +173,7 @@ function DashboardPage() {
         </header>
 
         {/* Bento Grid Layout */}
-        <div className="px-margin-desktop grid grid-cols-12 gap-gutter pb-20">
+        <div className="px-4 md:px-margin-desktop grid grid-cols-12 gap-4 md:gap-gutter pb-20">
           {/* Left Column: Strength & Stats */}
           <div className="col-span-12 lg:col-span-7 space-y-12">
             {/* Resume Strength Section */}
@@ -330,12 +330,12 @@ function DashboardPage() {
         </div>
 
         {/* Footer Shell */}
-        <footer className="w-full py-12 px-margin-desktop flex flex-col md:flex-row justify-between items-center border-t border-primary mt-auto">
-          <div className="flex items-center gap-8 mb-6 md:mb-0">
+        <footer className="w-full py-8 md:py-12 px-4 md:px-margin-desktop flex flex-col md:flex-row justify-between items-center border-t border-primary mt-auto gap-6">
+          <div className="flex flex-col md:flex-row items-center md:items-center gap-2 md:gap-8">
             <span className="font-display text-headline-md text-primary">PREPHAS</span>
             <p className="font-body-md text-body-md text-secondary">© 2024 PREPHAS AI. All rights reserved.</p>
           </div>
-          <div className="flex gap-8">
+          <div className="flex flex-wrap justify-center gap-6 md:gap-8">
             <a className="font-label-sm text-label-sm text-secondary hover:text-primary transition-colors" href="#">Privacy Policy</a>
             <a className="font-label-sm text-label-sm text-secondary hover:text-primary transition-colors" href="#">Terms of Service</a>
             <a className="font-label-sm text-label-sm text-secondary hover:text-primary transition-colors" href="#">Twitter</a>
@@ -347,10 +347,10 @@ function DashboardPage() {
       {/* Floating Action Button for "New Resume" */}
       <button 
         onClick={() => navigate('/builder/new')}
-        className="fixed bottom-10 right-10 w-16 h-16 bg-primary text-on-primary flex items-center justify-center group hover:scale-110 transition-transform duration-200 z-50"
+        className="fixed bottom-6 right-6 md:bottom-10 md:right-10 w-14 h-14 md:w-16 md:h-16 bg-primary text-on-primary flex items-center justify-center group hover:scale-110 transition-transform duration-200 z-50 min-w-[44px] min-h-[44px]"
       >
-        <span className="material-symbols-outlined text-3xl" data-icon="add">add</span>
-        <div className="absolute right-full mr-4 bg-primary text-on-primary px-4 py-2 font-label-sm text-label-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+        <span className="material-symbols-outlined text-2xl md:text-3xl" data-icon="add">add</span>
+        <div className="absolute right-full mr-4 bg-primary text-on-primary px-4 py-2 font-label-sm text-label-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none hidden md:block">
           Create New Resume
         </div>
       </button>

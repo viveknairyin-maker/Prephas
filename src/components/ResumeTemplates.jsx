@@ -54,63 +54,494 @@ export const BLANK_RESUME = {
 
 // ─── Template definitions ────────────────────────────────────────────────────
 export const TEMPLATES = [
-  { id: "classic", label: "Classic Pro", role: "Software Engineer" },
-  { id: "modern", label: "Modern Edge", role: "Data Analyst" },
-  { id: "minimal", label: "Clean Minimal", role: "Fresher / Graduate" },
-  { id: "bold", label: "Bold Executive", role: "Product Manager" },
-  { id: "sidebar", label: "Sidebar Split", role: "Designer / Creative" },
+  { id: "software-engineer", label: "Software Engineer", role: "Technical & Grid Layout" },
+  { id: "fresher", label: "Fresher / Student", role: "Academic & Simple" },
+  { id: "modern-professional", label: "Modern Professional", role: "Asymmetric Tinted Sidebar" },
+  { id: "executive", label: "Executive", role: "Centered & Elegant Serif" },
+  { id: "creative", label: "Creative", role: "Bold Design & Custom Typography" },
 ];
 
-// ══════════════════════════════════════════════════════════════════════════════
-// TEMPLATE 1 — Classic Pro (Traditional, recruiter-trusted layout)
-// ══════════════════════════════════════════════════════════════════════════════
-export function ClassicTemplate({ data, editable, onEdit }) {
-  const d = data;
-  const field = (section, key, fallback) =>
-    editable ? (
-      <span
-        contentEditable
-        suppressContentEditableWarning
-        onBlur={(e) => onEdit(section, key, e.target.innerText)}
-        style={{ outline: "none", borderBottom: "1px dashed #ccc", minWidth: 40, display: "inline-block" }}
-      >
-        {fallback}
-      </span>
-    ) : (
-      <span>{fallback}</span>
-    );
+// Helper styles for sections
+function SectionTitle({ children }) {
+  return (
+    <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", borderBottom: "1px solid #000", paddingBottom: 2, marginBottom: 8, color: "#000" }}>
+      {children}
+    </div>
+  );
+}
 
+function RightSection({ title, children }) {
+  return (
+    <div style={{ marginBottom: 20 }}>
+      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", marginBottom: 8, paddingBottom: 4, borderBottom: "1px solid #ddd", color: "#000" }}>
+        {title}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function SidebarSection({ title, children, dark = false }) {
+  return (
+    <div style={{ marginBottom: 20 }}>
+      <div style={{ fontSize: 10, letterSpacing: 3, textTransform: "uppercase", color: dark ? "rgba(255,255,255,0.6)" : "#666", marginBottom: 8, fontWeight: "bold" }}>
+        {title}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// TEMPLATE 1 — Software Engineer (Two-column technical grid layout)
+// ══════════════════════════════════════════════════════════════════════════════
+export function SoftwareEngineerTemplate({ data }) {
+  const d = data;
   const linksArr = getLinksArray(d.links);
 
   return (
-    <div style={{ fontFamily: "'Georgia', serif", color: "#000", background: "#fff", padding: "40px 48px", maxWidth: 760, margin: "0 auto", fontSize: 13, lineHeight: 1.6 }} className="text-left">
+    <div style={{ fontFamily: "'Inter', sans-serif", color: "#000", background: "#fff", padding: "40px", maxWidth: 760, margin: "0 auto", fontSize: 13, lineHeight: 1.5, display: "flex", gap: 32 }} className="text-left">
+      {/* Left (Main) Column */}
+      <div style={{ flex: 1.6 }}>
+        <div style={{ marginBottom: 24 }}>
+          <div style={{ fontSize: 28, fontWeight: "bold", textTransform: "uppercase", letterSpacing: -0.5, color: "#000" }}>
+            {d.personalInfo?.name || "Your Name"}
+          </div>
+          {d.personalInfo?.role && (
+            <div style={{ fontSize: 13, fontWeight: "600", color: "#333", marginTop: 4, textTransform: "uppercase", letterSpacing: 0.5 }}>
+              {d.personalInfo.role}
+            </div>
+          )}
+          <div style={{ fontSize: 11, color: "#666", marginTop: 6, display: "flex", gap: 12, flexWrap: "wrap" }}>
+            {d.personalInfo?.location && <span>📍 {d.personalInfo.location}</span>}
+            {d.personalInfo?.phone && <span>📞 {d.personalInfo.phone}</span>}
+            {d.personalInfo?.email && <span>✉ {d.personalInfo.email}</span>}
+          </div>
+        </div>
+
+        {d.summary && (
+          <div style={{ marginBottom: 20 }}>
+            <SectionTitle>Professional Summary</SectionTitle>
+            <p style={{ margin: 0, lineHeight: 1.6 }} className="whitespace-pre-wrap">{d.summary}</p>
+          </div>
+        )}
+
+        {d.experience && d.experience.length > 0 && (
+          <div style={{ marginBottom: 20 }}>
+            <SectionTitle>Experience</SectionTitle>
+            {d.experience.map((exp, i) => (
+              <div key={i} style={{ marginBottom: 12 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 700 }}>
+                  <span>{exp.role}</span>
+                  <span style={{ fontWeight: 500, color: "#555" }}>{exp.duration}</span>
+                </div>
+                <div style={{ fontStyle: "italic", color: "#444", marginBottom: 4 }}>{exp.company}</div>
+                {exp.bullets && exp.bullets.length > 0 && (
+                  <ul style={{ margin: "4px 0 0 16px", padding: 0 }} className="list-disc">
+                    {exp.bullets.filter(b => b).map((b, j) => <li key={j} style={{ marginBottom: 2 }}>{b}</li>)}
+                  </ul>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {d.projects && d.projects.length > 0 && (
+          <div style={{ marginBottom: 20 }}>
+            <SectionTitle>Projects</SectionTitle>
+            {d.projects.map((p, i) => (
+              <div key={i} style={{ marginBottom: 12 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 700 }}>
+                  <span>{p.name}</span>
+                  {p.link && <span style={{ fontWeight: 400, fontSize: 11, color: "#555" }} className="select-all">{p.link}</span>}
+                </div>
+                <div style={{ color: "#444", marginTop: 2 }}>{p.description}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Right (Sidebar) Column */}
+      <div style={{ flex: 1, borderLeft: "1px solid #eee", paddingLeft: 24 }}>
+        {linksArr.length > 0 && (
+          <RightSection title="Links">
+            {linksArr.map((link, idx) => (
+              <div key={idx} style={{ marginBottom: 6, fontSize: 12 }} className="select-all">
+                <strong>{link.label}:</strong> <span style={{ color: "#333" }}>{link.val}</span>
+              </div>
+            ))}
+          </RightSection>
+        )}
+
+        {d.skills && d.skills.length > 0 && (
+          <RightSection title="Skills">
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {d.skills.map((s, i) => (
+                <span key={i} style={{ border: "1px solid #000", padding: "2px 8px", fontSize: 11, fontWeight: 500 }}>{s}</span>
+              ))}
+            </div>
+          </RightSection>
+        )}
+
+        {d.certifications && d.certifications.length > 0 && (
+          <RightSection title="Certifications">
+            {d.certifications.map((cert, i) => (
+              <div key={i} style={{ marginBottom: 8, fontSize: 12 }}>
+                <div style={{ fontWeight: 700 }}>{cert.name}</div>
+                <div style={{ color: "#555", fontSize: 11 }}>{cert.authority} ({cert.year})</div>
+              </div>
+            ))}
+          </RightSection>
+        )}
+
+        {d.education && d.education.length > 0 && (
+          <RightSection title="Education">
+            {d.education.map((edu, i) => (
+              <div key={i} style={{ marginBottom: 10, fontSize: 12 }}>
+                <div style={{ fontWeight: 700 }}>{edu.degree}</div>
+                <div style={{ color: "#555" }}>{edu.institution}</div>
+                <div style={{ color: "#777", fontSize: 11 }}>{edu.year}</div>
+              </div>
+            ))}
+          </RightSection>
+        )}
+
+        {d.languages && d.languages.length > 0 && (
+          <RightSection title="Languages">
+            {d.languages.map((l, i) => (
+              <div key={i} style={{ fontSize: 12, marginBottom: 4 }}>
+                <strong>{l.name}</strong> <span style={{ color: "#666", fontSize: 11 }}>({l.level})</span>
+              </div>
+            ))}
+          </RightSection>
+        )}
+
+        {d.achievements && d.achievements.length > 0 && (
+          <RightSection title="Achievements">
+            <ul style={{ margin: "4px 0 0 14px", padding: 0 }} className="list-disc">
+              {d.achievements.filter(ach => ach).map((ach, i) => <li key={i} style={{ marginBottom: 2, fontSize: 12 }}>{ach}</li>)}
+            </ul>
+          </RightSection>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// TEMPLATE 2 — Fresher / Student (Education-first single-column layout)
+// ══════════════════════════════════════════════════════════════════════════════
+export function FresherTemplate({ data }) {
+  const d = data;
+  const linksArr = getLinksArray(d.links);
+
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif", color: "#111", background: "#fff", padding: "40px 48px", maxWidth: 760, margin: "0 auto", fontSize: 13, lineHeight: 1.6 }} className="text-left">
       {/* Header */}
-      <div style={{ textAlign: "center", borderBottom: "2px solid #000", paddingBottom: 16, marginBottom: 16 }}>
+      <div style={{ borderBottom: "2px solid #000", paddingBottom: 16, marginBottom: 20 }}>
+        <div style={{ fontSize: 30, fontWeight: 800 }}>{d.personalInfo?.name || "Your Name"}</div>
+        {d.personalInfo?.role && (
+          <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 1.5, color: "#666", marginTop: 2 }}>{d.personalInfo.role}</div>
+        )}
+        <div style={{ fontSize: 12, marginTop: 8, display: "flex", gap: 15, flexWrap: "wrap", color: "#555" }}>
+          {d.personalInfo?.email && <span>✉ {d.personalInfo.email}</span>}
+          {d.personalInfo?.phone && <span>📞 {d.personalInfo.phone}</span>}
+          {d.personalInfo?.location && <span>📍 {d.personalInfo.location}</span>}
+        </div>
+      </div>
+
+      {d.summary && (
+        <div style={{ marginBottom: 20 }}>
+          <SectionTitle>Objective / Summary</SectionTitle>
+          <p style={{ margin: 0 }} className="whitespace-pre-wrap">{d.summary}</p>
+        </div>
+      )}
+
+      {/* Education (First for Freshers!) */}
+      {d.education && d.education.length > 0 && (
+        <div style={{ marginBottom: 20 }}>
+          <SectionTitle>Education</SectionTitle>
+          {d.education.map((edu, i) => (
+            <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+              <span><strong>{edu.degree}</strong> — {edu.institution}</span>
+              <span style={{ color: "#555" }}>{edu.year}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {d.projects && d.projects.length > 0 && (
+        <div style={{ marginBottom: 20 }}>
+          <SectionTitle>Projects</SectionTitle>
+          {d.projects.map((p, i) => (
+            <div key={i} style={{ marginBottom: 12 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                <strong>{p.name}</strong>
+                {p.link && <span style={{ color: "#555", fontSize: 11, marginLeft: 8 }} className="select-all">{p.link}</span>}
+              </div>
+              <div style={{ color: "#444", marginTop: 2 }}>{p.description}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {d.skills && d.skills.length > 0 && (
+        <div style={{ marginBottom: 20 }}>
+          <SectionTitle>Skills</SectionTitle>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            {d.skills.map((s, i) => (
+              <span key={i} style={{ background: "#f3f4f6", border: "1px solid #e5e7eb", padding: "3px 10px", fontSize: 12, borderRadius: 4 }}>{s}</span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {d.certifications && d.certifications.length > 0 && (
+        <div style={{ marginBottom: 20 }}>
+          <SectionTitle>Certifications</SectionTitle>
+          {d.certifications.map((cert, i) => (
+            <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+              <span><strong>{cert.name}</strong> {cert.authority ? `— ${cert.authority}` : ''}</span>
+              <span style={{ color: "#555" }}>{cert.year}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {d.experience && d.experience.length > 0 && (
+        <div style={{ marginBottom: 20 }}>
+          <SectionTitle>Experience</SectionTitle>
+          {d.experience.map((exp, i) => (
+            <div key={i} style={{ marginBottom: 12 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 700 }}>
+                <span>{exp.role}</span>
+                <span style={{ fontWeight: 500, color: "#555" }}>{exp.duration}</span>
+              </div>
+              <div style={{ fontStyle: "italic", color: "#444", marginBottom: 4 }}>{exp.company}</div>
+              {exp.bullets && exp.bullets.length > 0 && (
+                <ul style={{ margin: "4px 0 0 16px", padding: 0 }} className="list-disc">
+                  {exp.bullets.filter(b => b).map((b, j) => <li key={j}>{b}</li>)}
+                </ul>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {d.languages && d.languages.length > 0 && (
+        <div style={{ marginBottom: 20 }}>
+          <SectionTitle>Languages</SectionTitle>
+          <p style={{ margin: 0 }}>
+            {d.languages.map(l => `${l.name} (${l.level})`).join(" · ")}
+          </p>
+        </div>
+      )}
+
+      {d.achievements && d.achievements.length > 0 && (
+        <div style={{ marginBottom: 20 }}>
+          <SectionTitle>Achievements</SectionTitle>
+          <ul style={{ margin: "4px 0 0 16px", padding: 0 }} className="list-disc">
+            {d.achievements.filter(ach => ach).map((ach, i) => <li key={i}>{ach}</li>)}
+          </ul>
+        </div>
+      )}
+
+      {linksArr.length > 0 && (
+        <div>
+          <SectionTitle>Links / Profiles</SectionTitle>
+          <div style={{ display: "flex", gap: 16, flexWrap: "wrap", fontSize: 12 }}>
+            {linksArr.map((link, idx) => (
+              <span key={idx} className="select-all">
+                <strong>{link.label}:</strong> {link.val}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// TEMPLATE 3 — Modern Professional (Tinted left sidebar layout)
+// ══════════════════════════════════════════════════════════════════════════════
+export function ModernProfessionalTemplate({ data }) {
+  const d = data;
+  const linksArr = getLinksArray(d.links);
+
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif", color: "#000", background: "#fff", maxWidth: 760, margin: "0 auto", fontSize: 13, display: "flex", minHeight: 842 }} className="text-left">
+      {/* Sidebar (Left Column, tinted) */}
+      <div style={{ width: 240, background: "#f4f4f5", padding: "36px 24px", flexShrink: 0, borderRight: "1px solid #e4e4e7" }} className="flex flex-col gap-6">
+        {linksArr.length > 0 && (
+          <SidebarSection title="Links">
+            <div style={{ fontSize: 11, lineHeight: 1.8 }}>
+              {linksArr.map((link, idx) => (
+                <div key={idx} className="truncate select-all">
+                  <strong>{link.label}:</strong> {link.val}
+                </div>
+              ))}
+            </div>
+          </SidebarSection>
+        )}
+
+        {d.skills && d.skills.length > 0 && (
+          <SidebarSection title="Skills">
+            {d.skills.map((s, i) => (
+              <div key={i} style={{ fontSize: 12, marginBottom: 6, display: "flex", alignItems: "center", gap: 8 }}>
+                <div style={{ width: 6, height: 6, background: "#000", borderRadius: "50%", flexShrink: 0 }} />
+                {s}
+              </div>
+            ))}
+          </SidebarSection>
+        )}
+
+        {d.education && d.education.length > 0 && (
+          <SidebarSection title="Education">
+            {d.education.map((edu, i) => (
+              <div key={i} style={{ marginBottom: 10, fontSize: 12 }}>
+                <div style={{ fontWeight: 700 }}>{edu.degree}</div>
+                <div style={{ color: "#555" }}>{edu.institution}</div>
+                <div style={{ color: "#777", fontSize: 11 }}>{edu.year}</div>
+              </div>
+            ))}
+          </SidebarSection>
+        )}
+
+        {d.languages && d.languages.length > 0 && (
+          <SidebarSection title="Languages">
+            {d.languages.map((l, i) => (
+              <div key={i} style={{ marginBottom: 6, fontSize: 12 }}>
+                <div style={{ fontWeight: 700 }}>{l.name}</div>
+                <div style={{ color: "#555" }}>{l.level}</div>
+              </div>
+            ))}
+          </SidebarSection>
+        )}
+
+        {d.certifications && d.certifications.length > 0 && (
+          <SidebarSection title="Certifications">
+            {d.certifications.map((cert, i) => (
+              <div key={i} style={{ marginBottom: 10, fontSize: 12 }}>
+                <div style={{ fontWeight: 700 }}>{cert.name}</div>
+                <div style={{ color: "#555" }}>{cert.authority}</div>
+                <div style={{ color: "#777", fontSize: 11 }}>{cert.year}</div>
+              </div>
+            ))}
+          </SidebarSection>
+        )}
+      </div>
+
+      {/* Main (Right Column) */}
+      <div style={{ flex: 1, padding: "36px 32px" }}>
+        {/* Header */}
+        <div style={{ marginBottom: 24, borderBottom: "2px solid #000", paddingBottom: 16 }}>
+          <div style={{ fontSize: 28, fontWeight: 900, textTransform: "uppercase" }}>{d.personalInfo?.name || "Your Name"}</div>
+          {d.personalInfo?.role && (
+            <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 2, color: "#666", marginTop: 2 }}>{d.personalInfo.role}</div>
+          )}
+          <div style={{ fontSize: 11, color: "#666", marginTop: 8, display: "flex", gap: 12, flexWrap: "wrap" }}>
+            {d.personalInfo?.email && <span>{d.personalInfo.email}</span>}
+            {d.personalInfo?.phone && <span>{d.personalInfo.phone}</span>}
+            {d.personalInfo?.location && <span>{d.personalInfo.location}</span>}
+          </div>
+        </div>
+
+        {d.summary && (
+          <div style={{ marginBottom: 24 }}>
+            <RightSection title="Summary">
+              <p style={{ margin: 0, lineHeight: 1.7 }} className="whitespace-pre-wrap">{d.summary}</p>
+            </RightSection>
+          </div>
+        )}
+
+        {d.experience && d.experience.length > 0 && (
+          <div style={{ marginBottom: 24 }}>
+            <RightSection title="Experience">
+              {d.experience.map((exp, i) => (
+                <div key={i} style={{ marginBottom: 16 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                    <span style={{ fontWeight: 700, fontSize: 14 }}>{exp.role}</span>
+                    <span style={{ fontSize: 11, background: "#000", color: "#fff", padding: "2px 8px" }}>{exp.duration}</span>
+                  </div>
+                  <div style={{ color: "#444", fontSize: 12, marginBottom: 4 }}>{exp.company}</div>
+                  {exp.bullets && exp.bullets.length > 0 && (
+                    <ul style={{ margin: "4px 0 0 16px", padding: 0 }} className="list-disc">
+                      {exp.bullets.filter(b => b).map((b, j) => <li key={j} style={{ marginBottom: 2 }}>{b}</li>)}
+                    </ul>
+                  )}
+                </div>
+              ))}
+            </RightSection>
+          </div>
+        )}
+
+        {d.projects && d.projects.length > 0 && (
+          <div style={{ marginBottom: 24 }}>
+            <RightSection title="Projects">
+              {d.projects.map((p, i) => (
+                <div key={i} style={{ marginBottom: 12 }}>
+                  <div style={{ fontWeight: 700 }}>
+                    {p.name} {p.link && <span style={{ fontSize: 10, fontWeight: 400, color: "#555" }} className="select-all">— {p.link}</span>}
+                  </div>
+                  <div style={{ color: "#444", marginTop: 2 }}>{p.description}</div>
+                </div>
+              ))}
+            </RightSection>
+          </div>
+        )}
+
+        {d.achievements && d.achievements.length > 0 && (
+          <div>
+            <RightSection title="Achievements">
+              <ul style={{ margin: "4px 0 0 16px", padding: 0 }} className="list-disc">
+                {d.achievements.filter(ach => ach).map((ach, i) => <li key={i} style={{ marginBottom: 2 }}>{ach}</li>)}
+              </ul>
+            </RightSection>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// TEMPLATE 4 — Executive (Centered serif layout)
+// ══════════════════════════════════════════════════════════════════════════════
+export function ExecutiveTemplate({ data }) {
+  const d = data;
+  const linksArr = getLinksArray(d.links);
+
+  return (
+    <div style={{ fontFamily: "'Lora', 'Georgia', serif", color: "#000", background: "#fff", padding: "40px 48px", maxWidth: 760, margin: "0 auto", fontSize: 13, lineHeight: 1.6 }} className="text-left">
+      {/* Header */}
+      <div style={{ textAlign: "center", borderBottom: "4px double #000", paddingBottom: 16, marginBottom: 20 }}>
         <div style={{ fontSize: 28, fontWeight: "bold", letterSpacing: 2, textTransform: "uppercase" }}>
-          {field("personalInfo", "name", d.personalInfo?.name || "Your Name")}
+          {d.personalInfo?.name || "Your Name"}
         </div>
         {d.personalInfo?.role && (
-          <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: 1, color: "#666", marginTop: 4 }}>
+          <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: 1.5, color: "#444", marginTop: 4, fontWeight: "bold" }}>
             {d.personalInfo.role}
           </div>
         )}
-        <div style={{ fontSize: 12, marginTop: 6, color: "#333", display: "flex", justifyContent: "center", gap: 15, flexWrap: "wrap" }}>
-          {d.personalInfo?.email && <span>{field("personalInfo", "email", d.personalInfo.email)}</span>}
+        <div style={{ fontSize: 12, marginTop: 8, color: "#333", display: "flex", justifyContent: "center", gap: 15, flexWrap: "wrap" }}>
+          {d.personalInfo?.email && <span>{d.personalInfo.email}</span>}
           {d.personalInfo?.phone && (
             <>
-              <span>|</span>
-              <span>{field("personalInfo", "phone", d.personalInfo.phone)}</span>
+              <span>•</span>
+              <span>{d.personalInfo.phone}</span>
             </>
           )}
           {d.personalInfo?.location && (
             <>
-              <span>|</span>
-              <span>{field("personalInfo", "location", d.personalInfo.location)}</span>
+              <span>•</span>
+              <span>{d.personalInfo.location}</span>
             </>
           )}
           {linksArr.map((link, idx) => (
-            <span key={idx} style={{ display: "inline-flex", gap: 4 }}>
-              <span>|</span>
+            <span key={idx} style={{ display: "inline-flex", gap: 15 }}>
+              <span>•</span>
               <span className="select-all"><strong>{link.label}:</strong> {link.val}</span>
             </span>
           ))}
@@ -119,7 +550,7 @@ export function ClassicTemplate({ data, editable, onEdit }) {
 
       {/* Summary */}
       {d.summary && (
-        <div style={{ marginBottom: 16 }}>
+        <div style={{ marginBottom: 20 }}>
           <SectionTitle>Professional Summary</SectionTitle>
           <p style={{ margin: 0 }} className="whitespace-pre-wrap">{d.summary}</p>
         </div>
@@ -127,7 +558,7 @@ export function ClassicTemplate({ data, editable, onEdit }) {
 
       {/* Experience */}
       {d.experience && d.experience.length > 0 && (
-        <div style={{ marginBottom: 16 }}>
+        <div style={{ marginBottom: 20 }}>
           <SectionTitle>Experience</SectionTitle>
           {d.experience.map((exp, i) => (
             <div key={i} style={{ marginBottom: 12 }}>
@@ -148,7 +579,7 @@ export function ClassicTemplate({ data, editable, onEdit }) {
 
       {/* Education */}
       {d.education && d.education.length > 0 && (
-        <div style={{ marginBottom: 16 }}>
+        <div style={{ marginBottom: 20 }}>
           <SectionTitle>Education</SectionTitle>
           {d.education.map((edu, i) => (
             <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
@@ -161,7 +592,7 @@ export function ClassicTemplate({ data, editable, onEdit }) {
 
       {/* Projects */}
       {d.projects && d.projects.length > 0 && (
-        <div style={{ marginBottom: 16 }}>
+        <div style={{ marginBottom: 20 }}>
           <SectionTitle>Projects</SectionTitle>
           {d.projects.map((p, i) => (
             <div key={i} style={{ marginBottom: 8 }}>
@@ -177,15 +608,15 @@ export function ClassicTemplate({ data, editable, onEdit }) {
 
       {/* Skills */}
       {d.skills && d.skills.length > 0 && (
-        <div style={{ marginBottom: 16 }}>
+        <div style={{ marginBottom: 20 }}>
           <SectionTitle>Skills</SectionTitle>
-          <p style={{ margin: 0 }}>{d.skills.join(" · ")}</p>
+          <p style={{ margin: 0 }}>{d.skills.join(" • ")}</p>
         </div>
       )}
 
       {/* Certifications */}
       {d.certifications && d.certifications.length > 0 && (
-        <div style={{ marginBottom: 16 }}>
+        <div style={{ marginBottom: 20 }}>
           <SectionTitle>Certifications</SectionTitle>
           {d.certifications.map((cert, i) => (
             <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
@@ -198,10 +629,10 @@ export function ClassicTemplate({ data, editable, onEdit }) {
 
       {/* Languages */}
       {d.languages && d.languages.length > 0 && (
-        <div style={{ marginBottom: 16 }}>
+        <div style={{ marginBottom: 20 }}>
           <SectionTitle>Languages</SectionTitle>
           <p style={{ margin: 0 }}>
-            {d.languages.map(l => `${l.name} (${l.level})`).join(" · ")}
+            {d.languages.map(l => `${l.name} (${l.level})`).join(" • ")}
           </p>
         </div>
       )}
@@ -220,583 +651,157 @@ export function ClassicTemplate({ data, editable, onEdit }) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// TEMPLATE 2 — Modern Edge (Clean, bold name, metrics-friendly)
+// TEMPLATE 5 — Creative (Asymmetric modern layout)
 // ══════════════════════════════════════════════════════════════════════════════
-export function ModernTemplate({ data }) {
+export function CreativeTemplate({ data }) {
   const d = data;
   const linksArr = getLinksArray(d.links);
 
   return (
-    <div style={{ fontFamily: "'Arial', sans-serif", color: "#000", background: "#fff", padding: "0", maxWidth: 760, margin: "0 auto", fontSize: 13 }} className="text-left">
-      {/* Top bar */}
-      <div style={{ background: "#000", color: "#fff", padding: "28px 40px" }}>
-        <div style={{ fontSize: 32, fontWeight: 900, letterSpacing: 1, textTransform: "uppercase" }}>{d.personalInfo?.name || "Your Name"}</div>
-        {d.personalInfo?.role && (
-          <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 2, color: "#aaa", marginTop: 2 }}>{d.personalInfo.role}</div>
-        )}
-        <div style={{ fontSize: 12, marginTop: 8, display: "flex", gap: 16, flexWrap: "wrap", opacity: 0.85 }}>
-          {d.personalInfo?.email && <span>{d.personalInfo.email}</span>}
-          {d.personalInfo?.phone && <span>{d.personalInfo.phone}</span>}
-          {d.personalInfo?.location && <span>{d.personalInfo.location}</span>}
-          {linksArr.map((link, idx) => (
-            <span key={idx} className="select-all">{link.label}: {link.val}</span>
-          ))}
-        </div>
-      </div>
-
-      <div style={{ padding: "28px 40px" }}>
-        {/* Summary */}
-        {d.summary && (
-          <div style={{ marginBottom: 20, padding: "12px 16px", border: "1px solid #000" }}>
-            <p style={{ margin: 0, lineHeight: 1.7 }} className="whitespace-pre-wrap">{d.summary}</p>
-          </div>
-        )}
-
-        {/* Experience */}
-        {d.experience && d.experience.length > 0 && (
-          <ModernSection title="Experience">
-            {d.experience.map((exp, i) => (
-              <div key={i} style={{ marginBottom: 14 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                  <span style={{ fontWeight: 700, fontSize: 14 }}>{exp.role}</span>
-                  <span style={{ fontSize: 11, background: "#000", color: "#fff", padding: "2px 8px" }}>{exp.duration}</span>
-                </div>
-                <div style={{ color: "#444", fontSize: 12, marginBottom: 4 }}>{exp.company}</div>
-                {exp.bullets && exp.bullets.length > 0 && (
-                  <ul style={{ margin: "4px 0 0 16px", padding: 0 }} className="list-disc">
-                    {exp.bullets.filter(b => b).map((b, j) => <li key={j} style={{ marginBottom: 2 }}>{b}</li>)}
-                  </ul>
-                )}
-              </div>
-            ))}
-          </ModernSection>
-        )}
-
-        {/* Two-col: Skills + Education */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginTop: 20 }}>
-          <div>
-            {d.skills && d.skills.length > 0 && (
-              <ModernSection title="Skills">
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                  {d.skills.map((s, i) => (
-                    <span key={i} style={{ border: "1px solid #000", padding: "2px 10px", fontSize: 11 }}>{s}</span>
-                  ))}
-                </div>
-              </ModernSection>
-            )}
-
-            {d.languages && d.languages.length > 0 && (
-              <ModernSection title="Languages" style={{ marginTop: 20 }}>
-                {d.languages.map((l, i) => (
-                  <div key={i} style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 4 }}>
-                    <strong>{l.name}</strong>
-                    <span style={{ color: "#555" }}>{l.level}</span>
-                  </div>
-                ))}
-              </ModernSection>
-            )}
-          </div>
-
-          <div>
-            {d.education && d.education.length > 0 && (
-              <ModernSection title="Education">
-                {d.education.map((edu, i) => (
-                  <div key={i} style={{ marginBottom: 8 }}>
-                    <div style={{ fontWeight: 700 }}>{edu.degree}</div>
-                    <div style={{ color: "#444" }}>{edu.institution}</div>
-                    <div style={{ fontSize: 11, color: "#666" }}>{edu.year}</div>
-                  </div>
-                ))}
-              </ModernSection>
-            )}
-
-            {d.certifications && d.certifications.length > 0 && (
-              <ModernSection title="Certifications" style={{ marginTop: 20 }}>
-                {d.certifications.map((cert, i) => (
-                  <div key={i} style={{ marginBottom: 8 }}>
-                    <div style={{ fontWeight: 700 }}>{cert.name}</div>
-                    {cert.authority && <div style={{ color: "#444" }}>{cert.authority}</div>}
-                    <div style={{ fontSize: 11, color: "#666" }}>{cert.year}</div>
-                  </div>
-                ))}
-              </ModernSection>
-            )}
-          </div>
-        </div>
-
-        {/* Projects */}
-        {d.projects && d.projects.length > 0 && (
-          <ModernSection title="Projects" style={{ marginTop: 20 }}>
-            {d.projects.map((p, i) => (
-              <div key={i} style={{ marginBottom: 10, paddingLeft: 12, borderLeft: "3px solid #000" }}>
-                <div style={{ fontWeight: 700 }}>
-                  {p.name} {p.link && <span style={{ fontSize: 10, fontWeight: 400, color: "#555" }} className="select-all">— {p.link}</span>}
-                </div>
-                <div>{p.description}</div>
-              </div>
-            ))}
-          </ModernSection>
-        )}
-
-        {/* Achievements */}
-        {d.achievements && d.achievements.length > 0 && (
-          <ModernSection title="Achievements" style={{ marginTop: 20 }}>
-            <ul style={{ margin: "4px 0 0 16px", padding: 0 }} className="list-disc">
-              {d.achievements.filter(ach => ach).map((ach, i) => <li key={i} style={{ marginBottom: 2 }}>{ach}</li>)}
-            </ul>
-          </ModernSection>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ══════════════════════════════════════════════════════════════════════════════
-// TEMPLATE 3 — Clean Minimal (Perfect for freshers, lots of whitespace)
-// ══════════════════════════════════════════════════════════════════════════════
-export function MinimalTemplate({ data }) {
-  const d = data;
-  const linksArr = getLinksArray(d.links);
-
-  return (
-    <div style={{ fontFamily: "'Helvetica Neue', sans-serif", color: "#111", background: "#fff", padding: "48px 52px", maxWidth: 760, margin: "0 auto", fontSize: 13, lineHeight: 1.7 }} className="text-left">
-      {/* Name */}
-      <div style={{ marginBottom: 24 }}>
-        <div style={{ fontSize: 36, fontWeight: 300, letterSpacing: -1 }}>{d.personalInfo?.name || "Your Name"}</div>
-        {d.personalInfo?.role && (
-          <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 2, color: "#666", marginTop: 2 }}>{d.personalInfo.role}</div>
-        )}
-        <div style={{ width: 40, height: 3, background: "#000", margin: "10px 0" }} />
-        <div style={{ display: "flex", gap: 15, fontSize: 12, color: "#555", flexWrap: "wrap" }}>
-          {d.personalInfo?.email && <span>{d.personalInfo.email}</span>}
-          {d.personalInfo?.phone && <span>{d.personalInfo.phone}</span>}
-          {d.personalInfo?.location && <span>{d.personalInfo.location}</span>}
-          {linksArr.map((link, idx) => (
-            <span key={idx} className="select-all">{link.label}: {link.val}</span>
-          ))}
-        </div>
-      </div>
-
-      {/* Summary */}
-      {d.summary && <div style={{ marginBottom: 28, fontSize: 13, color: "#333" }} className="whitespace-pre-wrap">{d.summary}</div>}
-
-      {/* Education first for freshers */}
-      {d.education && d.education.length > 0 && (
-        <MinimalSection title="Education">
-          {d.education.map((edu, i) => (
-            <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-              <div>
-                <div style={{ fontWeight: 600 }}>{edu.degree}</div>
-                <div style={{ color: "#555" }}>{edu.institution}</div>
-              </div>
-              <div style={{ color: "#888", fontSize: 12 }}>{edu.year}</div>
-            </div>
-          ))}
-        </MinimalSection>
-      )}
-
-      {/* Experience */}
-      {d.experience && d.experience.length > 0 && (
-        <MinimalSection title="Experience">
-          {d.experience.map((exp, i) => (
-            <div key={i} style={{ marginBottom: 16 }}>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span style={{ fontWeight: 600 }}>{exp.role} — {exp.company}</span>
-                <span style={{ color: "#888", fontSize: 12 }}>{exp.duration}</span>
-              </div>
-              {exp.bullets && exp.bullets.length > 0 && (
-                <ul style={{ margin: "6px 0 0 16px", padding: 0, color: "#444" }} className="list-disc">
-                  {exp.bullets.filter(b => b).map((b, j) => <li key={j}>{b}</li>)}
-                </ul>
-              )}
-            </div>
-          ))}
-        </MinimalSection>
-      )}
-
-      {/* Projects */}
-      {d.projects && d.projects.length > 0 && (
-        <MinimalSection title="Projects">
-          {d.projects.map((p, i) => (
-            <div key={i} style={{ marginBottom: 12 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                <span style={{ fontWeight: 600 }}>{p.name}</span>
-                {p.link && <span style={{ color: "#888", fontSize: 11, marginLeft: 8 }} className="select-all">{p.link}</span>}
-              </div>
-              <div style={{ color: "#444" }}>{p.description}</div>
-            </div>
-          ))}
-        </MinimalSection>
-      )}
-
-      {/* Skills */}
-      {d.skills && d.skills.length > 0 && (
-        <MinimalSection title="Skills">
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-            {d.skills.map((s, i) => (
-              <span key={i} style={{ background: "#f5f5f5", border: "1px solid #e0e0e0", padding: "3px 12px", fontSize: 12, borderRadius: 2 }}>{s}</span>
-            ))}
-          </div>
-        </MinimalSection>
-      )}
-
-      {/* Certifications */}
-      {d.certifications && d.certifications.length > 0 && (
-        <MinimalSection title="Certifications">
-          {d.certifications.map((cert, i) => (
-            <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-              <div>
-                <span style={{ fontWeight: 600 }}>{cert.name}</span>
-                {cert.authority && <span style={{ color: "#555", marginLeft: 6 }}>| {cert.authority}</span>}
-              </div>
-              <div style={{ color: "#888", fontSize: 12 }}>{cert.year}</div>
-            </div>
-          ))}
-        </MinimalSection>
-      )}
-
-      {/* Languages */}
-      {d.languages && d.languages.length > 0 && (
-        <MinimalSection title="Languages">
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
-            {d.languages.map((l, i) => (
-              <span key={i} style={{ fontSize: 12, color: "#444" }}>
-                <strong>{l.name}</strong> ({l.level})
-              </span>
-            ))}
-          </div>
-        </MinimalSection>
-      )}
-
-      {/* Achievements */}
-      {d.achievements && d.achievements.length > 0 && (
-        <MinimalSection title="Achievements">
-          <ul style={{ margin: "6px 0 0 16px", padding: 0, color: "#444" }} className="list-disc">
-            {d.achievements.filter(ach => ach).map((ach, i) => <li key={i}>{ach}</li>)}
-          </ul>
-        </MinimalSection>
-      )}
-    </div>
-  );
-}
-
-// ══════════════════════════════════════════════════════════════════════════════
-// TEMPLATE 4 — Bold Executive (Strong typography, senior roles)
-// ══════════════════════════════════════════════════════════════════════════════
-export function BoldTemplate({ data }) {
-  const d = data;
-  const linksArr = getLinksArray(d.links);
-
-  return (
-    <div style={{ fontFamily: "'Arial Black', 'Arial', sans-serif", color: "#000", background: "#fff", maxWidth: 760, margin: "0 auto", fontSize: 13 }} className="text-left">
+    <div style={{ fontFamily: "'Plus Jakarta Sans', 'Inter', sans-serif", color: "#111", background: "#fff", padding: "40px", maxWidth: 760, margin: "0 auto", fontSize: 13, lineHeight: 1.6 }} className="text-left">
       {/* Header */}
-      <div style={{ padding: "36px 44px 24px", borderBottom: "4px solid #000" }}>
-        <div style={{ fontSize: 38, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, lineHeight: 1 }}>
-          {d.personalInfo?.name || "Your Name"}
+      <div style={{ marginBottom: 32, display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 16 }}>
+        <div>
+          <div style={{ fontSize: 32, fontWeight: 900, textTransform: "uppercase", letterSpacing: -1, color: "#000", lineHeight: 1.1 }}>
+            {d.personalInfo?.name || "Your Name"}
+          </div>
+          {d.personalInfo?.role && (
+            <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 2, color: "#666", marginTop: 6, fontWeight: 700 }}>
+              {d.personalInfo.role}
+            </div>
+          )}
         </div>
-        {d.personalInfo?.role && (
-          <div style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: 3, color: "#333", marginTop: 6, fontWeight: 900 }}>{d.personalInfo.role}</div>
-        )}
-        <div style={{ marginTop: 12, display: "flex", gap: 16, fontSize: 11, color: "#555", flexWrap: "wrap" }}>
-          {d.personalInfo?.email && <span>{d.personalInfo.email}</span>}
-          {d.personalInfo?.phone && <span>{d.personalInfo.phone}</span>}
-          {d.personalInfo?.location && <span>{d.personalInfo.location}</span>}
+        <div style={{ fontSize: 11, color: "#555", textAlign: "right", minWidth: 200 }}>
+          {d.personalInfo?.email && <div>✉ {d.personalInfo.email}</div>}
+          {d.personalInfo?.phone && <div>📞 {d.personalInfo.phone}</div>}
+          {d.personalInfo?.location && <div>📍 {d.personalInfo.location}</div>}
           {linksArr.map((link, idx) => (
-            <span key={idx} className="select-all">{link.label.toUpperCase()}: {link.val}</span>
+            <div key={idx} className="select-all"><strong>{link.label}:</strong> {link.val}</div>
           ))}
         </div>
       </div>
 
-      <div style={{ padding: "24px 44px" }}>
-        {/* Summary */}
-        {d.summary && (
-          <div style={{ marginBottom: 24, fontSize: 14, lineHeight: 1.8, fontWeight: 300 }} className="whitespace-pre-wrap">{d.summary}</div>
-        )}
-
-        {/* Experience */}
-        {d.experience && d.experience.length > 0 && (
-          <div style={{ marginBottom: 24 }}>
-            <div style={{ fontSize: 11, fontWeight: 900, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>Experience</div>
-            {d.experience.map((exp, i) => (
-              <div key={i} style={{ marginBottom: 16, paddingBottom: 16, borderBottom: i < d.experience.length - 1 ? "1px solid #eee" : "none" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                  <div>
-                    <div style={{ fontWeight: 900, fontSize: 15 }}>{exp.role}</div>
-                    <div style={{ fontWeight: 400, fontSize: 13, color: "#444" }}>{exp.company}</div>
-                  </div>
-                  <div style={{ fontWeight: 700, fontSize: 11, color: "#000", textAlign: "right", whiteSpace: "nowrap" }}>{exp.duration}</div>
-                </div>
-                {exp.bullets && exp.bullets.length > 0 && (
-                  <ul style={{ margin: "8px 0 0 16px", padding: 0 }} className="list-disc">
-                    {exp.bullets.filter(b => b).map((b, j) => <li key={j} style={{ marginBottom: 3 }}>{b}</li>)}
-                  </ul>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Projects */}
-        {d.projects && d.projects.length > 0 && (
-          <div style={{ marginBottom: 24 }}>
-            <div style={{ fontSize: 11, fontWeight: 900, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>Projects</div>
-            {d.projects.map((p, i) => (
-              <div key={i} style={{ marginBottom: 12 }}>
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <strong>{p.name}</strong>
-                  {p.link && <span style={{ color: "#555", fontSize: 11, marginLeft: 8 }} className="select-all">{p.link}</span>}
-                </div>
-                <div style={{ color: "#444", marginTop: 2 }}>{p.description}</div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Skills row */}
-        {d.skills && d.skills.length > 0 && (
-          <div style={{ marginBottom: 24 }}>
-            <div style={{ fontSize: 11, fontWeight: 900, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>Core Skills</div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
-              {d.skills.map((s, i) => (
-                <div key={i} style={{ borderLeft: "3px solid #000", paddingLeft: 8, fontSize: 12, fontWeight: 600 }}>{s}</div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Education */}
-        {d.education && d.education.length > 0 && (
-          <div style={{ marginBottom: 24 }}>
-            <div style={{ fontSize: 11, fontWeight: 900, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>Education</div>
-            {d.education.map((edu, i) => (
-              <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                <div><strong>{edu.degree}</strong> — {edu.institution}</div>
-                <div style={{ color: "#555" }}>{edu.year}</div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Certifications */}
-        {d.certifications && d.certifications.length > 0 && (
-          <div style={{ marginBottom: 24 }}>
-            <div style={{ fontSize: 11, fontWeight: 900, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>Certifications</div>
-            {d.certifications.map((cert, i) => (
-              <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                <div><strong>{cert.name}</strong> {cert.authority ? `— ${cert.authority}` : ''}</div>
-                <div style={{ color: "#555" }}>{cert.year}</div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Languages */}
-        {d.languages && d.languages.length > 0 && (
-          <div style={{ marginBottom: 24 }}>
-            <div style={{ fontSize: 11, fontWeight: 900, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>Languages</div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
-              {d.languages.map((l, i) => (
-                <div key={i} style={{ borderLeft: "3px solid #000", paddingLeft: 8, fontSize: 12, fontWeight: 600 }}>
-                  {l.name} <span style={{ fontWeight: 400, color: "#555", fontSize: 10 }}>({l.level})</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Achievements */}
-        {d.achievements && d.achievements.length > 0 && (
-          <div>
-            <div style={{ fontSize: 11, fontWeight: 900, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>Achievements</div>
-            <ul style={{ margin: "8px 0 0 16px", padding: 0 }} className="list-disc">
-              {d.achievements.filter(ach => ach).map((ach, i) => <li key={i} style={{ marginBottom: 3 }}>{ach}</li>)}
-            </ul>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ══════════════════════════════════════════════════════════════════════════════
-// TEMPLATE 5 — Sidebar Split (Two-column, creative/designer look)
-// ══════════════════════════════════════════════════════════════════════════════
-export function SidebarTemplate({ data }) {
-  const d = data;
-  const linksArr = getLinksArray(d.links);
-
-  return (
-    <div style={{ fontFamily: "'Helvetica Neue', sans-serif", color: "#000", background: "#fff", maxWidth: 760, margin: "0 auto", fontSize: 13, display: "flex", minHeight: 842 }} className="text-left">
-      {/* Left sidebar */}
-      <div style={{ width: 240, background: "#000", color: "#fff", padding: "36px 24px", flexShrink: 0 }} className="flex flex-col gap-6">
+      <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 32 }}>
+        {/* Column 1 */}
         <div>
-          <div style={{ fontSize: 22, fontWeight: 700, lineHeight: 1.2 }}>{d.personalInfo?.name || "Your Name"}</div>
-          {d.personalInfo?.role && (
-            <div style={{ fontSize: 11, color: "#aaa", textTransform: "uppercase", letterSpacing: 1, marginTop: 4 }}>{d.personalInfo.role}</div>
+          {d.summary && (
+            <div style={{ marginBottom: 24, borderLeft: "3px solid #000", paddingLeft: 16 }}>
+              <p style={{ margin: 0, fontStyle: "italic", fontSize: 14 }} className="whitespace-pre-wrap">{d.summary}</p>
+            </div>
           )}
-          <div style={{ width: 32, height: 2, background: "#fff", margin: "12px 0" }} />
+
+          {d.experience && d.experience.length > 0 && (
+            <div style={{ marginBottom: 24 }}>
+              <SectionTitle>Experience</SectionTitle>
+              {d.experience.map((exp, i) => (
+                <div key={i} style={{ marginBottom: 16, position: "relative", paddingLeft: 12, borderLeft: "1px solid #ddd" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 700, fontSize: 14 }}>
+                    <span>{exp.role}</span>
+                    <span style={{ fontSize: 11, fontWeight: 500, color: "#666" }}>{exp.duration}</span>
+                  </div>
+                  <div style={{ color: "#555", fontWeight: 500, fontSize: 12, marginBottom: 4 }}>{exp.company}</div>
+                  {exp.bullets && exp.bullets.length > 0 && (
+                    <ul style={{ margin: "4px 0 0 16px", padding: 0 }} className="list-disc">
+                      {exp.bullets.filter(b => b).map((b, j) => <li key={j} style={{ marginBottom: 2 }}>{b}</li>)}
+                    </ul>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {d.projects && d.projects.length > 0 && (
+            <div style={{ marginBottom: 24 }}>
+              <SectionTitle>Projects</SectionTitle>
+              {d.projects.map((p, i) => (
+                <div key={i} style={{ marginBottom: 12, paddingLeft: 12, borderLeft: "1px solid #ddd" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 700 }}>
+                    <span>{p.name}</span>
+                    {p.link && <span style={{ fontSize: 11, color: "#666" }} className="select-all">{p.link}</span>}
+                  </div>
+                  <div style={{ color: "#555", marginTop: 2 }}>{p.description}</div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
-        <SidebarSection title="Contact">
-          <div style={{ fontSize: 11, lineHeight: 1.8, opacity: 0.85 }}>
-            {d.personalInfo?.email && <div className="break-all">{d.personalInfo.email}</div>}
-            {d.personalInfo?.phone && <div>{d.personalInfo.phone}</div>}
-            {d.personalInfo?.location && <div>{d.personalInfo.location}</div>}
-            {linksArr.map((link, idx) => (
-              <div key={idx} className="truncate select-all"><strong style={{ textTransform: "uppercase", fontSize: 8 }}>{link.label}:</strong> {link.val}</div>
-            ))}
-          </div>
-        </SidebarSection>
-
-        {d.skills && d.skills.length > 0 && (
-          <SidebarSection title="Skills">
-            {d.skills.map((s, i) => (
-              <div key={i} style={{ fontSize: 12, marginBottom: 6, display: "flex", alignItems: "center", gap: 8 }}>
-                <div style={{ width: 6, height: 6, background: "#fff", borderRadius: "50%", flexShrink: 0 }} />
-                {s}
+        {/* Column 2 */}
+        <div>
+          {d.skills && d.skills.length > 0 && (
+            <div style={{ marginBottom: 24 }}>
+              <SectionTitle>Skills</SectionTitle>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                {d.skills.map((s, i) => (
+                  <span key={i} style={{ background: "#000", color: "#fff", padding: "3px 8px", fontSize: 11, fontWeight: "bold" }}>{s}</span>
+                ))}
               </div>
-            ))}
-          </SidebarSection>
-        )}
+            </div>
+          )}
 
-        {d.education && d.education.length > 0 && (
-          <SidebarSection title="Education">
-            {d.education.map((edu, i) => (
-              <div key={i} style={{ marginBottom: 10, fontSize: 12 }}>
-                <div style={{ fontWeight: 700 }}>{edu.degree}</div>
-                <div style={{ opacity: 0.75 }}>{edu.institution}</div>
-                <div style={{ opacity: 0.55, fontSize: 11 }}>{edu.year}</div>
-              </div>
-            ))}
-          </SidebarSection>
-        )}
-
-        {d.languages && d.languages.length > 0 && (
-          <SidebarSection title="Languages">
-            {d.languages.map((l, i) => (
-              <div key={i} style={{ marginBottom: 6, fontSize: 12 }}>
-                <div style={{ fontWeight: 700 }}>{l.name}</div>
-                <div style={{ opacity: 0.75 }}>{l.level}</div>
-              </div>
-            ))}
-          </SidebarSection>
-        )}
-
-        {d.certifications && d.certifications.length > 0 && (
-          <SidebarSection title="Certifications">
-            {d.certifications.map((cert, i) => (
-              <div key={i} style={{ marginBottom: 10, fontSize: 12 }}>
-                <div style={{ fontWeight: 700 }}>{cert.name}</div>
-                {cert.authority && <div style={{ opacity: 0.75 }}>{cert.authority}</div>}
-                <div style={{ opacity: 0.55, fontSize: 11 }}>{cert.year}</div>
-              </div>
-            ))}
-          </SidebarSection>
-        )}
-      </div>
-
-      {/* Right main */}
-      <div style={{ flex: 1, padding: "36px 32px" }}>
-        {d.summary && (
-          <div style={{ marginBottom: 24, padding: "14px 16px", background: "#f9f9f9", borderLeft: "3px solid #000" }}>
-            <p style={{ margin: 0, lineHeight: 1.8 }} className="whitespace-pre-wrap">{d.summary}</p>
-          </div>
-        )}
-
-        {d.experience && d.experience.length > 0 && (
-          <RightSection title="Experience">
-            {d.experience.map((exp, i) => (
-              <div key={i} style={{ marginBottom: 16 }}>
-                <div style={{ fontWeight: 700, fontSize: 14 }}>{exp.role}</div>
-                <div style={{ color: "#555", marginBottom: 4 }}>{exp.company} · {exp.duration}</div>
-                {exp.bullets && exp.bullets.length > 0 && (
-                  <ul style={{ margin: "4px 0 0 16px", padding: 0 }} className="list-disc">
-                    {exp.bullets.filter(b => b).map((b, j) => <li key={j} style={{ marginBottom: 3 }}>{b}</li>)}
-                  </ul>
-                )}
-              </div>
-            ))}
-          </RightSection>
-        )}
-
-        {d.projects && d.projects.length > 0 && (
-          <RightSection title="Projects">
-            {d.projects.map((p, i) => (
-              <div key={i} style={{ marginBottom: 10 }}>
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ fontWeight: 700 }}>{p.name}</span>
-                  {p.link && <span style={{ fontSize: 11, color: "#666", marginLeft: 8 }} className="select-all">{p.link}</span>}
+          {d.education && d.education.length > 0 && (
+            <div style={{ marginBottom: 24 }}>
+              <SectionTitle>Education</SectionTitle>
+              {d.education.map((edu, i) => (
+                <div key={i} style={{ marginBottom: 12 }}>
+                  <div style={{ fontWeight: 700 }}>{edu.degree}</div>
+                  <div style={{ color: "#555", fontSize: 12 }}>{edu.institution}</div>
+                  <div style={{ color: "#777", fontSize: 11 }}>{edu.year}</div>
                 </div>
-                <div style={{ color: "#444", marginTop: 2 }}>{p.description}</div>
-              </div>
-            ))}
-          </RightSection>
-        )}
+              ))}
+            </div>
+          )}
 
-        {d.achievements && d.achievements.length > 0 && (
-          <RightSection title="Achievements">
-            <ul style={{ margin: "4px 0 0 16px", padding: 0 }} className="list-disc">
-              {d.achievements.filter(ach => ach).map((ach, j) => <li key={j} style={{ marginBottom: 3 }}>{ach}</li>)}
-            </ul>
-          </RightSection>
-        )}
+          {d.certifications && d.certifications.length > 0 && (
+            <div style={{ marginBottom: 24 }}>
+              <SectionTitle>Certifications</SectionTitle>
+              {d.certifications.map((cert, i) => (
+                <div key={i} style={{ marginBottom: 8 }}>
+                  <div style={{ fontWeight: 700 }}>{cert.name}</div>
+                  <div style={{ color: "#555", fontSize: 11 }}>{cert.authority} ({cert.year})</div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {d.languages && d.languages.length > 0 && (
+            <div style={{ marginBottom: 24 }}>
+              <SectionTitle>Languages</SectionTitle>
+              {d.languages.map((l, i) => (
+                <div key={i} style={{ marginBottom: 4, fontSize: 12, color: '#333' }}>{typeof l === 'string' ? l : `${l.language || ''} — ${l.proficiency || ''}`}</div>
+              ))}
+            </div>
+          )}
+
+          {d.achievements && d.achievements.length > 0 && (
+            <div style={{ marginBottom: 24 }}>
+              <SectionTitle>Achievements</SectionTitle>
+              <ul style={{ margin: '4px 0 0 16px', padding: 0 }} className="list-disc">
+                {d.achievements.filter(ach => ach).map((ach, i) => <li key={i} style={{ marginBottom: 2 }}>{ach}</li>)}
+              </ul>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
-// ─── Small helper sub-components ────────────────────────────────────────────
-
-function SectionTitle({ children }) {
-  return (
-    <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", borderBottom: "1px solid #000", paddingBottom: 2, marginBottom: 8 }}>
-      {children}
-    </div>
-  );
-}
-
-function ModernSection({ title, children, style }) {
-  return (
-    <div style={{ marginBottom: 20, ...style }}>
-      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", marginBottom: 8, paddingBottom: 4, borderBottom: "2px solid #000" }}>{title}</div>
-      {children}
-    </div>
-  );
-}
-
-function MinimalSection({ title, children }) {
-  return (
-    <div style={{ marginBottom: 24 }}>
-      <div style={{ fontSize: 10, letterSpacing: 3, textTransform: "uppercase", color: "#888", marginBottom: 10 }}>{title}</div>
-      {children}
-    </div>
-  );
-}
-
-function SidebarSection({ title, children }) {
-  return (
-    <div style={{ marginBottom: 24 }}>
-      <div style={{ fontSize: 10, letterSpacing: 3, textTransform: "uppercase", color: "rgba(255,255,255,0.5)", marginBottom: 10 }}>{title}</div>
-      {children}
-    </div>
-  );
-}
-
-function RightSection({ title, children }) {
-  return (
-    <div style={{ marginBottom: 24 }}>
-      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", marginBottom: 10, paddingBottom: 4, borderBottom: "1px solid #ddd" }}>{title}</div>
-      {children}
-    </div>
-  );
-}
 
 export const TEMPLATE_COMPONENTS = {
-  classic: ClassicTemplate,
-  modern: ModernTemplate,
-  minimal: MinimalTemplate,
-  bold: BoldTemplate,
-  sidebar: SidebarTemplate,
+  // New IDs
+  "software-engineer": SoftwareEngineerTemplate,
+  "fresher": FresherTemplate,
+  "modern-professional": ModernProfessionalTemplate,
+  "executive": ExecutiveTemplate,
+  "creative": CreativeTemplate,
+
+  // Fallbacks for compatibility
+  classic: ExecutiveTemplate,
+  modern: ModernProfessionalTemplate,
+  minimal: FresherTemplate,
+  bold: SoftwareEngineerTemplate,
+  sidebar: CreativeTemplate,
 };
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -806,7 +811,20 @@ export const TEMPLATE_COMPONENTS = {
 export default function ResumeTemplates({ resumeData, onSelectTemplate }) {
   const [selected, setSelected] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [previewScale, setPreviewScale] = useState(1);
   const data = resumeData || BLANK_RESUME;
+
+  // Compute scale for mobile preview
+  const updateScale = () => {
+    const available = Math.min(window.innerWidth - 32, 860);
+    setPreviewScale(Math.min(1, available / 595));
+  };
+
+  useState(() => {
+    updateScale();
+    window.addEventListener('resize', updateScale);
+    return () => window.removeEventListener('resize', updateScale);
+  });
 
   const handleSelect = (id) => {
     setSelected(id);
@@ -816,76 +834,147 @@ export default function ResumeTemplates({ resumeData, onSelectTemplate }) {
   const ActiveTemplate = preview ? TEMPLATE_COMPONENTS[preview] : null;
 
   return (
-    <div style={{ background: "#fff", minHeight: "100vh", padding: "40px 32px", fontFamily: "'Inter', sans-serif" }}>
+    <div style={{ background: "#fff", minHeight: "100vh", padding: "24px 16px", fontFamily: "'Inter', sans-serif", overflowX: "hidden" }}>
       {/* Header */}
-      <div style={{ maxWidth: 900, margin: "0 auto 40px" }} className="text-left">
-        <h1 style={{ fontSize: 28, fontWeight: 800, margin: 0 }}>Choose Your Template</h1>
-        <p style={{ color: "#666", marginTop: 8, fontSize: 14 }}>All templates are ATS-friendly and recruiter-approved. Click to preview.</p>
+      <div style={{ maxWidth: 900, margin: "0 auto 28px" }}>
+        <h1 style={{ fontSize: 24, fontWeight: 800, margin: 0 }}>Choose Your Template</h1>
+        <p style={{ color: "#666", marginTop: 8, fontSize: 14 }}>All templates are ATS-friendly and recruiter-approved. Swipe to browse on mobile.</p>
       </div>
 
-      {/* Template grid */}
+      {/* Template grid — swipeable on mobile, CSS grid on desktop */}
       {!preview && (
-        <div style={{ maxWidth: 900, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 24 }}>
-          {TEMPLATES.map((t) => (
-            <div
-              key={t.id}
-              onClick={() => setPreview(t.id)}
-              style={{
-                border: selected === t.id ? "2px solid #000" : "1px solid #e0e0e0",
-                cursor: "pointer",
-                transition: "all 0.15s",
-                background: "#fff",
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#000"; e.currentTarget.style.boxShadow = "4px 4px 0 #000"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = selected === t.id ? "#000" : "#e0e0e0"; e.currentTarget.style.boxShadow = "none"; }}
-              className="text-left"
-            >
-              {/* Mini preview thumbnail */}
-              <TemplateThumbnail id={t.id} />
-              {/* Card footer */}
-              <div style={{ padding: "14px 16px", borderTop: "1px solid #eee" }}>
-                <div style={{ fontWeight: 700, fontSize: 14 }}>{t.label}</div>
-                <div style={{ color: "#888", fontSize: 12, marginTop: 2 }}>{t.role}</div>
-                <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setPreview(t.id); }}
-                    style={{ flex: 1, padding: "7px 0", border: "1px solid #000", background: "#fff", cursor: "pointer", fontSize: 12, fontWeight: 600 }}
-                  >
-                    Preview
-                  </button>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); handleSelect(t.id); }}
-                    style={{ flex: 1, padding: "7px 0", border: "none", background: "#000", color: "#fff", cursor: "pointer", fontSize: 12, fontWeight: 600 }}
-                  >
-                    {selected === t.id ? "✓ Selected" : "Use This"}
-                  </button>
+        <>
+          {/* Mobile: horizontal scroll with snap */}
+          <div
+            className="lg:hidden"
+            style={{
+              display: "flex",
+              overflowX: "auto",
+              gap: 16,
+              paddingBottom: 16,
+              scrollSnapType: "x mandatory",
+              WebkitOverflowScrolling: "touch",
+              msOverflowStyle: "none",
+              scrollbarWidth: "none",
+            }}
+          >
+            {TEMPLATES.map((t) => (
+              <div
+                key={t.id}
+                style={{
+                  minWidth: "72vw",
+                  maxWidth: 280,
+                  scrollSnapAlign: "start",
+                  border: selected === t.id ? "2px solid #000" : "1px solid #e0e0e0",
+                  cursor: "pointer",
+                  background: "#fff",
+                  flexShrink: 0,
+                  boxShadow: selected === t.id ? "4px 4px 0 #000" : "none",
+                  transition: "all 0.15s",
+                }}
+                onClick={() => setPreview(t.id)}
+              >
+                <TemplateThumbnail id={t.id} />
+                <div style={{ padding: "14px 14px 12px" }}>
+                  <div style={{ fontWeight: 700, fontSize: 14 }}>{t.label}</div>
+                  <div style={{ color: "#888", fontSize: 12, marginTop: 2 }}>{t.role}</div>
+                  <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setPreview(t.id); }}
+                      style={{ flex: 1, padding: "10px 0", border: "1px solid #000", background: "#fff", cursor: "pointer", fontSize: 12, fontWeight: 600, minHeight: 44 }}
+                    >
+                      Preview
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleSelect(t.id); }}
+                      style={{ flex: 1, padding: "10px 0", border: "none", background: "#000", color: "#fff", cursor: "pointer", fontSize: 12, fontWeight: 600, minHeight: 44 }}
+                    >
+                      {selected === t.id ? "✓ Selected" : "Use This"}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+          {/* Mobile scroll indicator */}
+          <div className="lg:hidden" style={{ textAlign: "center", fontSize: 11, color: "#aaa", marginTop: 4, marginBottom: 16 }}>
+            ← Swipe to see all templates →
+          </div>
+
+          {/* Desktop: CSS grid */}
+          <div
+            className="hidden lg:grid"
+            style={{ maxWidth: 900, margin: "0 auto", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 24 }}
+          >
+            {TEMPLATES.map((t) => (
+              <div
+                key={t.id}
+                onClick={() => setPreview(t.id)}
+                style={{
+                  border: selected === t.id ? "2px solid #000" : "1px solid #e0e0e0",
+                  cursor: "pointer",
+                  transition: "all 0.15s",
+                  background: "#fff",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#000"; e.currentTarget.style.boxShadow = "4px 4px 0 #000"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = selected === t.id ? "#000" : "#e0e0e0"; e.currentTarget.style.boxShadow = selected === t.id ? "4px 4px 0 #000" : "none"; }}
+              >
+                <TemplateThumbnail id={t.id} />
+                <div style={{ padding: "14px 16px", borderTop: "1px solid #eee" }}>
+                  <div style={{ fontWeight: 700, fontSize: 14 }}>{t.label}</div>
+                  <div style={{ color: "#888", fontSize: 12, marginTop: 2 }}>{t.role}</div>
+                  <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setPreview(t.id); }}
+                      style={{ flex: 1, padding: "7px 0", border: "1px solid #000", background: "#fff", cursor: "pointer", fontSize: 12, fontWeight: 600 }}
+                    >
+                      Preview
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleSelect(t.id); }}
+                      style={{ flex: 1, padding: "7px 0", border: "none", background: "#000", color: "#fff", cursor: "pointer", fontSize: 12, fontWeight: 600 }}
+                    >
+                      {selected === t.id ? "✓ Selected" : "Use This"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
-      {/* Full preview mode */}
+      {/* Full preview mode — scales to fit any screen */}
       {preview && ActiveTemplate && (
         <div style={{ maxWidth: 900, margin: "0 auto" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, gap: 12, flexWrap: "wrap" }}>
             <button
               onClick={() => setPreview(null)}
-              style={{ background: "#fff", border: "1px solid #000", padding: "8px 18px", cursor: "pointer", fontSize: 13, fontWeight: 600 }}
+              style={{ background: "#fff", border: "1px solid #000", padding: "10px 18px", cursor: "pointer", fontSize: 13, fontWeight: 600, minHeight: 44 }}
             >
-              ← Back to Templates
+              ← Back
             </button>
             <button
               onClick={() => { handleSelect(preview); setPreview(null); }}
-              style={{ background: "#000", color: "#fff", border: "none", padding: "8px 24px", cursor: "pointer", fontSize: 13, fontWeight: 600 }}
+              style={{ background: "#000", color: "#fff", border: "none", padding: "10px 24px", cursor: "pointer", fontSize: 13, fontWeight: 600, minHeight: 44 }}
             >
               {selected === preview ? "✓ Currently Selected" : "Use This Template"}
             </button>
           </div>
-          {/* Live preview */}
-          <div style={{ border: "1px solid #e0e0e0", boxShadow: "0 4px 24px rgba(0,0,0,0.08)" }}>
-            <ActiveTemplate data={data} editable={false} onEdit={() => {}} />
+          {/* Scaled live preview */}
+          <div style={{ width: "100%", overflowX: "hidden", display: "flex", justifyContent: "center" }}>
+            <div
+              style={{
+                width: 595,
+                transformOrigin: "top center",
+                transform: `scale(${previewScale})`,
+                marginBottom: `${(842 * previewScale) - 842}px`,
+                border: "1px solid #e0e0e0",
+                boxShadow: "0 4px 24px rgba(0,0,0,0.08)"
+              }}
+            >
+              <ActiveTemplate data={data} editable={false} onEdit={() => {}} />
+            </div>
           </div>
         </div>
       )}
@@ -894,8 +983,15 @@ export default function ResumeTemplates({ resumeData, onSelectTemplate }) {
 }
 
 // ─── Thumbnail previews (pure CSS, no images needed) ────────────────────────
-function TemplateThumbnail({ id }) {
+export function TemplateThumbnail({ id }) {
   const styles = {
+    executive: { header: { background: "#fff", borderBottom: "2px solid #000", padding: "10px 14px" }, accent: "#000" },
+    "modern-professional": { header: { background: "#000", padding: "10px 14px" }, accent: "#fff" },
+    fresher: { header: { background: "#fff", padding: "10px 14px" }, accent: "#000" },
+    "software-engineer": { header: { background: "#fff", borderBottom: "4px solid #000", padding: "10px 14px" }, accent: "#000" },
+    creative: { header: null, accent: "#000" },
+    
+    // Compatibility Fallbacks
     classic: { header: { background: "#fff", borderBottom: "2px solid #000", padding: "10px 14px" }, accent: "#000" },
     modern: { header: { background: "#000", padding: "10px 14px" }, accent: "#fff" },
     minimal: { header: { background: "#fff", padding: "10px 14px" }, accent: "#000" },
@@ -903,18 +999,18 @@ function TemplateThumbnail({ id }) {
     sidebar: { header: null, accent: "#000" },
   };
 
-  const s = styles[id];
+  const s = styles[id] || styles.executive;
 
-  if (id === "sidebar") {
+  if (id === "creative" || id === "sidebar") {
     return (
-      <div style={{ height: 160, display: "flex", overflow: "hidden" }}>
+      <div style={{ height: 160, display: "flex", overflow: "hidden", border: "1px solid #eee", background: "#fff" }}>
         <div style={{ width: "32%", background: "#000", padding: 10 }}>
           <div style={{ height: 8, background: "#fff", borderRadius: 2, marginBottom: 6, width: "80%" }} />
           <div style={{ height: 4, background: "rgba(255,255,255,0.4)", borderRadius: 2, marginBottom: 4 }} />
           <div style={{ height: 4, background: "rgba(255,255,255,0.4)", borderRadius: 2, marginBottom: 4, width: "70%" }} />
           <div style={{ height: 4, background: "rgba(255,255,255,0.4)", borderRadius: 2, width: "60%" }} />
         </div>
-        <div style={{ flex: 1, padding: 10 }}>
+        <div style={{ flex: 1, padding: 10, background: "#fff" }}>
           <div style={{ height: 5, background: "#ddd", borderRadius: 2, marginBottom: 4 }} />
           <div style={{ height: 5, background: "#ddd", borderRadius: 2, marginBottom: 8, width: "80%" }} />
           <div style={{ height: 3, background: "#eee", borderRadius: 2, marginBottom: 3 }} />
@@ -926,12 +1022,12 @@ function TemplateThumbnail({ id }) {
   }
 
   return (
-    <div style={{ height: 160, overflow: "hidden" }}>
+    <div style={{ height: 160, overflow: "hidden", border: "1px solid #eee", background: "#fff" }}>
       <div style={s.header}>
-        <div style={{ height: 10, background: id === "modern" ? "#fff" : "#000", borderRadius: 2, width: "60%", marginBottom: 6 }} />
+        <div style={{ height: 10, background: id === "modern-professional" || id === "modern" ? "#fff" : "#000", borderRadius: 2, width: "60%", marginBottom: 6 }} />
         <div style={{ display: "flex", gap: 6 }}>
           {[40, 50, 40].map((w, i) => (
-            <div key={i} style={{ height: 4, background: id === "modern" ? "rgba(255,255,255,0.5)" : "#ccc", borderRadius: 2, width: w }} />
+            <div key={i} style={{ height: 4, background: id === "modern-professional" || id === "modern" ? "rgba(255,255,255,0.5)" : "#ccc", borderRadius: 2, width: w }} />
           ))}
         </div>
       </div>
@@ -943,3 +1039,4 @@ function TemplateThumbnail({ id }) {
     </div>
   );
 }
+

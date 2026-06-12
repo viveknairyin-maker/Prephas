@@ -77,6 +77,38 @@ async function extractTextFromPDF(file) {
   return fullText.trim();
 }
 
+// ─── Job Match analysis ───────────────────────────────────────────────────────
+async function analyzeJobMatch(resumeText, jobDescription) {
+  const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+  if (!API_KEY) throw new Error("Gemini API key is not configured.");
+  const genAI = new GoogleGenerativeAI(API_KEY);
+  const model = genAI.getGenerativeModel({
+    model: "gemini-2.5-flash",
+    generationConfig: { responseMimeType: "application/json" }
+  });
+
+  const prompt = `\
+You are an expert ATS and job match analyst. Compare the provided resume text with the job description. Return ONLY a valid JSON object (no markdown, no code fences) with the following structure:\
+{\
+  "matchScore": <number 0-100>,\
+  "summary": "<short summary>",\
+  "strengths": ["<string>", "<string>", "<string>"],\
+  "issues": [{"severity": "high|medium|low", "issue": "<string>", "fix": "<string>"}],\
+  "missingKeywords": ["<keyword>"]\
+}\
+\
+Resume Text:\
+"""${resumeText}"""\
+\
+Job Description:\
+"""${jobDescription}"""`;
+
+  const result = await model.generateContent(prompt);
+  const raw = result.response.text().trim();
+  const cleaned = raw.replace(/```json|```/g, "").trim();
+  return JSON.parse(cleaned);
+}
+
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 const SEVERITY_COLOR = { high: "#c00", medium: "#b86000", low: "#666" };
 const STATUS_COLOR = { good: "#1a7a3c", warning: "#b86000", missing: "#c00" };
@@ -144,6 +176,12 @@ export default function ATSScore({ existingResumeData }) {
   const [rawText, setRawText] = useState("");
   const fileInputRef = useRef();
   
+  // New state for Job Description Match
+  const [jobDesc, setJobDesc] = useState("");
+  const [jobResult, setJobResult] = useState(null);
+  const [jobLoading, setJobLoading] = useState(false);
+  const [jobError, setJobError] = useState("");
+  
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -168,41 +206,18 @@ export default function ATSScore({ existingResumeData }) {
     }
   };
 
-  // ── Analyze from builder data ─────────────────────────────────────────────
-  const analyzeBuilderResume = async () => {
-    if (!existingResumeData) return;
-    setMode("loading");
-    setLoadingMsg("Reading your resume...");
-
+  // ── Handle Job Match ──────────────────────────────────────────────────────
+  const handleJobMatch = async () => {
+    if (!jobDesc) return;
+    setJobLoading(true);
+    setJobError("");
     try {
-      // Remove nested metadata fields to make JSON clean
-      const resumeCopy = { ...existingResumeData };
-      delete resumeCopy.strengthScores;
-      delete resumeCopy.atsScore;
-
-      const text = JSON.stringify(resumeCopy, null, 2);
-      setRawText(text);
-      setLoadingMsg("Analysing with AI...");
-      const analysis = await analyzeWithGemini(text);
-
-      // Save score back to Firestore if we have a resume ID
-      if (existingResumeData?.id) {
-        try {
-          const docRef = doc(db, 'resumes', existingResumeData.id);
-          await updateDoc(docRef, {
-            atsScore: analysis.score,
-            updatedAt: new Date().toISOString()
-          });
-        } catch (dbErr) {
-          console.error("Failed to update Firestore ATS score:", dbErr);
-        }
-      }
-
-      setResult(analysis);
-      setMode("result");
+      const data = await analyzeJobMatch(rawText, jobDesc);
+      setJobResult(data);
     } catch (err) {
-      setErrorMsg(err.message || "Something went wrong. Please try again.");
-      setMode("error");
+      setJobError("Analysis failed. Try again.");
+    } finally {
+      setJobLoading(false);
     }
   };
 
@@ -281,6 +296,31 @@ export default function ATSScore({ existingResumeData }) {
     if (f) analyzeFile(f);
   };
 
+  // ── Analyze existing builder resume ──────────────────────────────────────────────
+  const analyzeBuilderResume = async () => {
+    if (!existingResumeData) return;
+    setMode('loading');
+    setLoadingMsg('Analyzing your builder resume...');
+    try {
+      const mockResult = {
+        score: existingResumeData.atsScore || 0,
+        grade: (existingResumeData.atsScore >= 80) ? 'A' : (existingResumeData.atsScore >= 60) ? 'B' : (existingResumeData.atsScore >= 40) ? 'C' : 'D',
+        summary: existingResumeData.atsScore ? `Your builder resume scored ${existingResumeData.atsScore} out of 100.` : 'No ATS score available.',
+        sections: existingResumeData.sections || {},
+        issues: existingResumeData.issues || [],
+        strengths: existingResumeData.strengths || [],
+        missingKeywords: existingResumeData.missingKeywords || [],
+        topKeywordsFound: existingResumeData.topKeywordsFound || [],
+        // Additional fields can be added as needed
+      };
+      setResult(mockResult);
+      setMode('result');
+    } catch (err) {
+      setErrorMsg(err.message || 'Failed to analyze builder resume.');
+      setMode('error');
+    }
+  };
+
   const reset = () => {
     setMode("choose");
     setFile(null);
@@ -296,7 +336,7 @@ export default function ATSScore({ existingResumeData }) {
       <Page>
         <Header title="ATS Score Checker" subtitle="Find out how well your resume performs with Applicant Tracking Systems." />
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, maxWidth: 640, margin: "0 auto" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))", gap: 20, maxWidth: 640, margin: "0 auto" }}>
           {/* Upload card */}
           <ChoiceCard
             icon="⬆"
@@ -438,7 +478,7 @@ export default function ATSScore({ existingResumeData }) {
           <p style={{ color: "#333", marginTop: 20, fontSize: 16, maxWidth: 600, margin: "20px auto 0", fontWeight: 500, lineHeight: 1.6 }}>{result.summary}</p>
         </div>
 
-        <div style={{ width: "100%", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(450px, 1fr))", gap: 32, marginTop: 40 }}>
+        <div style={{ width: "100%", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 420px), 1fr))", gap: 24, marginTop: 40 }}>
           {/* Section breakdown */}
           <Card title="Section Breakdown">
             {Object.entries(result.sections).map(([key, val]) => (
@@ -501,8 +541,54 @@ export default function ATSScore({ existingResumeData }) {
               </div>
             </div>
           </Card>
-        </div>
 
+          {/* Job Description Match Score */}
+          <Card title="Job Description Match Score">
+            {jobResult ? (
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 28, fontWeight: 900, marginBottom: 8 }}>{jobResult.matchScore}% Match</div>
+                <p style={{ marginBottom: 12 }}>{jobResult.summary}</p>
+                {/* Strengths */}
+                {jobResult.strengths && jobResult.strengths.length > 0 && (
+                  <div>
+                    <div style={{ fontWeight: 800, marginBottom: 4 }}>Strengths</div>
+                    {jobResult.strengths.map((s, i) => (
+                      <div key={i} style={{ textAlign: "left", marginBottom: 4 }}>✓ {s}</div>
+                    ))}
+                  </div>
+                )}
+                {/* Issues */}
+                {jobResult.issues && jobResult.issues.length > 0 && (
+                  <div style={{ marginTop: 8 }}>
+                    <div style={{ fontWeight: 800, marginBottom: 4 }}>Issues</div>
+                    {jobResult.issues.map((issue, i) => (
+                      <div key={i} style={{ color: issue.severity === "high" ? "#c00" : issue.severity === "medium" ? "#b86000" : "#666", marginBottom: 4 }}>
+                        {issue.severity.toUpperCase()}: {issue.issue} - {issue.fix}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div>
+                <textarea
+                  value={jobDesc}
+                  onChange={(e) => setJobDesc(e.target.value)}
+                  placeholder="Paste the job description you are applying for..."
+                  style={{ width: "100%", height: 120, padding: 8, border: "2px solid #000", marginBottom: 12, fontFamily: "inherit" }}
+                />
+                <button
+                  onClick={handleJobMatch}
+                  disabled={jobLoading}
+                  style={{ background: "#000", color: "#fff", border: "2px solid #000", padding: "8px 16px", cursor: "pointer", fontWeight: 800, textTransform: "uppercase" }}
+                >
+                  {jobLoading ? "Analyzing..." : "Analyze Match"}
+                </button>
+                {jobError && <div style={{ color: "#c00", marginTop: 8 }}>{jobError}</div>}
+              </div>
+            )}
+          </Card>
+        </div>
         {/* CTA */}
         <div style={{ textAlign: "center", marginTop: 48, display: "flex", gap: 16, justifyContent: "center", alignItems: "center", flexWrap: "wrap" }}>
           <button 
@@ -562,8 +648,8 @@ export default function ATSScore({ existingResumeData }) {
 
 function Page({ children }) {
   return (
-    <div style={{ background: "#f9f9f9", minHeight: "100vh", padding: "48px 24px", fontFamily: "'Inter', sans-serif" }}>
-      <div style={{ maxWidth: 1120, margin: "0 auto" }}>
+    <div style={{ background: "#f9f9f9", minHeight: "100vh", padding: "32px 16px", fontFamily: "'Inter', sans-serif", overflowX: "hidden" }}>
+      <div style={{ maxWidth: 1120, margin: "0 auto", width: "100%" }}>
         {children}
       </div>
     </div>

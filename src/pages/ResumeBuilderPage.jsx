@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useDeferredValue, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
 import { db, doc, getDoc, updateDoc, collection, addDoc } from '../utils/firebase';
@@ -9,7 +9,7 @@ import {
 } from '../utils/gemini';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
-import { TEMPLATE_COMPONENTS, TEMPLATES } from '../components/ResumeTemplates';
+import { TEMPLATE_COMPONENTS, TEMPLATES, TemplateThumbnail } from '../components/ResumeTemplates';
 
 function ResumeBuilderPage() {
   const { id } = useParams();
@@ -23,6 +23,10 @@ function ResumeBuilderPage() {
   const [saveState, setSaveState] = useState('Saved ✓');
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [firstLoad, setFirstLoad] = useState(true);
+
+  // Mobile UX State
+  const [activeTab, setActiveTab] = useState('edit'); // 'edit' | 'preview'
+  const [previewScale, setPreviewScale] = useState(1);
 
   // Form Collapse States
   const [collapsed, setCollapsed] = useState({
@@ -53,6 +57,22 @@ function ResumeBuilderPage() {
   });
 
   const [skillInput, setSkillInput] = useState('');
+
+  // Preview scale — recalculate on resize so preview fits mobile screen
+  useEffect(() => {
+    const calcScale = () => {
+      const isDesktop = window.innerWidth >= 1024;
+      if (isDesktop) {
+        setPreviewScale(0.95);
+        return;
+      }
+      const available = window.innerWidth - 32;
+      setPreviewScale(Math.min(0.95, available / 595));
+    };
+    calcScale();
+    window.addEventListener('resize', calcScale);
+    return () => window.removeEventListener('resize', calcScale);
+  }, []);
 
   // Fetch Resume
   useEffect(() => {
@@ -628,13 +648,15 @@ service cloud.firestore {
 
   const ActiveTemplate = TEMPLATE_COMPONENTS[resume.template || 'classic'] || TEMPLATE_COMPONENTS['classic'];
   const strength = calculateStrength(resume);
+  // Defer preview re-renders for better mobile typing performance
+  const deferredResume = useDeferredValue(resume);
 
   return (
-    <div className="bg-surface text-on-surface antialiased overflow-hidden min-h-screen flex flex-col">
+    <div className="bg-surface text-on-surface antialiased overflow-x-hidden min-h-screen flex flex-col">
       {/* Top Navigation Bar */}
-      <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-desktop py-4 bg-surface border-b border-primary h-20">
-        <div className="flex items-center gap-8">
-          <Link className="font-display text-headline-md tracking-tighter text-primary" to="/">PREPHAS</Link>
+      <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-3 md:px-6 lg:px-margin-desktop py-0 bg-surface border-b border-primary h-14 md:h-16 lg:h-20">
+        <div className="flex items-center gap-4 lg:gap-8 min-w-0">
+          <Link className="font-display text-lg lg:text-headline-md tracking-tighter text-primary flex-shrink-0" to="/">PREPHAS</Link>
           <nav className="hidden xl:flex gap-6">
             <a className="text-secondary hover:opacity-70 transition-opacity font-body-md text-body-md" href="/#features">Features</a>
             <Link className="text-secondary hover:opacity-70 transition-opacity font-body-md text-body-md" to="/templates">Templates</Link>
@@ -642,27 +664,48 @@ service cloud.firestore {
             <Link className="text-secondary hover:opacity-70 transition-opacity font-body-md text-body-md" to="/pricing">Pricing</Link>
           </nav>
         </div>
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-2 md:gap-4">
+          {/* Save status — desktop only */}
           <span className="font-label-sm text-[10px] uppercase tracking-widest text-secondary hidden lg:flex items-center gap-2">
             Status: <span className="text-primary font-bold">{saveState}</span>
           </span>
-          <div className="flex items-center gap-3 px-4 py-2 border border-primary bg-white block-shadow-sm">
-            <span className="font-label-sm text-label-sm text-secondary">ATS SCORE</span>
-            <span className="font-headline-md text-headline-md">{resume.atsScore || 0}<span className="text-secondary text-body-md">/100</span></span>
-            <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+          {/* ATS Score badge — hide on small phones */}
+          <div className="hidden sm:flex items-center gap-2 px-2 md:px-4 py-1.5 md:py-2 border border-primary bg-white">
+            <span className="font-label-sm text-[10px] uppercase tracking-widest text-secondary">ATS</span>
+            <span className="font-headline-md text-base md:text-headline-md">{resume.atsScore || 0}<span className="text-secondary text-xs md:text-body-md">/100</span></span>
           </div>
+          {/* Download — hidden on mobile (available in sticky bar) */}
           <button 
             onClick={handleDownload}
-            className="bg-primary text-on-primary px-8 py-3 font-label-sm text-label-sm uppercase tracking-widest hover:bg-opacity-90 active:translate-y-0.5"
+            className="hidden md:block bg-primary text-on-primary px-4 lg:px-8 py-2 lg:py-3 font-label-sm text-label-sm uppercase tracking-widest hover:opacity-90 active:translate-y-0.5"
           >
-            DOWNLOAD PDF
+            <span className="hidden lg:inline">DOWNLOAD PDF</span>
+            <span className="lg:hidden">PDF</span>
           </button>
         </div>
       </header>
 
-      <main className="flex h-screen pt-20">
-        {/* Left Side Navigation (Resume Section Navigator) */}
-        <nav className="fixed left-0 top-20 h-[calc(100vh-80px)] w-56 flex flex-col border-r border-primary bg-surface z-40 py-6 overflow-y-auto custom-scrollbar">
+      {/* Mobile Tab Bar — Edit / Preview switcher */}
+      <div className="fixed top-14 md:top-16 lg:hidden left-0 right-0 z-40 flex border-b border-primary bg-surface">
+        <button
+          onClick={() => setActiveTab('edit')}
+          className={`flex-1 flex items-center justify-center gap-2 py-3 font-label-sm text-[11px] uppercase tracking-widest transition-all min-h-[44px] ${activeTab === 'edit' ? 'bg-primary text-on-primary' : 'text-secondary hover:bg-zinc-50'}`}
+        >
+          <span className="material-symbols-outlined text-base">edit</span>
+          Edit
+        </button>
+        <button
+          onClick={() => setActiveTab('preview')}
+          className={`flex-1 flex items-center justify-center gap-2 py-3 font-label-sm text-[11px] uppercase tracking-widest transition-all min-h-[44px] ${activeTab === 'preview' ? 'bg-primary text-on-primary' : 'text-secondary hover:bg-zinc-50'}`}
+        >
+          <span className="material-symbols-outlined text-base">visibility</span>
+          Preview
+        </button>
+      </div>
+
+      <main className="flex min-h-screen pt-14 md:pt-16 lg:pt-20" style={{ paddingBottom: '72px' }}>
+        {/* Left Side Navigation (Resume Section Navigator) — desktop only */}
+        <nav className="hidden lg:fixed lg:flex lg:left-0 lg:top-20 lg:h-[calc(100vh-80px)] lg:w-56 lg:flex-col border-r border-primary bg-surface z-40 py-6 overflow-y-auto custom-scrollbar">
           <div className="px-4 py-2 text-[9px] uppercase tracking-widest text-secondary font-bold mb-2">
             Resume Sections
           </div>
@@ -682,7 +725,7 @@ service cloud.firestore {
               <button 
                 key={sec.key}
                 onClick={() => scrollToSection(sec.key)}
-                className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-secondary hover:bg-surface-container hover:text-primary transition-all duration-150 border-b border-primary/5 uppercase font-label-sm text-[11px] tracking-wider"
+                className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-secondary hover:bg-surface-container hover:text-primary transition-all duration-150 border-b border-primary/5 uppercase font-label-sm text-[11px] tracking-wider min-h-[44px]"
               >
                 <span className="material-symbols-outlined text-lg">{sec.icon}</span>
                 <span>{sec.label}</span>
@@ -695,21 +738,21 @@ service cloud.firestore {
               Resume Tools
             </div>
             <Link 
-              className="flex items-center gap-3 px-4 py-2.5 text-secondary hover:bg-surface-container hover:text-primary transition-all uppercase font-label-sm text-[11px]" 
+              className="flex items-center gap-3 px-4 py-2.5 text-secondary hover:bg-surface-container hover:text-primary transition-all uppercase font-label-sm text-[11px] min-h-[44px]" 
               to={`/ats/${id}`}
             >
               <span className="material-symbols-outlined text-lg">analytics</span>
               <span>ATS Score</span>
             </Link>
             <Link 
-              className="flex items-center gap-3 px-4 py-2.5 text-secondary hover:bg-surface-container hover:text-primary transition-all uppercase font-label-sm text-[11px]" 
+              className="flex items-center gap-3 px-4 py-2.5 text-secondary hover:bg-surface-container hover:text-primary transition-all uppercase font-label-sm text-[11px] min-h-[44px]" 
               to={`/match/${id}`}
             >
               <span className="material-symbols-outlined text-lg">work</span>
               <span>Job Match</span>
             </Link>
             <Link 
-              className="flex items-center gap-3 px-4 py-2.5 text-secondary hover:bg-surface-container hover:text-primary transition-all uppercase font-label-sm text-[11px] border-t border-primary/5 mt-2 pt-2" 
+              className="flex items-center gap-3 px-4 py-2.5 text-secondary hover:bg-surface-container hover:text-primary transition-all uppercase font-label-sm text-[11px] border-t border-primary/5 mt-2 pt-2 min-h-[44px]" 
               to="/dashboard"
             >
               <span className="material-symbols-outlined text-lg">dashboard</span>
@@ -718,8 +761,8 @@ service cloud.firestore {
           </div>
         </nav>
 
-        {/* Form Editor Column */}
-        <section className="ml-56 w-1/2 h-full overflow-y-auto px-12 py-12 bg-white pb-32">
+        {/* Form Editor Column — full-width on mobile, half-width on desktop */}
+        <section className={`${activeTab === 'edit' ? 'block' : 'hidden'} lg:block w-full lg:ml-56 lg:w-1/2 h-full overflow-y-auto px-4 md:px-8 lg:px-12 py-6 lg:py-12 bg-white pb-32 mt-10 lg:mt-0`}>
           <div className="max-w-2xl mx-auto space-y-8">
             <div className="flex justify-between items-end border-b border-primary pb-4">
               <div>
@@ -1475,16 +1518,65 @@ service cloud.firestore {
           </div>
         </section>
 
-        {/* Right Side Live Preview Panel */}
-        <section className="w-1/2 h-full bg-surface-container-highest flex justify-center py-12 overflow-y-auto border-l border-primary">
-          <div 
-            id="resume-preview-root"
-            className="bg-white w-[595px] min-h-[842px] resume-shadow transition-all duration-300 transform scale-95 origin-top p-0"
+        {/* Right Side Live Preview Panel — full-width on mobile (when preview tab active), half-width on desktop */}
+        <section className={`${activeTab === 'preview' ? 'block' : 'hidden'} lg:block w-full lg:w-1/2 bg-surface-container-highest flex flex-col items-center py-6 lg:py-12 overflow-y-auto border-l border-primary mt-10 lg:mt-0`} style={{ minHeight: 'calc(100vh - 56px)' }}>
+          {/* Preview wrapper — scales down to fit viewport on mobile */}
+          <div
+            style={{
+              width: '595px',
+              transformOrigin: 'top center',
+              transform: `scale(${previewScale})`,
+              marginBottom: `${(842 * previewScale) - 842}px`,
+            }}
           >
-            <ActiveTemplate data={resume} editable={false} onEdit={() => {}} />
+            <div
+              id="resume-preview-root"
+              className="bg-white w-[595px] min-h-[842px] resume-shadow transition-all duration-300 p-0"
+            >
+              <ActiveTemplate data={deferredResume} editable={false} onEdit={() => {}} />
+            </div>
           </div>
         </section>
       </main>
+
+      {/* Sticky Mobile Bottom Action Bar — lg:hidden */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden flex items-stretch border-t border-primary bg-surface">
+        <Link
+          to="/dashboard"
+          className="flex flex-col items-center justify-center px-3 py-2 text-secondary hover:text-primary hover:bg-zinc-50 transition-colors min-h-[56px] min-w-[56px]"
+          title="Dashboard"
+        >
+          <span className="material-symbols-outlined text-xl">dashboard</span>
+          <span className="text-[9px] uppercase tracking-wide mt-0.5">Home</span>
+        </Link>
+        <Link
+          to={`/ats/${id}`}
+          className="flex flex-col items-center justify-center px-3 py-2 text-secondary hover:text-primary hover:bg-zinc-50 transition-colors min-h-[56px] min-w-[56px]"
+          title="ATS Score"
+        >
+          <span className="material-symbols-outlined text-xl">analytics</span>
+          <span className="text-[9px] uppercase tracking-wide mt-0.5">ATS</span>
+        </Link>
+        <div className="flex items-center justify-center px-3 py-2 text-secondary min-h-[56px] flex-1">
+          <span className={`text-[10px] uppercase tracking-widest font-bold ${saveState === 'Saved ✓' ? 'text-green-700' : saveState === 'Saving...' ? 'text-secondary animate-pulse' : 'text-red-600'}`}>{saveState}</span>
+        </div>
+        <button
+          onClick={() => setActiveTab(activeTab === 'preview' ? 'edit' : 'preview')}
+          className="flex flex-col items-center justify-center px-3 py-2 text-secondary hover:text-primary hover:bg-zinc-50 transition-colors min-h-[56px] min-w-[56px]"
+          title="Toggle Preview"
+        >
+          <span className="material-symbols-outlined text-xl">{activeTab === 'preview' ? 'edit' : 'visibility'}</span>
+          <span className="text-[9px] uppercase tracking-wide mt-0.5">{activeTab === 'preview' ? 'Edit' : 'Preview'}</span>
+        </button>
+        <button
+          onClick={handleDownload}
+          className="flex flex-col items-center justify-center px-3 py-2 bg-primary text-on-primary hover:opacity-90 transition-colors min-h-[56px] min-w-[64px]"
+          title="Download PDF"
+        >
+          <span className="material-symbols-outlined text-xl">download</span>
+          <span className="text-[9px] uppercase tracking-wide mt-0.5">PDF</span>
+        </button>
+      </div>
 
       {/* Upgrade Modal */}
       {showUpgradeModal && (

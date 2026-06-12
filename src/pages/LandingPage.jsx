@@ -19,7 +19,7 @@ function LandingPage() {
     <div className="bg-surface text-on-surface antialiased overflow-x-hidden min-h-screen">
       <Navbar />
 
-      <main className="pt-20">
+      <main className="pt-16 md:pt-20">
         {/* Hero Section */}
         <section className="relative min-h-[819px] flex flex-col justify-center items-center text-center px-margin-mobile md:px-margin-desktop py-24 overflow-hidden border-b border-primary">
           <div className="absolute inset-0 grid-bg pointer-events-none"></div>
@@ -97,7 +97,7 @@ function LandingPage() {
                   <span className="material-symbols-outlined text-[48px] mb-8" data-icon="description">description</span>
                   <h3 className="font-headline-lg mb-4">Template Engineering</h3>
                   <p className="font-body-md text-secondary mb-6">Designed by hiring managers. Every pixel is placed with intent to guide the recruiter's eye to your most important qualifications.</p>
-                  <button onClick={() => navigate('/pricing')} className="font-label-sm uppercase tracking-widest border border-primary px-6 py-3 hover:bg-primary hover:text-on-primary transition-all">View Templates</button>
+                  <button onClick={() => navigate('/templates')} className="font-label-sm uppercase tracking-widest border border-primary px-6 py-3 hover:bg-primary hover:text-on-primary transition-all">View Templates</button>
                 </div>
                 <div className="flex-1 border border-primary grayscale opacity-80 overflow-hidden h-full min-h-[200px] flex items-center justify-center p-8 bg-zinc-50">
                   <div className="text-center font-display text-headline-md text-secondary uppercase tracking-widest">
@@ -143,7 +143,7 @@ function LandingPage() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full py-12 px-margin-desktop flex flex-col md:flex-row justify-between items-center border-t border-primary bg-surface">
+      <footer className="w-full py-10 px-4 md:px-margin-desktop flex flex-col md:flex-row justify-between items-center border-t border-primary bg-surface gap-6">
         <div className="mb-8 md:mb-0">
           <span className="font-display text-headline-md text-primary tracking-tighter">PREPHAS</span>
           <p className="font-body-md text-secondary mt-2">© 2024 PREPHAS AI. All rights reserved.</p>

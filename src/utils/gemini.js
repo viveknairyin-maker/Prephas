@@ -220,3 +220,57 @@ ${rawText}
   }
 }
 
+/**
+ * 7. Job Description Match Analyzer
+ * Input: resume text/JSON + pasted job description text
+ * Output: match score, status, strengths, missing keywords, and improvements
+ */
+export async function calculateJobMatchScore(resumeTextOrJson, jobDescriptionText) {
+  try {
+    const model = getJsonModel();
+    const resumeStr = typeof resumeTextOrJson === 'object' ? JSON.stringify(resumeTextOrJson, null, 2) : resumeTextOrJson;
+    const prompt = `You are an expert recruiter and ATS matching system.
+Analyze the following resume (which could be plain text or JSON format) and compare it against the provided Job Description.
+
+Calculate a realistic match score (0-100) based on:
+1. Skills and Technologies (are the required tools/languages/frameworks present?)
+2. Experience (does the candidate have relevant work history and job titles?)
+3. Education and Certifications (are degrees and credentials matching requirements?)
+4. Projects and Industry keywords.
+
+Determine the Match Status based on the calculated score:
+- "Excellent Match" (score 85-100): The candidate meets almost all key criteria and preferences.
+- "Strong Match" (score 70-84): The candidate has most core skills and experience, but lacks minor details.
+- "Moderate Match" (score 50-69): The candidate has some relevant skills/experience, but there are substantial gaps.
+- "Weak Match" (score 0-49): The candidate does not meet the core requirements.
+
+Identify:
+- "strengths": Keywords, skills, experiences, and titles that successfully match.
+- "missingKeywords": Key skills, tools, methodologies, certifications, or titles present in the job description but missing/weak in the resume.
+- "improvements": Actionable, concrete recommendations on what specific sections of the resume need updates or additions (e.g. "Add specific projects showing Experience with Kubernetes", "List your certification in AWS", "Ensure your job title matches or aligns closer to Software Engineer").
+
+Return ONLY a valid JSON object with the following structure, no markdown, no explanation, no code fences:
+{
+  "score": number,
+  "status": "Excellent Match" | "Strong Match" | "Moderate Match" | "Weak Match",
+  "strengths": [ "string" ],
+  "missingKeywords": [ "string" ],
+  "improvements": [ "string" ]
+}
+
+Resume Data:
+${resumeStr}
+
+Job Description:
+${jobDescriptionText}`;
+
+    const result = await model.generateContent(prompt);
+    const text = result.response.text().trim();
+    // Clean up code fences just in case the model ignored our formatting instructions
+    const cleaned = text.replace(/```json|```/g, "").trim();
+    return JSON.parse(cleaned);
+  } catch (error) {
+    console.error("Error in calculateJobMatchScore:", error);
+    throw error;
+  }
+}
