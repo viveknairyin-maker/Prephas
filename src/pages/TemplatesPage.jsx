@@ -54,14 +54,15 @@ function TemplatesPage() {
       try {
         const q = query(
           collection(db, 'resumes'),
-          where('userId', '==', user.uid),
-          orderBy('updatedAt', 'desc')
+          where('userId', '==', user.uid)
         );
         const snap = await getDocs(q);
         const list = [];
         snap.forEach(doc => {
           list.push({ id: doc.id, ...doc.data() });
         });
+        // Sort in-memory to prevent composite index requirements
+        list.sort((a, b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0));
         setResumes(list);
       } catch (error) {
         console.error("Error fetching resumes:", error);
@@ -105,7 +106,7 @@ function TemplatesPage() {
       }
     } catch (error) {
       console.error("Error applying template:", error);
-      alert("Something went wrong. Try again.");
+      alert(`Something went wrong: ${error.message} (${error.code || 'unknown'})`);
     }
   };
 

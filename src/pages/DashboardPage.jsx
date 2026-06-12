@@ -20,14 +20,15 @@ function DashboardPage() {
       try {
         const q = query(
           collection(db, 'resumes'), 
-          where('userId', '==', user.uid),
-          orderBy('updatedAt', 'desc')
+          where('userId', '==', user.uid)
         );
         const querySnapshot = await getDocs(q);
         const list = [];
         querySnapshot.forEach((doc) => {
           list.push({ id: doc.id, ...doc.data() });
         });
+        // Sort in-memory to prevent composite index requirements
+        list.sort((a, b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0));
         setResumes(list);
       } catch (error) {
         console.error("Error fetching resumes:", error);
