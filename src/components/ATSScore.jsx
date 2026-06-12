@@ -88,38 +88,42 @@ function ScoreRing({ score }) {
   const filled = (score / 100) * circ;
 
   return (
-    <svg width={130} height={130} viewBox="0 0 130 130">
-      <circle cx={65} cy={65} r={r} fill="none" stroke="#eee" strokeWidth={10} />
-      <circle
-        cx={65} cy={65} r={r} fill="none"
-        stroke="#000" strokeWidth={10}
-        strokeDasharray={`${filled} ${circ}`}
-        strokeLinecap="round"
-        transform="rotate(-90 65 65)"
-        style={{ transition: "stroke-dasharray 1s ease" }}
-      />
-      <text x={65} y={60} textAnchor="middle" fontSize={28} fontWeight={900} fill="#000">{score}</text>
-      <text x={65} y={78} textAnchor="middle" fontSize={11} fill="#888">out of 100</text>
-    </svg>
+    <div style={{ position: "relative", width: 140, height: 140, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto" }}>
+      <svg width={140} height={140} viewBox="0 0 140 140" style={{ display: "block" }}>
+        <circle cx={70} cy={70} r={r} fill="none" stroke="#f0f0f0" strokeWidth={10} />
+        <circle
+          cx={70} cy={70} r={r} fill="none"
+          stroke="#000" strokeWidth={10}
+          strokeDasharray={`${filled} ${circ}`}
+          strokeLinecap="round"
+          transform="rotate(-90 70 70)"
+          style={{ transition: "stroke-dasharray 1.5s cubic-bezier(0.4, 0, 0.2, 1)" }}
+        />
+      </svg>
+      <div style={{ position: "absolute", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+        <span style={{ fontSize: 32, fontWeight: 900, color: "#000", lineHeight: 1 }}>{score}</span>
+        <span style={{ fontSize: 10, color: "#888", marginTop: 2, textTransform: "uppercase", letterSpacing: 1 }}>out of 100</span>
+      </div>
+    </div>
   );
 }
 
 function ProgressBar({ label, score, status }) {
   return (
-    <div style={{ marginBottom: 12 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4, fontSize: 12 }}>
-        <span style={{ fontWeight: 600 }}>{label}</span>
-        <span style={{ color: STATUS_COLOR[status], fontWeight: 700 }}>
+    <div style={{ marginBottom: 18 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6, fontSize: 13 }}>
+        <span style={{ fontWeight: 800, textTransform: "uppercase", fontSize: 11, letterSpacing: 0.5 }}>{label}</span>
+        <span style={{ color: STATUS_COLOR[status], fontWeight: 900, fontSize: 11 }}>
           {STATUS_ICON[status]} {score}%
         </span>
       </div>
-      <div style={{ height: 6, background: "#f0f0f0", borderRadius: 0 }}>
+      <div style={{ height: 12, background: "#f0f0f0", border: "2px solid #000", borderRadius: 0, overflow: "hidden" }}>
         <div
           style={{
             height: "100%",
             width: `${score}%`,
             background: score >= 70 ? "#000" : score >= 40 ? "#888" : "#ddd",
-            transition: "width 1s ease",
+            transition: "width 1.5s cubic-bezier(0.4, 0, 0.2, 1)",
           }}
         />
       </div>
@@ -400,21 +404,24 @@ export default function ATSScore({ existingResumeData }) {
     return (
       <Page>
         {/* Top: Score + grade */}
-        <div style={{ textAlign: "center", marginBottom: 40 }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", marginBottom: 48, textAlign: "center" }}>
           <ScoreRing score={result.score} />
-          <div style={{ marginTop: 12 }}>
+          <div style={{ marginTop: 24 }}>
             <span style={{
-              fontSize: 13, fontWeight: 700, padding: "4px 16px",
+              fontSize: 14, fontWeight: 900, padding: "6px 20px",
               background: result.score >= 70 ? "#000" : result.score >= 50 ? "#555" : "#c00",
-              color: "#fff", letterSpacing: 1,
+              color: "#fff", letterSpacing: 2,
+              textTransform: "uppercase",
+              border: "2px solid #000",
+              boxShadow: "3px 3px 0 #000"
             }}>
               Grade {result.grade}
             </span>
           </div>
-          <p style={{ color: "#555", marginTop: 12, fontSize: 14, maxWidth: 480, margin: "12px auto 0" }}>{result.summary}</p>
+          <p style={{ color: "#333", marginTop: 20, fontSize: 16, maxWidth: 600, margin: "20px auto 0", fontWeight: 500, lineHeight: 1.6 }}>{result.summary}</p>
         </div>
 
-        <div style={{ maxWidth: 760, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+        <div style={{ width: "100%", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(450px, 1fr))", gap: 32, marginTop: 40 }}>
           {/* Section breakdown */}
           <Card title="Section Breakdown">
             {Object.entries(result.sections).map(([key, val]) => (
@@ -423,53 +430,56 @@ export default function ATSScore({ existingResumeData }) {
           </Card>
 
           {/* Issues */}
-          <div>
-            <Card title="Issues to Fix">
+          <Card title="Issues to Fix">
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               {result.issues.map((issue, i) => (
-                <div key={i} style={{ marginBottom: 14, paddingBottom: 14, borderBottom: i < result.issues.length - 1 ? "1px solid #f0f0f0" : "none" }}>
-                  <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
+                <div key={i} style={{ padding: "16px", border: "2px solid #000", background: "#fbfbfb", boxShadow: "4px 4px 0 #000" }}>
+                  <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
                     <span style={{
-                      fontSize: 10, fontWeight: 700, padding: "2px 6px",
+                      fontSize: 10, fontWeight: 900, padding: "2px 8px",
                       background: SEVERITY_COLOR[issue.severity],
-                      color: "#fff", flexShrink: 0, marginTop: 2,
+                      color: "#fff", flexShrink: 0, border: "1px solid #000",
+                      textTransform: "uppercase", letterSpacing: 0.5
                     }}>
-                      {issue.severity.toUpperCase()}
+                      {issue.severity}
                     </span>
                     <div>
-                      <div style={{ fontWeight: 600, fontSize: 13 }}>{issue.issue}</div>
-                      <div style={{ color: "#555", fontSize: 12, marginTop: 3 }}>→ {issue.fix}</div>
+                      <div style={{ fontWeight: 800, fontSize: 14, color: "#000" }}>{issue.issue}</div>
+                      <div style={{ color: "#444", fontSize: 13, marginTop: 6, fontWeight: 500 }}>{issue.fix}</div>
                     </div>
                   </div>
                 </div>
               ))}
-            </Card>
-          </div>
+            </div>
+          </Card>
 
           {/* Strengths */}
           <Card title="What's Working ✓">
-            {result.strengths.map((s, i) => (
-              <div key={i} style={{ display: "flex", gap: 10, marginBottom: 8, alignItems: "flex-start" }}>
-                <span style={{ color: "#1a7a3c", fontWeight: 700, flexShrink: 0 }}>✓</span>
-                <span style={{ fontSize: 13 }}>{s}</span>
-              </div>
-            ))}
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {result.strengths.map((s, i) => (
+                <div key={i} style={{ display: "flex", gap: 12, alignItems: "flex-start", padding: "12px 16px", border: "2px solid #000", background: "#f5fdf7" }}>
+                  <span style={{ color: "#1a7a3c", fontWeight: 900, fontSize: 16 }}>✓</span>
+                  <span style={{ fontSize: 14, fontWeight: 500, color: "#111" }}>{s}</span>
+                </div>
+              ))}
+            </div>
           </Card>
 
           {/* Keywords */}
           <Card title="Keyword Analysis">
-            <div style={{ marginBottom: 12 }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: "#888", marginBottom: 8, letterSpacing: 1 }}>FOUND</div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontSize: 11, fontWeight: 900, color: "#000", marginBottom: 12, letterSpacing: 1.5, textTransform: "uppercase" }}>Keywords Found</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 {result.topKeywordsFound.map((k, i) => (
-                  <span key={i} style={{ background: "#f0f0f0", border: "1px solid #ddd", padding: "3px 10px", fontSize: 11 }}>{k}</span>
+                  <span key={i} style={{ background: "#f0f0f0", border: "2px solid #000", padding: "4px 12px", fontSize: 12, fontWeight: 600 }}>{k}</span>
                 ))}
               </div>
             </div>
             <div>
-              <div style={{ fontSize: 11, fontWeight: 700, color: "#888", marginBottom: 8, letterSpacing: 1 }}>MISSING</div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              <div style={{ fontSize: 11, fontWeight: 900, color: "#000", marginBottom: 12, letterSpacing: 1.5, textTransform: "uppercase" }}>Keywords Missing</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 {result.missingKeywords.map((k, i) => (
-                  <span key={i} style={{ background: "#fff", border: "1px solid #c00", color: "#c00", padding: "3px 10px", fontSize: 11 }}>{k}</span>
+                  <span key={i} style={{ background: "#fff", border: "2px solid #c00", color: "#c00", padding: "4px 12px", fontSize: 12, fontWeight: 600 }}>{k}</span>
                 ))}
               </div>
             </div>
@@ -477,19 +487,50 @@ export default function ATSScore({ existingResumeData }) {
         </div>
 
         {/* CTA */}
-        <div style={{ textAlign: "center", marginTop: 36, display: "flex", gap: 12, justifyContent: "center", alignItems: "center" }}>
+        <div style={{ textAlign: "center", marginTop: 48, display: "flex", gap: 16, justifyContent: "center", alignItems: "center", flexWrap: "wrap" }}>
           <button 
             onClick={handleFixInBuilder} 
-            style={{ background: "#000", color: "#fff", border: "none", padding: "10px 28px", cursor: "pointer", fontSize: 13, fontWeight: 600 }}
+            style={{ 
+              background: "#000", 
+              color: "#fff", 
+              border: "2px solid #000", 
+              padding: "14px 32px", 
+              cursor: "pointer", 
+              fontSize: 14, 
+              fontWeight: 800,
+              textTransform: "uppercase",
+              letterSpacing: 1,
+              boxShadow: "4px 4px 0 #000",
+              transition: "transform 0.1s, box-shadow 0.1s"
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = "translate(-2px, -2px)"; e.currentTarget.style.boxShadow = "6px 6px 0 #000"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "4px 4px 0 #000"; }}
           >
             {existingResumeData?.id ? "Fix this resume in Builder" : "Import & Fix in Builder ✦"}
           </button>
-          <button onClick={reset} style={{ background: "#fff", border: "1px solid #000", padding: "10px 24px", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>
+          <button 
+            onClick={reset} 
+            style={{ 
+              background: "#fff", 
+              color: "#000", 
+              border: "2px solid #000", 
+              padding: "14px 32px", 
+              cursor: "pointer", 
+              fontSize: 14, 
+              fontWeight: 800,
+              textTransform: "uppercase",
+              letterSpacing: 1,
+              boxShadow: "4px 4px 0 #000",
+              transition: "transform 0.1s, box-shadow 0.1s"
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = "translate(-2px, -2px)"; e.currentTarget.style.boxShadow = "6px 6px 0 #000"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "4px 4px 0 #000"; }}
+          >
             Check Another Resume
           </button>
           {file && (
-            <div style={{ fontSize: 12, color: "#888", display: "flex", alignItems: "center" }}>
-              Analysed: {file.name}
+            <div style={{ fontSize: 13, color: "#555", fontWeight: 500 }}>
+              Analysed: <strong>{file.name}</strong>
             </div>
           )}
         </div>
@@ -504,25 +545,27 @@ export default function ATSScore({ existingResumeData }) {
 
 function Page({ children }) {
   return (
-    <div style={{ background: "#fff", minHeight: "100vh", padding: "40px 24px", fontFamily: "'Inter', sans-serif" }}>
-      {children}
+    <div style={{ background: "#f9f9f9", minHeight: "100vh", padding: "48px 24px", fontFamily: "'Inter', sans-serif" }}>
+      <div style={{ maxWidth: 1120, margin: "0 auto" }}>
+        {children}
+      </div>
     </div>
   );
 }
 
 function Header({ title, subtitle }) {
   return (
-    <div style={{ textAlign: "center", marginBottom: 36 }}>
-      <h1 style={{ fontSize: 28, fontWeight: 800, margin: 0 }}>{title}</h1>
-      {subtitle && <p style={{ color: "#666", fontSize: 14, marginTop: 8 }}>{subtitle}</p>}
+    <div style={{ textAlign: "center", marginBottom: 48 }}>
+      <h1 style={{ fontSize: 36, fontWeight: 900, textTransform: "uppercase", letterSpacing: -0.5, margin: 0 }}>{title}</h1>
+      {subtitle && <p style={{ color: "#555", fontSize: 16, marginTop: 12, fontWeight: 500 }}>{subtitle}</p>}
     </div>
   );
 }
 
 function Card({ title, children }) {
   return (
-    <div style={{ border: "1px solid #e8e8e8", padding: "20px 22px" }}>
-      <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", marginBottom: 16, paddingBottom: 10, borderBottom: "1px solid #f0f0f0" }}>
+    <div style={{ border: "2px solid #000", boxShadow: "6px 6px 0px #000", padding: "32px 28px", background: "#fff", height: "100%", boxSizing: "border-box" }}>
+      <div style={{ fontSize: 12, fontWeight: 900, letterSpacing: 2, textTransform: "uppercase", marginBottom: 20, paddingBottom: 12, borderBottom: "2px solid #000" }}>
         {title}
       </div>
       {children}
@@ -534,13 +577,13 @@ function ChoiceCard({ icon, title, desc, onClick }) {
   return (
     <div
       onClick={onClick}
-      style={{ border: "1px solid #e0e0e0", padding: "32px 24px", textAlign: "center", cursor: "pointer", transition: "all 0.15s" }}
-      onMouseEnter={(e) => { e.currentTarget.style.border = "1px solid #000"; e.currentTarget.style.boxShadow = "4px 4px 0 #000"; }}
-      onMouseLeave={(e) => { e.currentTarget.style.border = "1px solid #e0e0e0"; e.currentTarget.style.boxShadow = "none"; }}
+      style={{ border: "2px solid #000", boxShadow: "6px 6px 0px #000", padding: "48px 32px", textAlign: "center", cursor: "pointer", transition: "all 0.15s", background: "#fff", height: "100%", boxSizing: "border-box" }}
+      onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "10px 10px 0 #000"; e.currentTarget.style.transform = "translate(-4px, -4px)"; }}
+      onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "6px 6px 0 #000"; e.currentTarget.style.transform = "none"; }}
     >
-      <div style={{ fontSize: 32, marginBottom: 12 }}>{icon}</div>
-      <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>{title}</div>
-      <div style={{ color: "#666", fontSize: 13, lineHeight: 1.6 }}>{desc}</div>
+      <div style={{ fontSize: 44, marginBottom: 16 }}>{icon}</div>
+      <div style={{ fontWeight: 900, fontSize: 18, marginBottom: 12, textTransform: "uppercase", letterSpacing: 0.5 }}>{title}</div>
+      <div style={{ color: "#555", fontSize: 14, lineHeight: 1.6 }}>{desc}</div>
     </div>
   );
 }
@@ -550,7 +593,7 @@ function Spinner() {
     <div style={{ display: "inline-block" }}>
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
-        .ats-spinner { width: 40px; height: 40px; border: 3px solid #eee; border-top-color: #000; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        .ats-spinner { width: 48px; height: 48px; border: 4px solid #eee; border-top-color: #000; border-radius: 50%; animation: spin 0.8s linear infinite; }
       `}</style>
       <div className="ats-spinner" />
     </div>
