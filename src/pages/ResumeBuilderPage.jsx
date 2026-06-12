@@ -309,7 +309,8 @@ function ResumeBuilderPage() {
         bullets: { ...prev.bullets, [key]: improved }
       }));
     } catch (err) {
-      alert("Something went wrong. Try again.");
+      console.error("AI Bullet Improver failed:", err);
+      alert("AI Bullet Improver failed: " + err.message);
     } finally {
       setAiLoading(prev => ({
         ...prev,
@@ -352,7 +353,8 @@ function ResumeBuilderPage() {
       });
       setResume(prev => ({ ...prev, summary: summaryText }));
     } catch (err) {
-      alert("Something went wrong. Try again.");
+      console.error("AI Summary Generation failed:", err);
+      alert("AI Summary Generation failed: " + err.message);
     } finally {
       setAiLoading(prev => ({ ...prev, summary: false }));
     }
@@ -377,7 +379,8 @@ function ResumeBuilderPage() {
         return { ...prev, experience: exp };
       });
     } catch (err) {
-      alert("Something went wrong. Try again.");
+      console.error("AI Bullet Generation failed:", err);
+      alert("AI Bullet Generation failed: " + err.message);
     } finally {
       setAiLoading(prev => ({
         ...prev,
