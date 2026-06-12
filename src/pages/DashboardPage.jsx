@@ -6,6 +6,8 @@ import { collection, query, where, orderBy, getDocs, doc, updateDoc, deleteDoc }
 import Navbar from '../components/Navbar';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { TEMPLATE_COMPONENTS } from '../components/ResumeTemplates';
 
 function DashboardPage() {
   const { user, profile, refreshProfile } = useAuth();
@@ -71,109 +73,15 @@ function DashboardPage() {
     }
 
     const printEl = document.createElement('div');
-    printEl.className = `bg-white p-12 flex flex-col gap-8 template-${resume.template || 'software-engineer'}`;
     printEl.style.width = '595px';
     printEl.style.minHeight = '842px';
     printEl.style.position = 'fixed';
     printEl.style.left = '-9999px';
     printEl.style.top = '-9999px';
+    printEl.className = 'bg-white p-0';
 
-    const bulletsHtml = (bullets) => {
-      if (!bullets || bullets.length === 0) return '';
-      return bullets.map(b => `<li class="font-body-md text-body-md text-on-background leading-relaxed">${b}</li>`).join('');
-    };
-
-    printEl.innerHTML = `
-      <header class="border-b-2 border-primary pb-6 preview-header">
-        <h1 class="font-display text-display uppercase leading-tight tracking-tighter">${(resume.personalInfo?.name || 'YOUR NAME').toUpperCase()}</h1>
-        ${resume.personalInfo?.role ? `<p class="font-label-sm text-label-sm text-secondary uppercase tracking-widest mt-1">${resume.personalInfo.role}</p>` : ''}
-        <div class="flex flex-wrap gap-4 mt-2 font-label-sm text-label-sm uppercase tracking-widest text-secondary">
-          <span>${resume.personalInfo?.location || ''}</span>
-          ${resume.personalInfo?.location ? '<span>•</span>' : ''}
-          <span>${resume.personalInfo?.email || ''}</span>
-          ${resume.personalInfo?.email ? '<span>•</span>' : ''}
-          <span>${resume.personalInfo?.phone || ''}</span>
-          ${resume.personalInfo?.linkedin ? '<span>•</span>' : ''}
-          <span>${resume.personalInfo?.linkedin || ''}</span>
-        </div>
-      </header>
-      <div class="grid grid-cols-1 gap-10 preview-body">
-        ${resume.summary ? `
-          <section class="space-y-2">
-            <h4 class="font-label-sm text-label-sm uppercase font-bold border-b border-primary pb-1 w-fit pr-8">Summary</h4>
-            <p class="font-body-md text-body-md leading-relaxed">${resume.summary}</p>
-          </section>
-        ` : ''}
-        
-        ${resume.experience && resume.experience.length > 0 ? `
-          <section class="space-y-6">
-            <h4 class="font-label-sm text-label-sm uppercase font-bold border-b border-primary pb-1 w-fit pr-8">Experience</h4>
-            ${resume.experience.map(exp => `
-              <div class="space-y-2">
-                <div class="flex justify-between items-baseline">
-                  <h5 class="font-headline-md text-headline-md uppercase">${exp.company || 'Company'}</h5>
-                  <span class="font-label-sm text-label-sm">${exp.duration || ''}</span>
-                </div>
-                <p class="font-label-sm text-label-sm italic">${exp.role || ''}</p>
-                <ul class="list-disc ml-4 space-y-1">
-                  ${bulletsHtml(exp.bullets)}
-                </ul>
-              </div>
-            `).join('')}
-          </section>
-        ` : ''}
-
-        ${resume.education && resume.education.length > 0 ? `
-          <section class="space-y-4">
-            <h4 class="font-label-sm text-label-sm uppercase font-bold border-b border-primary pb-1 w-fit pr-8">Education</h4>
-            ${resume.education.map(edu => `
-              <div class="flex justify-between items-baseline">
-                <div>
-                  <h5 class="font-headline-md text-headline-md uppercase">${edu.institution || ''}</h5>
-                  <p class="font-body-md text-body-md text-secondary">${edu.degree || ''}</p>
-                </div>
-                <span class="font-label-sm text-label-sm">${edu.year || ''}</span>
-              </div>
-            `).join('')}
-          </section>
-        ` : ''}
-
-        ${resume.skills && resume.skills.length > 0 ? `
-          <section class="space-y-4">
-            <h4 class="font-label-sm text-label-sm uppercase font-bold border-b border-primary pb-1 w-fit pr-8">Core Skills</h4>
-            <div class="flex flex-wrap gap-2">
-              ${resume.skills.map(skill => `
-                <span class="px-3 py-1 border border-primary text-[10px] font-bold uppercase">${skill}</span>
-              `).join('')}
-            </div>
-          </section>
-        ` : ''}
-
-        ${resume.projects && resume.projects.length > 0 ? `
-          <section class="space-y-4">
-            <h4 class="font-label-sm text-label-sm uppercase font-bold border-b border-primary pb-1 w-fit pr-8">Projects</h4>
-            ${resume.projects.map(proj => `
-              <div class="space-y-1">
-                <div class="flex justify-between items-baseline">
-                  <h5 class="font-headline-md text-headline-md uppercase">${proj.name || ''}</h5>
-                  ${proj.link ? `<a href="${proj.link}" class="font-label-sm text-label-sm underline">${proj.link}</a>` : ''}
-                </div>
-                <p class="font-body-md text-body-md text-secondary">${proj.description || ''}</p>
-              </div>
-            `).join('')}
-          </section>
-        ` : ''}
-
-        ${resume.achievements && resume.achievements.length > 0 ? `
-          <section class="space-y-4">
-            <h4 class="font-label-sm text-label-sm uppercase font-bold border-b border-primary pb-1 w-fit pr-8">Achievements</h4>
-            <ul class="list-disc ml-4 space-y-1">
-              ${resume.achievements.map(ach => ach ? `<li class="font-body-md text-body-md text-on-background leading-relaxed">${ach}</li>` : '').join('')}
-            </ul>
-          </section>
-        ` : ''}
-      </div>
-    `;
+    const ActiveTemplate = TEMPLATE_COMPONENTS[resume.template || 'classic'] || TEMPLATE_COMPONENTS['classic'];
+    printEl.innerHTML = renderToStaticMarkup(<ActiveTemplate data={resume} editable={false} onEdit={() => {}} />);
 
     document.body.appendChild(printEl);
 
