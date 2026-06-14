@@ -36,6 +36,7 @@ function LandingPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [showDemo, setShowDemo] = useState(false);
+  const [seoOpen, setSeoOpen] = useState(false);
 
   const handleCtaClick = () => {
     if (user) {
@@ -223,29 +224,130 @@ function LandingPage() {
         </section>
       </main>
 
-      {/* SEO Content Section */}
-      <section className="px-margin-mobile md:px-margin-desktop py-20 border-t border-primary bg-zinc-50/50">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="font-display text-headline-lg mb-8 text-center">
-            Why PREPHAS Helps You Get More Interviews
-          </h2>
-          <div className="font-body-md text-secondary space-y-6 leading-relaxed">
-            <p>
-              In today's highly competitive job market, submitting a standard resume is no longer enough. The vast majority of medium and large-sized companies, both in India and globally, utilize an Applicant Tracking System (ATS) to scan, filter, and rank applications before they are ever read by human recruiters. In fact, research indicates that up to 75% of resumes are filtered out automatically before reaching a hiring manager. This digital gatekeeping makes ATS optimization an essential part of the modern job application process. PREPHAS is built specifically to address this challenge, offering an end-to-end suite of tools designed to maximize your visibility and help you secure more callbacks.
-            </p>
-            <p>
-              At the heart of the PREPHAS platform is our advanced ATS Score Checker. By uploading your resume, our system analyzes its structural integrity, formatting choices, and content depth. It checks for common issues that cause software parsing errors, such as tables, text boxes, non-standard fonts, or complex layouts. The score checker then generates a detailed, actionable report with a rating from 0 to 100. This immediate feedback highlights exactly what is working and what needs correction, giving you a clear roadmap to optimize your document for digital crawlers.
-            </p>
-            <p>
-              Beyond structure, the actual vocabulary used in your resume plays a vital role. Recruiters program ATS systems with specific search queries consisting of skills, tools, and methodologies required for the role. If your resume lacks these critical terms, it will rank poorly. PREPHAS solves this through our deep Job Description Matching tool. By pasting a target job description, our AI compares it against your experience, highlighting missing keywords and recommending precise edits. This ensures your resume speaks the exact language of the recruiter, significantly boosting your placement on the candidate leaderboard.
-            </p>
-            <p>
-              Writing impactful experience bullet points is another hurdle for many job seekers. PREPHAS features a built-in AI Bullet Generator that transforms weak, task-oriented descriptions into high-impact, results-driven achievements. By focusing on action verbs and quantifiable metrics, the AI helps you construct compelling professional stories. To complement this, our real-time Resume Strength Meter provides immediate visual feedback as you make updates, ensuring your document maintains the highest standard of quality.
-            </p>
-            <p>
-              Finally, layout and styling can determine whether a recruiter spends more than the average six seconds reviewing your profile. PREPHAS provides professionally designed, recruiter-approved resume templates. These presets are intentionally structured to guide the human eye to your most impressive qualifications while remaining fully parsable by applicant tracking systems. Whether you are a software engineer, creative designer, senior executive, or a recent graduate looking for entry-level roles, PREPHAS ensures your presentation is polished, professional, and ready to stand out. By using our free professional resume builder, you bridge the gap between human intuition and machine intelligence, preparing a document that impresses both bots and hiring managers. Stop sending your resume into a black hole—use PREPHAS to build an optimized, interview-winning document today.
-            </p>
+      {/* Modern Feature Showcase Section */}
+      <section className="px-margin-mobile md:px-margin-desktop py-24 border-t border-b border-primary bg-zinc-50/30">
+        <div className="max-w-container-max-width mx-auto">
+          <div className="text-center mb-16">
+            <span className="font-label-sm text-primary uppercase tracking-widest block mb-4">Core Platform Features</span>
+            <h2 className="font-display text-headline-lg md:text-[48px] leading-tight">Built for modern job applications</h2>
           </div>
+          
+          {/* 3-column desktop, 2-column tablet, 1-column mobile grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Card 1 */}
+            <div className="border border-primary bg-white p-8 flex flex-col justify-between hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-150 min-h-[200px]">
+              <div>
+                <span className="material-symbols-outlined text-[32px] text-primary mb-4" data-icon="analytics">analytics</span>
+                <h3 className="font-headline-md text-headline-md mb-2 text-primary">ATS Score Checker</h3>
+                <p className="font-body-md text-secondary text-sm leading-relaxed">Instant ATS analysis with actionable recommendations.</p>
+              </div>
+            </div>
+
+            {/* Card 2 */}
+            <div className="border border-primary bg-white p-8 flex flex-col justify-between hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-150 min-h-[200px]">
+              <div>
+                <span className="material-symbols-outlined text-[32px] text-primary mb-4" data-icon="person_search">person_search</span>
+                <h3 className="font-headline-md text-headline-md mb-2 text-primary">Job Match Analysis</h3>
+                <p className="font-body-md text-secondary text-sm leading-relaxed">Compare resumes against job descriptions and measure relevance.</p>
+              </div>
+            </div>
+
+            {/* Card 3 */}
+            <div className="border border-primary bg-white p-8 flex flex-col justify-between hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-150 min-h-[200px]">
+              <div>
+                <span className="material-symbols-outlined text-[32px] text-primary mb-4" data-icon="auto_awesome">auto_awesome</span>
+                <h3 className="font-headline-md text-headline-md mb-2 text-primary">AI Resume Suggestions</h3>
+                <p className="font-body-md text-secondary text-sm leading-relaxed">Improve wording, impact, and keyword optimization.</p>
+              </div>
+            </div>
+
+            {/* Card 4 */}
+            <div className="border border-primary bg-white p-8 flex flex-col justify-between hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-150 min-h-[200px]">
+              <div>
+                <span className="material-symbols-outlined text-[32px] text-primary mb-4" data-icon="description">description</span>
+                <h3 className="font-headline-md text-headline-md mb-2 text-primary">Professional Templates</h3>
+                <p className="font-body-md text-secondary text-sm leading-relaxed">ATS-friendly resume templates for different careers.</p>
+              </div>
+            </div>
+
+            {/* Card 5 */}
+            <div className="border border-primary bg-white p-8 flex flex-col justify-between hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-150 min-h-[200px]">
+              <div>
+                <span className="material-symbols-outlined text-[32px] text-primary mb-4" data-icon="download">download</span>
+                <h3 className="font-headline-md text-headline-md mb-2 text-primary">One-Click PDF Export</h3>
+                <p className="font-body-md text-secondary text-sm leading-relaxed">Download clean recruiter-ready resumes instantly.</p>
+              </div>
+            </div>
+
+            {/* Card 6 */}
+            <div className="border border-primary bg-white p-8 flex flex-col justify-between hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-150 min-h-[200px]">
+              <div>
+                <span className="material-symbols-outlined text-[32px] text-primary mb-4" data-icon="speed">speed</span>
+                <h3 className="font-headline-md text-headline-md mb-2 text-primary">Resume Strength Meter</h3>
+                <p className="font-body-md text-secondary text-sm leading-relaxed">Real-time feedback while building your resume.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* CTA below cards */}
+          <div className="mt-20 border border-primary p-12 bg-white block-shadow text-center max-w-3xl mx-auto">
+            <h3 className="font-display text-headline-lg mb-6 text-primary">Ready to Build a Resume Recruiters Notice?</h3>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <button 
+                onClick={handleCtaClick} 
+                className="w-full sm:w-auto bg-primary text-on-primary px-8 py-4 font-label-sm uppercase tracking-widest hover:opacity-90 transition-all text-sm"
+              >
+                Build My Resume
+              </button>
+              <button 
+                onClick={() => {
+                  if (user) navigate('/ats-analyzer');
+                  else navigate('/signup');
+                }} 
+                className="w-full sm:w-auto bg-surface border border-primary text-primary px-8 py-4 font-label-sm uppercase tracking-widest hover:bg-primary hover:text-on-primary transition-all text-sm"
+              >
+                Check ATS Score
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SEO Content Section (Preserved inside an expandable accordion) */}
+      <section className="px-margin-mobile md:px-margin-desktop py-12 bg-zinc-50/30">
+        <div className="max-w-4xl mx-auto">
+          <button 
+            onClick={() => setSeoOpen(!seoOpen)}
+            className="w-full flex justify-between items-center py-6 px-8 border border-primary bg-white hover:bg-zinc-50 transition-colors cursor-pointer select-none text-left"
+            aria-expanded={seoOpen}
+          >
+            <span className="font-headline-md text-headline-md text-primary font-bold">
+              Learn More About ATS-Friendly Resumes
+            </span>
+            <span className="material-symbols-outlined text-2xl text-primary transition-transform duration-200" style={{ transform: seoOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+              expand_more
+            </span>
+          </button>
+          
+          {seoOpen && (
+            <div className="border-x border-b border-primary p-8 bg-white font-body-md text-secondary space-y-6 leading-relaxed transition-all duration-300">
+              <p>
+                In today's highly competitive job market, submitting a standard resume is no longer enough. The vast majority of medium and large-sized companies, both in India and globally, utilize an Applicant Tracking System (ATS) to scan, filter, and rank applications before they are ever read by human recruiters. In fact, research indicates that up to 75% of resumes are filtered out automatically before reaching a hiring manager. This digital gatekeeping makes ATS optimization an essential part of the modern job application process. PREPHAS is built specifically to address this challenge, offering an end-to-end suite of tools designed to maximize your visibility and help you secure more callbacks.
+              </p>
+              <p>
+                At the heart of the PREPHAS platform is our advanced ATS Score Checker. By uploading your resume, our system analyzes its structural integrity, formatting choices, and content depth. It checks for common issues that cause software parsing errors, such as tables, text boxes, non-standard fonts, or complex layouts. The score checker then generates a detailed, actionable report with a rating from 0 to 100. This immediate feedback highlights exactly what is working and what needs correction, giving you a clear roadmap to optimize your document for digital crawlers.
+              </p>
+              <p>
+                Beyond structure, the actual vocabulary used in your resume plays a vital role. Recruiters program ATS systems with specific search queries consisting of skills, tools, and methodologies required for the role. If your resume lacks these critical terms, it will rank poorly. PREPHAS solves this through our deep Job Description Matching tool. By pasting a target job description, our AI compares it against your experience, highlighting missing keywords and recommending precise edits. This ensures your resume speaks the exact language of the recruiter, significantly boosting your placement on the candidate leaderboard.
+              </p>
+              <p>
+                Writing impactful experience bullet points is another hurdle for many job seekers. PREPHAS features a built-in AI Bullet Generator that transforms weak, task-oriented descriptions into high-impact, results-driven achievements. By focusing on action verbs and quantifiable metrics, the AI helps you construct compelling professional stories. To complement this, our real-time Resume Strength Meter provides immediate visual feedback as you make updates, ensuring your document maintains the highest standard of quality.
+              </p>
+              <p>
+                Finally, layout and styling can determine whether a recruiter spends more than the average six seconds reviewing your profile. PREPHAS provides professionally designed, recruiter-approved resume templates. These presets are intentionally structured to guide the human eye to your most impressive qualifications while remaining fully parsable by applicant tracking systems. Whether you are a software engineer, creative designer, senior executive, or a recent graduate looking for entry-level roles, PREPHAS ensures your presentation is polished, professional, and ready to stand out. By using our free professional resume builder, you bridge the gap between human intuition and machine intelligence, preparing a document that impresses both bots and hiring managers. Stop sending your resume into a black hole—use PREPHAS to build an optimized, interview-winning document today.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
