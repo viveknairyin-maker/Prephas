@@ -838,110 +838,91 @@ export default function ResumeTemplates({ resumeData, onSelectTemplate }) {
       {/* Header */}
       <div style={{ maxWidth: 900, margin: "0 auto 28px" }}>
         <h1 style={{ fontSize: 24, fontWeight: 800, margin: 0 }}>Choose Your Template</h1>
-        <p style={{ color: "#666", marginTop: 8, fontSize: 14 }}>All templates are ATS-friendly and recruiter-approved. Swipe to browse on mobile.</p>
+        <p style={{ color: "#666", marginTop: 8, fontSize: 14 }}>All templates are ATS-friendly and recruiter-approved. Scroll down to browse all options.</p>
       </div>
 
-      {/* Template grid — swipeable on mobile, CSS grid on desktop */}
+      {/* Template grid — responsive vertical grid for both mobile and desktop */}
       {!preview && (
-        <>
-          {/* Mobile: horizontal scroll with snap */}
-          <div
-            className="lg:hidden"
-            style={{
-              display: "flex",
-              overflowX: "auto",
-              gap: 16,
-              paddingBottom: 16,
-              scrollSnapType: "x mandatory",
-              WebkitOverflowScrolling: "touch",
-              msOverflowStyle: "none",
-              scrollbarWidth: "none",
-            }}
-          >
-            {TEMPLATES.map((t) => (
-              <div
-                key={t.id}
-                style={{
-                  minWidth: "72vw",
-                  maxWidth: 280,
-                  scrollSnapAlign: "start",
-                  border: selected === t.id ? "2px solid #000" : "1px solid #e0e0e0",
-                  cursor: "pointer",
-                  background: "#fff",
-                  flexShrink: 0,
-                  boxShadow: selected === t.id ? "4px 4px 0 #000" : "none",
-                  transition: "all 0.15s",
-                }}
-                onClick={() => setPreview(t.id)}
-              >
-                <TemplateThumbnail id={t.id} />
-                <div style={{ padding: "14px 14px 12px" }}>
+        <div
+          style={{
+            maxWidth: 900,
+            margin: "0 auto",
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+            gap: 24,
+          }}
+        >
+          {TEMPLATES.map((t) => (
+            <div
+              key={t.id}
+              onClick={() => setPreview(t.id)}
+              style={{
+                border: selected === t.id ? "2px solid #000" : "1px solid #e0e0e0",
+                cursor: "pointer",
+                transition: "all 0.15s",
+                background: "#fff",
+                display: "flex",
+                flexDirection: "column",
+                height: "100%",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "#000";
+                e.currentTarget.style.boxShadow = "4px 4px 0 #000";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = selected === t.id ? "#000" : "#e0e0e0";
+                e.currentTarget.style.boxShadow = selected === t.id ? "4px 4px 0 #000" : "none";
+              }}
+            >
+              <TemplateThumbnail id={t.id} />
+              <div style={{ padding: "14px 16px", borderTop: "1px solid #eee", display: "flex", flexDirection: "column", flexGrow: 1, justifyContent: "space-between" }}>
+                <div>
                   <div style={{ fontWeight: 700, fontSize: 14 }}>{t.label}</div>
                   <div style={{ color: "#888", fontSize: 12, marginTop: 2 }}>{t.role}</div>
-                  <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
-                    <button
-                      onClick={(e) => { e.stopPropagation(); setPreview(t.id); }}
-                      style={{ flex: 1, padding: "10px 0", border: "1px solid #000", background: "#fff", cursor: "pointer", fontSize: 12, fontWeight: 600, minHeight: 44 }}
-                    >
-                      Preview
-                    </button>
-                    <button
-                      onClick={(e) => { e.stopPropagation(); handleSelect(t.id); }}
-                      style={{ flex: 1, padding: "10px 0", border: "none", background: "#000", color: "#fff", cursor: "pointer", fontSize: 12, fontWeight: 600, minHeight: 44 }}
-                    >
-                      {selected === t.id ? "✓ Selected" : "Use This"}
-                    </button>
-                  </div>
+                </div>
+                <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setPreview(t.id);
+                    }}
+                    style={{
+                      flex: 1,
+                      padding: "7px 0",
+                      border: "1px solid #000",
+                      background: "#fff",
+                      cursor: "pointer",
+                      fontSize: 12,
+                      fontWeight: 600,
+                      minHeight: 36,
+                    }}
+                  >
+                    Preview
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelect(t.id);
+                    }}
+                    style={{
+                      flex: 1,
+                      padding: "7px 0",
+                      border: "none",
+                      background: "#000",
+                      color: "#fff",
+                      cursor: "pointer",
+                      fontSize: 12,
+                      fontWeight: 600,
+                      minHeight: 36,
+                    }}
+                  >
+                    {selected === t.id ? "✓ Selected" : "Use This"}
+                  </button>
                 </div>
               </div>
-            ))}
-          </div>
-          {/* Mobile scroll indicator */}
-          <div className="lg:hidden" style={{ textAlign: "center", fontSize: 11, color: "#aaa", marginTop: 4, marginBottom: 16 }}>
-            ← Swipe to see all templates →
-          </div>
-
-          {/* Desktop: CSS grid */}
-          <div
-            className="hidden lg:grid"
-            style={{ maxWidth: 900, margin: "0 auto", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 24 }}
-          >
-            {TEMPLATES.map((t) => (
-              <div
-                key={t.id}
-                onClick={() => setPreview(t.id)}
-                style={{
-                  border: selected === t.id ? "2px solid #000" : "1px solid #e0e0e0",
-                  cursor: "pointer",
-                  transition: "all 0.15s",
-                  background: "#fff",
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#000"; e.currentTarget.style.boxShadow = "4px 4px 0 #000"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = selected === t.id ? "#000" : "#e0e0e0"; e.currentTarget.style.boxShadow = selected === t.id ? "4px 4px 0 #000" : "none"; }}
-              >
-                <TemplateThumbnail id={t.id} />
-                <div style={{ padding: "14px 16px", borderTop: "1px solid #eee" }}>
-                  <div style={{ fontWeight: 700, fontSize: 14 }}>{t.label}</div>
-                  <div style={{ color: "#888", fontSize: 12, marginTop: 2 }}>{t.role}</div>
-                  <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
-                    <button
-                      onClick={(e) => { e.stopPropagation(); setPreview(t.id); }}
-                      style={{ flex: 1, padding: "7px 0", border: "1px solid #000", background: "#fff", cursor: "pointer", fontSize: 12, fontWeight: 600 }}
-                    >
-                      Preview
-                    </button>
-                    <button
-                      onClick={(e) => { e.stopPropagation(); handleSelect(t.id); }}
-                      style={{ flex: 1, padding: "7px 0", border: "none", background: "#000", color: "#fff", cursor: "pointer", fontSize: 12, fontWeight: 600 }}
-                    >
-                      {selected === t.id ? "✓ Selected" : "Use This"}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </>
+            </div>
+          ))}
+        </div>
       )}
 
       {/* Full preview mode — scales to fit any screen */}
