@@ -4,26 +4,26 @@
   "redirects": [
     {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "www.prephas.online" }],
-      "destination": "https://prephas.online/:path*",
+      "has": [{ "type": "host", "value": "prephas.online" }],
+      "destination": "https://www.prephas.online/:path*",
       "permanent": true
     },
     {
       "source": "/:path*",
       "has": [{ "type": "host", "value": "prephas.vercel.app" }],
-      "destination": "https://prephas.online/:path*",
+      "destination": "https://www.prephas.online/:path*",
       "permanent": true
     },
     {
       "source": "/:path*",
       "has": [{ "type": "host", "value": "prephas.in" }],
-      "destination": "https://prephas.online/:path*",
+      "destination": "https://www.prephas.online/:path*",
       "permanent": true
     },
     {
       "source": "/:path*",
       "has": [{ "type": "host", "value": "www.prephas.in" }],
-      "destination": "https://prephas.online/:path*",
+      "destination": "https://www.prephas.online/:path*",
       "permanent": true
     }
   ],

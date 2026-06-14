@@ -83,7 +83,7 @@ function TemplatesPage() {
       <Helmet>
         <title>Resume Templates | Professional ATS-Friendly Resume Designs</title>
         <meta name="description" content="Build ATS-friendly resumes with PREPHAS. Free AI resume builder, ATS score checker, job match analysis, resume templates, and instant PDF export." />
-        <link rel="canonical" href="https://prephas.online/templates" />
+        <link rel="canonical" href="https://www.prephas.online/templates" />
       </Helmet>
       <Navbar />
       <main className="pt-20">

@@ -687,7 +687,7 @@ service cloud.firestore {
       <Helmet>
         <title>AI Resume Builder | PREPHAS</title>
         <meta name="description" content="Build ATS-friendly resumes with PREPHAS. Free AI resume builder, ATS score checker, job match analysis, resume templates, and instant PDF export." />
-        <link rel="canonical" href="https://prephas.online/resume-builder" />
+        <link rel="canonical" href="https://www.prephas.online/resume-builder" />
       </Helmet>
       {/* Top Navigation Bar */}
       <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-3 md:px-6 lg:px-margin-desktop py-0 bg-surface border-b border-primary h-14 md:h-16 lg:h-20">

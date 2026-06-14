@@ -13,4 +13,4 @@ Disallow: /ats-analyzer/
 Disallow: /match/
 Disallow: /settings
 
-Sitemap: https://prephas.online/sitemap.xml
+Sitemap: https://www.prephas.online/sitemap.xml

@@ -73,7 +73,7 @@ function LandingPage() {
       <Helmet>
         <title>PREPHAS | Free ATS Resume Builder & ATS Score Checker</title>
         <meta name="description" content="Build ATS-friendly resumes with PREPHAS. Free AI resume builder, ATS score checker, job match analysis, resume templates, and instant PDF export." />
-        <link rel="canonical" href="https://prephas.online/" />
+        <link rel="canonical" href="https://www.prephas.online/" />
       </Helmet>
 
       <Navbar />

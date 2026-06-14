@@ -54,7 +54,7 @@ function PricingPage() {
       <Helmet>
         <title>Pricing | PREPHAS Resume Builder</title>
         <meta name="description" content="Build ATS-friendly resumes with PREPHAS. Free AI resume builder, ATS score checker, job match analysis, resume templates, and instant PDF export." />
-        <link rel="canonical" href="https://prephas.online/pricing" />
+        <link rel="canonical" href="https://www.prephas.online/pricing" />
       </Helmet>
       <Navbar />
 

@@ -92,7 +92,7 @@ function LoginPage() {
       <Helmet>
         <title>Login | PREPHAS Resume Builder</title>
         <meta name="description" content="Build ATS-friendly resumes with PREPHAS. Free AI resume builder, ATS score checker, job match analysis, resume templates, and instant PDF export." />
-        <link rel="canonical" href="https://prephas.online/login" />
+        <link rel="canonical" href="https://www.prephas.online/login" />
       </Helmet>
       <div className="absolute inset-0 grid-bg pointer-events-none"></div>
       

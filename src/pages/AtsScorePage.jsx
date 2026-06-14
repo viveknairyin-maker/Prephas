@@ -62,7 +62,7 @@ function AtsScorePage() {
       <Helmet>
         <title>ATS Resume Checker | Analyze Resume ATS Score</title>
         <meta name="description" content="Build ATS-friendly resumes with PREPHAS. Free AI resume builder, ATS score checker, job match analysis, resume templates, and instant PDF export." />
-        <link rel="canonical" href="https://prephas.online/ats-analyzer" />
+        <link rel="canonical" href="https://www.prephas.online/ats-analyzer" />
       </Helmet>
       <Navbar />
       <main className="pt-16 md:pt-20">
