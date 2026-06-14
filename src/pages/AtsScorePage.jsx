@@ -4,6 +4,7 @@ import { useAuth } from '../components/AuthContext';
 import { db, doc, getDoc } from '../utils/firebase';
 import Navbar from '../components/Navbar';
 import ATSScore from '../components/ATSScore';
+import { Helmet } from 'react-helmet-async';
 
 function AtsScorePage() {
   const { id } = useParams();
@@ -58,6 +59,11 @@ function AtsScorePage() {
 
   return (
     <div className="bg-surface text-on-surface font-body-md min-h-screen">
+      <Helmet>
+        <title>ATS Resume Checker | Analyze Resume ATS Score</title>
+        <meta name="description" content="Build ATS-friendly resumes with PREPHAS. Free AI resume builder, ATS score checker, job match analysis, resume templates, and instant PDF export." />
+        <link rel="canonical" href="https://prephas.online/ats-analyzer" />
+      </Helmet>
       <Navbar />
       <main className="pt-16 md:pt-20">
         <ATSScore existingResumeData={resume} />

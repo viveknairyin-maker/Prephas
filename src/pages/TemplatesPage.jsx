@@ -4,6 +4,7 @@ import { useAuth } from '../components/AuthContext';
 import { db, doc, updateDoc, collection, query, where, getDocs, addDoc } from '../utils/firebase';
 import Navbar from '../components/Navbar';
 import ResumeTemplates from '../components/ResumeTemplates';
+import Footer from '../components/Footer';
 import { Helmet } from 'react-helmet-async';
 
 function TemplatesPage() {
@@ -80,9 +81,9 @@ function TemplatesPage() {
   return (
     <div className="font-body-md text-body-md bg-background min-h-screen">
       <Helmet>
-        <title>Resume Templates — ATS-Friendly | PREPHAS</title>
-        <meta name="description" content="Choose from 5 ATS-friendly resume templates for Software Engineers, Freshers, Data Analysts, Designers, and Marketing professionals. Free to use." />
-        <link rel="canonical" href="https://prephas.in/templates" />
+        <title>Resume Templates | Professional ATS-Friendly Resume Designs</title>
+        <meta name="description" content="Build ATS-friendly resumes with PREPHAS. Free AI resume builder, ATS score checker, job match analysis, resume templates, and instant PDF export." />
+        <link rel="canonical" href="https://prephas.online/templates" />
       </Helmet>
       <Navbar />
       <main className="pt-20">
@@ -91,6 +92,7 @@ function TemplatesPage() {
           onSelectTemplate={handleUseTemplate} 
         />
       </main>
+      <Footer />
     </div>
   );
 }

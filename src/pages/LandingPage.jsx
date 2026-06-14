@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import { Helmet } from 'react-helmet-async';
 
 function FAQItem({ question, answer }) {
@@ -46,33 +47,33 @@ function LandingPage() {
 
   const faqs = [
     {
-      q: "What is an ATS resume?",
-      a: "ATS stands for Applicant Tracking System — software companies use to filter resumes before a human sees them. An ATS resume is formatted so it passes these filters. PREPHAS checks your resume against ATS criteria and scores it out of 100."
+      q: "What is an ATS Resume?",
+      a: "An ATS (Applicant Tracking System) resume is formatted to pass through automated recruiting software that companies use to filter job applications. PREPHAS helps you build resumes with the exact layout, structure, and keywords that ATS systems search for."
     },
     {
-      q: "Is PREPHAS free to use?",
-      a: "Yes. The free plan gives you 3 resume downloads, 2 templates, and a basic ATS score. The Premium plan at ₹99/month unlocks unlimited downloads, all 5 templates, AI improvements, and job description matching."
+      q: "How does ATS Score work?",
+      a: "PREPHAS analyzes your resume against key ATS parameters including contact formatting, section headers, keyword match, and experience bullet points. It gives you a score out of 100 with clear, actionable recommendations to improve."
     },
     {
-      q: "Can I upload my existing resume for ATS check?",
-      a: "Yes. Go to the ATS Score page, upload any PDF resume, and PREPHAS will analyze it with AI and give you a detailed report with specific fixes."
+      q: "Is PREPHAS free?",
+      a: "Yes, PREPHAS offers a free tier that allows you to build your resume and run a basic ATS check. Our premium tier offers unlimited downloads, access to all templates, AI bullet generator, and deep job description matching."
     },
     {
-      q: "How is PREPHAS different from other resume builders?",
-      a: "Most resume builders just help you format a resume. PREPHAS goes further — it scores your resume against ATS systems, matches it to job descriptions, identifies missing keywords, and uses AI to improve every bullet point."
+      q: "Can I download resumes as PDF?",
+      a: "Yes, all resumes created on PREPHAS can be downloaded instantly as print-ready, professional PDFs. The format is designed to be highly readable by both human recruiters and ATS software."
     },
     {
-      q: "What resume templates are available?",
-      a: "PREPHAS has 5 professional templates: Classic Pro for software engineers, Modern Edge for data analysts, Clean Minimal for freshers and graduates, Bold Executive for senior roles, and Sidebar Split for designers and creative professionals."
-    },
+      q: "How does Job Match Analysis work?",
+      a: "You can copy and paste any job description into PREPHAS. Our AI will analyze the posting, compare it with your resume, identify missing skills and keywords, and calculate a match score."
+    }
   ];
 
   return (
     <div className="bg-surface text-on-surface antialiased overflow-x-hidden min-h-screen">
       <Helmet>
-        <title>PREPHAS — Free ATS Resume Builder | Get More Interviews</title>
-        <meta name="description" content="Build an ATS-friendly resume that recruiters actually notice. Free AI-powered resume builder with ATS score, job matching, and PDF export." />
-        <link rel="canonical" href="https://prephas.in/" />
+        <title>PREPHAS | Free ATS Resume Builder & ATS Score Checker</title>
+        <meta name="description" content="Build ATS-friendly resumes with PREPHAS. Free AI resume builder, ATS score checker, job match analysis, resume templates, and instant PDF export." />
+        <link rel="canonical" href="https://prephas.online/" />
       </Helmet>
 
       <Navbar />
@@ -222,37 +223,34 @@ function LandingPage() {
         </section>
       </main>
 
-      {/* Footer */}
-      <footer style={{ background: "#000", color: "#fff", padding: "48px 32px" }}>
-        <div style={{ maxWidth: 900, margin: "0 auto", display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: 40 }}>
-          <div>
-            <h2 style={{ fontSize: 20, fontWeight: 800, marginBottom: 12 }}>PREPHAS</h2>
-            <p style={{ color: "#aaa", fontSize: 13, lineHeight: 1.8, maxWidth: 280 }}>
-              Build an ATS-friendly resume that recruiters actually notice. AI-powered. Interview-ready.
+      {/* SEO Content Section */}
+      <section className="px-margin-mobile md:px-margin-desktop py-20 border-t border-primary bg-zinc-50/50">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="font-display text-headline-lg mb-8 text-center">
+            Why PREPHAS Helps You Get More Interviews
+          </h2>
+          <div className="font-body-md text-secondary space-y-6 leading-relaxed">
+            <p>
+              In today's highly competitive job market, submitting a standard resume is no longer enough. The vast majority of medium and large-sized companies, both in India and globally, utilize an Applicant Tracking System (ATS) to scan, filter, and rank applications before they are ever read by human recruiters. In fact, research indicates that up to 75% of resumes are filtered out automatically before reaching a hiring manager. This digital gatekeeping makes ATS optimization an essential part of the modern job application process. PREPHAS is built specifically to address this challenge, offering an end-to-end suite of tools designed to maximize your visibility and help you secure more callbacks.
+            </p>
+            <p>
+              At the heart of the PREPHAS platform is our advanced ATS Score Checker. By uploading your resume, our system analyzes its structural integrity, formatting choices, and content depth. It checks for common issues that cause software parsing errors, such as tables, text boxes, non-standard fonts, or complex layouts. The score checker then generates a detailed, actionable report with a rating from 0 to 100. This immediate feedback highlights exactly what is working and what needs correction, giving you a clear roadmap to optimize your document for digital crawlers.
+            </p>
+            <p>
+              Beyond structure, the actual vocabulary used in your resume plays a vital role. Recruiters program ATS systems with specific search queries consisting of skills, tools, and methodologies required for the role. If your resume lacks these critical terms, it will rank poorly. PREPHAS solves this through our deep Job Description Matching tool. By pasting a target job description, our AI compares it against your experience, highlighting missing keywords and recommending precise edits. This ensures your resume speaks the exact language of the recruiter, significantly boosting your placement on the candidate leaderboard.
+            </p>
+            <p>
+              Writing impactful experience bullet points is another hurdle for many job seekers. PREPHAS features a built-in AI Bullet Generator that transforms weak, task-oriented descriptions into high-impact, results-driven achievements. By focusing on action verbs and quantifiable metrics, the AI helps you construct compelling professional stories. To complement this, our real-time Resume Strength Meter provides immediate visual feedback as you make updates, ensuring your document maintains the highest standard of quality.
+            </p>
+            <p>
+              Finally, layout and styling can determine whether a recruiter spends more than the average six seconds reviewing your profile. PREPHAS provides professionally designed, recruiter-approved resume templates. These presets are intentionally structured to guide the human eye to your most impressive qualifications while remaining fully parsable by applicant tracking systems. Whether you are a software engineer, creative designer, senior executive, or a recent graduate looking for entry-level roles, PREPHAS ensures your presentation is polished, professional, and ready to stand out. By using our free professional resume builder, you bridge the gap between human intuition and machine intelligence, preparing a document that impresses both bots and hiring managers. Stop sending your resume into a black hole—use PREPHAS to build an optimized, interview-winning document today.
             </p>
           </div>
-          <div>
-            <div style={{ fontWeight: 700, marginBottom: 16, fontSize: 13, letterSpacing: 1, textTransform: "uppercase", color: "#888" }}>Product</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              <a href="/builder/new" style={{ color: "#ccc", fontSize: 13, textDecoration: "none" }}>Resume Builder</a>
-              <a href="/templates" style={{ color: "#ccc", fontSize: 13, textDecoration: "none" }}>Templates</a>
-              <a href="/pricing" style={{ color: "#ccc", fontSize: 13, textDecoration: "none" }}>Pricing</a>
-              <a href="/signup" style={{ color: "#ccc", fontSize: 13, textDecoration: "none" }}>Sign Up Free</a>
-            </div>
-          </div>
-          <div>
-            <div style={{ fontWeight: 700, marginBottom: 16, fontSize: 13, letterSpacing: 1, textTransform: "uppercase", color: "#888" }}>Account</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              <a href="/login" style={{ color: "#ccc", fontSize: 13, textDecoration: "none" }}>Login</a>
-              <a href="/dashboard" style={{ color: "#ccc", fontSize: 13, textDecoration: "none" }}>Dashboard</a>
-            </div>
-          </div>
         </div>
-        <div style={{ maxWidth: 900, margin: "32px auto 0", borderTop: "1px solid #333", paddingTop: 24, display: "flex", justifyContent: "space-between", fontSize: 12, color: "#666" }}>
-          <span>© 2026 PREPHAS. All rights reserved.</span>
-          <span>Built for job seekers across India 🇮🇳</span>
-        </div>
-      </footer>
+      </section>
+
+      {/* Footer */}
+      <Footer />
 
       {/* Modal */}
       {showDemo && (

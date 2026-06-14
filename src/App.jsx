@@ -12,6 +12,7 @@ import ResumeBuilderPage from './pages/ResumeBuilderPage';
 import AtsScorePage from './pages/AtsScorePage';
 import JobMatchPage from './pages/JobMatchPage';
 import TemplatesPage from './pages/TemplatesPage';
+import PricingPage from './pages/PricingPage';
 
 function App() {
   return (
@@ -28,6 +29,18 @@ function App() {
               <DashboardPage />
             </ProtectedRoute>
           } />
+          
+          {/* Resume Builder Routes */}
+          <Route path="/resume-builder" element={
+            <ProtectedRoute>
+              <ResumeBuilderPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/resume-builder/:id" element={
+            <ProtectedRoute>
+              <ResumeBuilderPage />
+            </ProtectedRoute>
+          } />
           <Route path="/builder/new" element={
             <ProtectedRoute>
               <ResumeBuilderPage />
@@ -36,6 +49,18 @@ function App() {
           <Route path="/builder/:id" element={
             <ProtectedRoute>
               <ResumeBuilderPage />
+            </ProtectedRoute>
+          } />
+          
+          {/* ATS Analyzer Routes */}
+          <Route path="/ats-analyzer" element={
+            <ProtectedRoute>
+              <AtsScorePage />
+            </ProtectedRoute>
+          } />
+          <Route path="/ats-analyzer/:id" element={
+            <ProtectedRoute>
+              <AtsScorePage />
             </ProtectedRoute>
           } />
           <Route path="/ats" element={
@@ -48,14 +73,22 @@ function App() {
               <AtsScorePage />
             </ProtectedRoute>
           } />
+          
           <Route path="/match/:id" element={
             <ProtectedRoute>
               <JobMatchPage />
             </ProtectedRoute>
           } />
+          
           <Route path="/templates" element={
             <ProtectedRoute>
               <TemplatesPage />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/pricing" element={
+            <ProtectedRoute>
+              <PricingPage />
             </ProtectedRoute>
           } />
         </Routes>

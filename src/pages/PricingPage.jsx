@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
 import { db, doc, updateDoc } from '../utils/firebase';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import { Helmet } from 'react-helmet-async';
 
 function PricingPage() {
@@ -51,9 +52,9 @@ function PricingPage() {
   return (
     <div className="bg-background text-on-background min-h-screen flex flex-col">
       <Helmet>
-        <title>Pricing — Free & Premium Plans | PREPHAS</title>
-        <meta name="description" content="PREPHAS is free to start. Premium plan at just ₹99/month for unlimited downloads, all templates, AI improvements, and job matching." />
-        <link rel="canonical" href="https://prephas.in/pricing" />
+        <title>Pricing | PREPHAS Resume Builder</title>
+        <meta name="description" content="Build ATS-friendly resumes with PREPHAS. Free AI resume builder, ATS score checker, job match analysis, resume templates, and instant PDF export." />
+        <link rel="canonical" href="https://prephas.online/pricing" />
       </Helmet>
       <Navbar />
 
@@ -194,19 +195,7 @@ function PricingPage() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full py-10 px-4 md:px-margin-desktop flex flex-col md:flex-row justify-between items-center border-t border-primary bg-surface gap-6">
-        <div className="mb-8 md:mb-0">
-          <span className="font-display text-headline-md text-primary">PREPHAS AI</span>
-          <p className="font-body-md text-body-md text-secondary mt-2">© 2024 PREPHAS AI. All rights reserved.</p>
-        </div>
-        <div className="flex flex-wrap justify-center gap-8">
-          <a className="font-label-sm text-label-sm text-secondary hover:text-primary transition-colors" href="#">Privacy Policy</a>
-          <a className="font-label-sm text-label-sm text-secondary hover:text-primary transition-colors" href="#">Terms of Service</a>
-          <a className="font-label-sm text-label-sm text-secondary hover:text-primary transition-colors" href="#">Contact</a>
-          <a className="font-label-sm text-label-sm text-secondary hover:text-primary transition-colors" href="#">Twitter</a>
-          <a className="font-label-sm text-label-sm text-secondary hover:text-primary transition-colors" href="#">LinkedIn</a>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

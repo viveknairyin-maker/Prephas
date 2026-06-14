@@ -87,9 +87,9 @@ function SignupPage() {
   return (
     <div className="bg-surface text-on-surface min-h-screen flex items-center justify-center px-margin-mobile md:px-margin-desktop py-20 relative">
       <Helmet>
-        <title>Sign Up Free — PREPHAS Resume Builder</title>
-        <meta name="description" content="Create a free PREPHAS account and start building your ATS-friendly resume in minutes." />
-        <link rel="canonical" href="https://prephas.in/signup" />
+        <title>Sign Up | PREPHAS Resume Builder</title>
+        <meta name="description" content="Build ATS-friendly resumes with PREPHAS. Free AI resume builder, ATS score checker, job match analysis, resume templates, and instant PDF export." />
+        <link rel="canonical" href="https://prephas.online/signup" />
       </Helmet>
       <div className="absolute inset-0 grid-bg pointer-events-none"></div>
       

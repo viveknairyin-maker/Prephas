@@ -7,8 +7,10 @@ Allow: /signup
 
 Disallow: /dashboard
 Disallow: /builder/
+Disallow: /resume-builder/
 Disallow: /ats/
+Disallow: /ats-analyzer/
 Disallow: /match/
 Disallow: /settings
 
-Sitemap: https://prephas.in/sitemap.xml
+Sitemap: https://prephas.online/sitemap.xml

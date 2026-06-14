@@ -90,9 +90,9 @@ function LoginPage() {
   return (
     <div className="bg-surface text-on-surface min-h-screen flex items-center justify-center px-margin-mobile md:px-margin-desktop py-20 relative">
       <Helmet>
-        <title>Login — PREPHAS Resume Builder</title>
-        <meta name="description" content="Log in to your PREPHAS account to access your resumes, ATS scores, and AI resume tools." />
-        <link rel="canonical" href="https://prephas.in/login" />
+        <title>Login | PREPHAS Resume Builder</title>
+        <meta name="description" content="Build ATS-friendly resumes with PREPHAS. Free AI resume builder, ATS score checker, job match analysis, resume templates, and instant PDF export." />
+        <link rel="canonical" href="https://prephas.online/login" />
       </Helmet>
       <div className="absolute inset-0 grid-bg pointer-events-none"></div>
       
