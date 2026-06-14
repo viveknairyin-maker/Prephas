@@ -72,7 +72,7 @@ function SectionTitle({ children }) {
 
 function RightSection({ title, children }) {
   return (
-    <div style={{ marginBottom: 20 }}>
+    <div className="resume-section" style={{ marginBottom: 20 }}>
       <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", marginBottom: 8, paddingBottom: 4, borderBottom: "1px solid #ddd", color: "#000" }}>
         {title}
       </div>
@@ -83,7 +83,7 @@ function RightSection({ title, children }) {
 
 function SidebarSection({ title, children, dark = false }) {
   return (
-    <div style={{ marginBottom: 20 }}>
+    <div className="resume-section" style={{ marginBottom: 20 }}>
       <div style={{ fontSize: 10, letterSpacing: 3, textTransform: "uppercase", color: dark ? "rgba(255,255,255,0.6)" : "#666", marginBottom: 8, fontWeight: "bold" }}>
         {title}
       </div>
@@ -120,14 +120,14 @@ export function SoftwareEngineerTemplate({ data }) {
         </div>
 
         {d.summary && (
-          <div style={{ marginBottom: 20 }}>
+          <div className="resume-section" style={{ marginBottom: 20 }}>
             <SectionTitle>Professional Summary</SectionTitle>
             <p style={{ margin: 0, lineHeight: 1.6 }} className="whitespace-pre-wrap">{d.summary}</p>
           </div>
         )}
 
         {d.experience && d.experience.length > 0 && (
-          <div style={{ marginBottom: 20 }}>
+          <div className="resume-section" style={{ marginBottom: 20 }}>
             <SectionTitle>Experience</SectionTitle>
             {d.experience.map((exp, i) => (
               <div key={i} style={{ marginBottom: 12 }}>
@@ -147,7 +147,7 @@ export function SoftwareEngineerTemplate({ data }) {
         )}
 
         {d.projects && d.projects.length > 0 && (
-          <div style={{ marginBottom: 20 }}>
+          <div className="resume-section" style={{ marginBottom: 20 }}>
             <SectionTitle>Projects</SectionTitle>
             {d.projects.map((p, i) => (
               <div key={i} style={{ marginBottom: 12 }}>
@@ -252,7 +252,7 @@ export function FresherTemplate({ data }) {
       </div>
 
       {d.summary && (
-        <div style={{ marginBottom: 20 }}>
+        <div className="resume-section" style={{ marginBottom: 20 }}>
           <SectionTitle>Objective / Summary</SectionTitle>
           <p style={{ margin: 0 }} className="whitespace-pre-wrap">{d.summary}</p>
         </div>
@@ -260,7 +260,7 @@ export function FresherTemplate({ data }) {
 
       {/* Education (First for Freshers!) */}
       {d.education && d.education.length > 0 && (
-        <div style={{ marginBottom: 20 }}>
+        <div className="resume-section" style={{ marginBottom: 20 }}>
           <SectionTitle>Education</SectionTitle>
           {d.education.map((edu, i) => (
             <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
@@ -272,7 +272,7 @@ export function FresherTemplate({ data }) {
       )}
 
       {d.projects && d.projects.length > 0 && (
-        <div style={{ marginBottom: 20 }}>
+        <div className="resume-section" style={{ marginBottom: 20 }}>
           <SectionTitle>Projects</SectionTitle>
           {d.projects.map((p, i) => (
             <div key={i} style={{ marginBottom: 12 }}>
@@ -287,7 +287,7 @@ export function FresherTemplate({ data }) {
       )}
 
       {d.skills && d.skills.length > 0 && (
-        <div style={{ marginBottom: 20 }}>
+        <div className="resume-section" style={{ marginBottom: 20 }}>
           <SectionTitle>Skills</SectionTitle>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
             {d.skills.map((s, i) => (
@@ -298,7 +298,7 @@ export function FresherTemplate({ data }) {
       )}
 
       {d.certifications && d.certifications.length > 0 && (
-        <div style={{ marginBottom: 20 }}>
+        <div className="resume-section" style={{ marginBottom: 20 }}>
           <SectionTitle>Certifications</SectionTitle>
           {d.certifications.map((cert, i) => (
             <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
@@ -310,7 +310,7 @@ export function FresherTemplate({ data }) {
       )}
 
       {d.experience && d.experience.length > 0 && (
-        <div style={{ marginBottom: 20 }}>
+        <div className="resume-section" style={{ marginBottom: 20 }}>
           <SectionTitle>Experience</SectionTitle>
           {d.experience.map((exp, i) => (
             <div key={i} style={{ marginBottom: 12 }}>
@@ -330,7 +330,7 @@ export function FresherTemplate({ data }) {
       )}
 
       {d.languages && d.languages.length > 0 && (
-        <div style={{ marginBottom: 20 }}>
+        <div className="resume-section" style={{ marginBottom: 20 }}>
           <SectionTitle>Languages</SectionTitle>
           <p style={{ margin: 0 }}>
             {d.languages.map(l => `${l.name} (${l.level})`).join(" · ")}
@@ -339,7 +339,7 @@ export function FresherTemplate({ data }) {
       )}
 
       {d.achievements && d.achievements.length > 0 && (
-        <div style={{ marginBottom: 20 }}>
+        <div className="resume-section" style={{ marginBottom: 20 }}>
           <SectionTitle>Achievements</SectionTitle>
           <ul style={{ margin: "4px 0 0 16px", padding: 0 }} className="list-disc">
             {d.achievements.filter(ach => ach).map((ach, i) => <li key={i}>{ach}</li>)}
@@ -550,7 +550,7 @@ export function ExecutiveTemplate({ data }) {
 
       {/* Summary */}
       {d.summary && (
-        <div style={{ marginBottom: 20 }}>
+        <div className="resume-section" style={{ marginBottom: 20 }}>
           <SectionTitle>Professional Summary</SectionTitle>
           <p style={{ margin: 0 }} className="whitespace-pre-wrap">{d.summary}</p>
         </div>
@@ -558,7 +558,7 @@ export function ExecutiveTemplate({ data }) {
 
       {/* Experience */}
       {d.experience && d.experience.length > 0 && (
-        <div style={{ marginBottom: 20 }}>
+        <div className="resume-section" style={{ marginBottom: 20 }}>
           <SectionTitle>Experience</SectionTitle>
           {d.experience.map((exp, i) => (
             <div key={i} style={{ marginBottom: 12 }}>
@@ -579,7 +579,7 @@ export function ExecutiveTemplate({ data }) {
 
       {/* Education */}
       {d.education && d.education.length > 0 && (
-        <div style={{ marginBottom: 20 }}>
+        <div className="resume-section" style={{ marginBottom: 20 }}>
           <SectionTitle>Education</SectionTitle>
           {d.education.map((edu, i) => (
             <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
@@ -592,7 +592,7 @@ export function ExecutiveTemplate({ data }) {
 
       {/* Projects */}
       {d.projects && d.projects.length > 0 && (
-        <div style={{ marginBottom: 20 }}>
+        <div className="resume-section" style={{ marginBottom: 20 }}>
           <SectionTitle>Projects</SectionTitle>
           {d.projects.map((p, i) => (
             <div key={i} style={{ marginBottom: 8 }}>
@@ -608,7 +608,7 @@ export function ExecutiveTemplate({ data }) {
 
       {/* Skills */}
       {d.skills && d.skills.length > 0 && (
-        <div style={{ marginBottom: 20 }}>
+        <div className="resume-section" style={{ marginBottom: 20 }}>
           <SectionTitle>Skills</SectionTitle>
           <p style={{ margin: 0 }}>{d.skills.join(" • ")}</p>
         </div>
@@ -616,7 +616,7 @@ export function ExecutiveTemplate({ data }) {
 
       {/* Certifications */}
       {d.certifications && d.certifications.length > 0 && (
-        <div style={{ marginBottom: 20 }}>
+        <div className="resume-section" style={{ marginBottom: 20 }}>
           <SectionTitle>Certifications</SectionTitle>
           {d.certifications.map((cert, i) => (
             <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
@@ -629,7 +629,7 @@ export function ExecutiveTemplate({ data }) {
 
       {/* Languages */}
       {d.languages && d.languages.length > 0 && (
-        <div style={{ marginBottom: 20 }}>
+        <div className="resume-section" style={{ marginBottom: 20 }}>
           <SectionTitle>Languages</SectionTitle>
           <p style={{ margin: 0 }}>
             {d.languages.map(l => `${l.name} (${l.level})`).join(" • ")}

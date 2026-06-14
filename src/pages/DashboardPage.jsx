@@ -16,6 +16,35 @@ function DashboardPage() {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const navigate = useNavigate();
 
+  // State per card
+  const [menuOpen, setMenuOpen] = useState(null); // holds resumeId of open menu
+  const [renamingId, setRenamingId] = useState(null);
+  const [renameValue, setRenameValue] = useState("");
+
+  const handleDelete = async (resumeId) => {
+    const confirmed = window.confirm("Delete this resume? This cannot be undone.");
+    if (!confirmed) return;
+    await deleteDoc(doc(db, "resumes", resumeId));
+    setResumes((prev) => prev.filter((r) => r.id !== resumeId));
+    setMenuOpen(null);
+  };
+
+  const handleRename = async (resumeId) => {
+    if (!renameValue.trim()) return;
+    await updateDoc(doc(db, "resumes", resumeId), { title: renameValue.trim() });
+    setResumes((prev) =>
+      prev.map((r) => r.id === resumeId ? { ...r, title: renameValue.trim() } : r)
+    );
+    setRenamingId(null);
+    setMenuOpen(null);
+  };
+
+  useEffect(() => {
+    const close = () => setMenuOpen(null);
+    document.addEventListener("click", close);
+    return () => document.removeEventListener("click", close);
+  }, []);
+
   useEffect(() => {
     if (!user) return;
     
@@ -64,9 +93,9 @@ function DashboardPage() {
     e.preventDefault();
     e.stopPropagation();
 
-
-
     const printEl = document.createElement('div');
+    const elementId = 'print-resume-element';
+    printEl.id = elementId;
     printEl.style.width = '595px';
     printEl.style.minHeight = '842px';
     printEl.style.position = 'fixed';
@@ -79,29 +108,63 @@ function DashboardPage() {
 
     document.body.appendChild(printEl);
 
+    // Add print-safe styles temporarily
+    const style = document.createElement("style");
+    style.innerHTML = `
+      #${elementId} * {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      #${elementId} .resume-section {
+        page-break-before: auto;
+        break-before: auto;
+      }
+    `;
+    document.head.appendChild(style);
+
     try {
-      const canvas = await html2canvas(printEl, { scale: 2 });
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4'
+      const canvas = await html2canvas(printEl, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: "#ffffff",
+        windowWidth: 794, // A4 width in px at 96dpi
       });
-      
-      const imgWidth = 210;
-      const pageHeight = 297;
+
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      });
+
+      const pageWidth = pdf.internal.pageSize.getWidth();   // 210mm
+      const pageHeight = pdf.internal.pageSize.getHeight(); // 297mm
+      const imgWidth = pageWidth;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
-      let position = 0;
 
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+      // If resume is taller than one page, split across pages
+      if (imgHeight <= pageHeight) {
+        pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+      } else {
+        let remainingHeight = imgHeight;
+        let pageNum = 0;
 
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+        while (remainingHeight > 0) {
+          if (pageNum > 0) pdf.addPage();
+
+          pdf.addImage(
+            imgData,
+            "PNG",
+            0,
+            -pageNum * pageHeight,
+            imgWidth,
+            imgHeight
+          );
+
+          remainingHeight -= pageHeight;
+          pageNum++;
+        }
       }
 
       const name = resume.personalInfo?.name || 'resume';
@@ -118,6 +181,7 @@ function DashboardPage() {
       console.error("PDF generation failed:", err);
       alert("Something went wrong while exporting PDF. Try again.");
     } finally {
+      document.head.removeChild(style);
       document.body.removeChild(printEl);
     }
   };
@@ -224,11 +288,33 @@ function DashboardPage() {
                   Loading resumes...
                 </div>
               ) : resumes.length === 0 ? (
-                <div className="border-2 border-dashed border-primary p-16 text-center space-y-4">
-                  <span className="material-symbols-outlined text-4xl text-secondary" data-icon="description">description</span>
-                  <p className="font-body-lg text-secondary">No resumes found. Create your first resume using our clean templates.</p>
-                  <button onClick={() => navigate('/builder/new')} className="bg-primary text-on-primary px-8 py-3 font-label-sm uppercase tracking-widest hover:opacity-80">
-                    Create Resume
+                <div style={{
+                  textAlign: "center",
+                  padding: "80px 32px",
+                  border: "1px dashed #ccc",
+                  maxWidth: 480,
+                  margin: "40px auto"
+                }}>
+                  <div style={{ fontSize: 48, marginBottom: 16 }}>📄</div>
+                  <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>
+                    No resumes yet
+                  </div>
+                  <div style={{ color: "#666", fontSize: 14, marginBottom: 24, lineHeight: 1.7 }}>
+                    You haven't created any resumes yet. Build your first one — it only takes a few minutes.
+                  </div>
+                  <button
+                    onClick={() => navigate("/builder/new")}
+                    style={{
+                      background: "#000",
+                      color: "#fff",
+                      border: "none",
+                      padding: "12px 28px",
+                      fontSize: 14,
+                      fontWeight: 600,
+                      cursor: "pointer"
+                    }}
+                  >
+                    Create My First Resume →
                   </button>
                 </div>
               ) : (
@@ -239,18 +325,63 @@ function DashboardPage() {
                       onClick={() => navigate(`/builder/${resume.id}`)}
                       className="border border-primary p-6 hover:bg-surface-container transition-colors group cursor-pointer relative"
                     >
-                      <button 
-                        onClick={(e) => deleteResume(resume.id, e)}
-                        className="absolute top-4 right-4 text-secondary hover:text-error opacity-0 group-hover:opacity-100 transition-opacity"
-                        title="Delete resume"
-                      >
-                        <span className="material-symbols-outlined text-[20px]" data-icon="delete">delete</span>
-                      </button>
+                      <div style={{ position: "absolute", top: 16, right: 16, zIndex: 30 }} onClick={(e) => e.stopPropagation()}>
+                        {/* ⋯ trigger */}
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setMenuOpen(menuOpen === resume.id ? null : resume.id); }}
+                          style={{
+                            background: "none", border: "1px solid #e0e0e0",
+                            width: 28, height: 28, cursor: "pointer",
+                            fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center"
+                          }}
+                        >
+                          ⋯
+                        </button>
+
+                        {/* Dropdown */}
+                        {menuOpen === resume.id && (
+                          <div style={{
+                            position: "absolute", top: 32, right: 0, zIndex: 100,
+                            background: "#fff", border: "1px solid #000",
+                            minWidth: 140, boxShadow: "4px 4px 0 #000"
+                          }}>
+                            <button
+                              onClick={() => { setRenamingId(resume.id); setRenameValue(resume.title || ""); setMenuOpen(null); }}
+                              style={{ display: "block", width: "100%", padding: "10px 14px", textAlign: "left", background: "none", border: "none", fontSize: 13, cursor: "pointer", borderBottom: "1px solid #eee" }}
+                            >
+                              ✏ Rename
+                            </button>
+                            <button
+                              onClick={() => handleDelete(resume.id)}
+                              style={{ display: "block", width: "100%", padding: "10px 14px", textAlign: "left", background: "none", border: "none", fontSize: 13, cursor: "pointer", color: "#c00" }}
+                            >
+                              🗑 Delete
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
                       <div className="aspect-[3/4] bg-surface-container-highest border border-primary/10 mb-4 flex flex-col items-center justify-center p-6 text-center">
                         <span className="material-symbols-outlined text-[48px] text-secondary mb-2" data-icon="article">article</span>
                         <span className="font-label-sm text-[10px] text-secondary uppercase font-bold tracking-wider">{resume.template || 'software-engineer'}</span>
                       </div>
-                      <h4 className="font-headline-md text-headline-md mb-1 truncate">{resume.title || 'Untitled Resume'}</h4>
+                      
+                      {renamingId === resume.id ? (
+                        <div style={{ marginTop: 8, display: "flex", gap: 8, marginBottom: 12 }} onClick={(e) => e.stopPropagation()}>
+                          <input
+                            autoFocus
+                            value={renameValue}
+                            onChange={(e) => setRenameValue(e.target.value)}
+                            onKeyDown={(e) => e.key === "Enter" && handleRename(resume.id)}
+                            style={{ flex: 1, border: "1px solid #000", padding: "6px 10px", fontSize: 13, outline: "none" }}
+                          />
+                          <button onClick={() => handleRename(resume.id)} style={{ background: "#000", color: "#fff", border: "none", padding: "6px 14px", cursor: "pointer", fontSize: 13 }}>Save</button>
+                          <button onClick={() => setRenamingId(null)} style={{ background: "#fff", border: "1px solid #ccc", padding: "6px 14px", cursor: "pointer", fontSize: 13 }}>Cancel</button>
+                        </div>
+                      ) : (
+                        <h4 className="font-headline-md text-headline-md mb-1 truncate">{resume.title || 'Untitled Resume'}</h4>
+                      )}
+
                       <p className="font-body-md text-body-md text-secondary mb-4">
                         Edited {resume.updatedAt ? new Date(resume.updatedAt).toLocaleDateString() : 'N/A'}
                       </p>

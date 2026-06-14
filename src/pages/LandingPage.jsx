@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
 import Navbar from '../components/Navbar';
@@ -6,6 +6,7 @@ import Navbar from '../components/Navbar';
 function LandingPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [showDemo, setShowDemo] = useState(false);
 
   const handleCtaClick = () => {
     if (user) {
@@ -34,9 +35,9 @@ function LandingPage() {
               <button onClick={handleCtaClick} className="w-full md:w-auto bg-primary text-on-primary px-10 py-5 font-label-sm uppercase tracking-widest hover:opacity-90 transition-all">
                 Build My Resume
               </button>
-              <a href="#features" className="w-full md:w-auto bg-surface border border-primary text-primary px-10 py-5 font-label-sm text-center uppercase tracking-widest hover:bg-primary hover:text-on-primary transition-all">
+              <button onClick={() => setShowDemo(true)} className="w-full md:w-auto bg-surface border border-primary text-primary px-10 py-5 font-label-sm text-center uppercase tracking-widest hover:bg-primary hover:text-on-primary transition-all">
                 See How It Works
-              </a>
+              </button>
             </div>
           </div>
           <div className="mt-24 w-full max-w-container-max-width border border-primary p-4 bg-white block-shadow">
@@ -156,6 +157,56 @@ function LandingPage() {
           <a className="text-secondary font-label-sm uppercase tracking-widest hover:text-primary transition-colors" href="#">LinkedIn</a>
         </div>
       </footer>
+
+      {/* Modal */}
+      {showDemo && (
+        <div
+          onClick={() => setShowDemo(false)}
+          style={{
+            position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)",
+            display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "#fff", padding: 32, maxWidth: 640, width: "90%",
+              border: "1px solid #000", position: "relative"
+            }}
+          >
+            <button
+              onClick={() => setShowDemo(false)}
+              style={{ position: "absolute", top: 12, right: 16, background: "none", border: "none", fontSize: 22, cursor: "pointer" }}
+            >
+              ×
+            </button>
+            <h2 style={{ marginBottom: 16, fontSize: 20, fontWeight: 700 }}>How PREPHAS Works</h2>
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              {[
+                { step: "1", title: "Create your resume", desc: "Fill in your details using our clean resume builder." },
+                { step: "2", title: "Get your ATS score", desc: "AI checks your resume against recruiter ATS systems." },
+                { step: "3", title: "Fix and improve", desc: "One-click AI improvements on every section." },
+                { step: "4", title: "Match to jobs", desc: "Paste a job description and see your match percentage." },
+                { step: "5", title: "Download and apply", desc: "Export a clean PDF and start applying." },
+              ].map((item) => (
+                <div key={item.step} style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
+                  <div style={{
+                    width: 32, height: 32, background: "#000", color: "#fff",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 14, fontWeight: 700, flexShrink: 0
+                  }}>
+                    {item.step}
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: 14 }}>{item.title}</div>
+                    <div style={{ color: "#666", fontSize: 13 }}>{item.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

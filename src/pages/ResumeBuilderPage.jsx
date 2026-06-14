@@ -519,34 +519,67 @@ function ResumeBuilderPage() {
   const handleDownload = async () => {
     if (!resume) return;
 
+    const elementId = 'resume-preview-root';
+    const element = document.getElementById(elementId);
+    if (!element) return;
 
-
-    const previewDiv = document.getElementById('resume-preview-root');
-    if (!previewDiv) return;
+    // Add print-safe styles temporarily
+    const style = document.createElement("style");
+    style.innerHTML = `
+      #${elementId} * {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      #${elementId} .resume-section {
+        page-break-before: auto;
+        break-before: auto;
+      }
+    `;
+    document.head.appendChild(style);
 
     try {
-      const canvas = await html2canvas(previewDiv, { scale: 2 });
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4'
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: "#ffffff",
+        windowWidth: 794, // A4 width in px at 96dpi
       });
 
-      const imgWidth = 210;
-      const pageHeight = 297;
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      });
+
+      const pageWidth = pdf.internal.pageSize.getWidth();   // 210mm
+      const pageHeight = pdf.internal.pageSize.getHeight(); // 297mm
+      const imgWidth = pageWidth;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
-      let position = 0;
 
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+      // If resume is taller than one page, split across pages
+      if (imgHeight <= pageHeight) {
+        pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+      } else {
+        let remainingHeight = imgHeight;
+        let pageNum = 0;
 
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+        while (remainingHeight > 0) {
+          if (pageNum > 0) pdf.addPage();
+
+          pdf.addImage(
+            imgData,
+            "PNG",
+            0,
+            -pageNum * pageHeight,
+            imgWidth,
+            imgHeight
+          );
+
+          remainingHeight -= pageHeight;
+          pageNum++;
+        }
       }
 
       const name = resume.personalInfo?.name || 'resume';
@@ -561,7 +594,8 @@ function ResumeBuilderPage() {
       }
     } catch (err) {
       console.error("PDF generation error:", err);
-      alert("Something went wrong. Try again.");
+    } finally {
+      document.head.removeChild(style);
     }
   };
 
@@ -1233,25 +1267,55 @@ service cloud.firestore {
                 <div className="space-y-4 pt-4 border-t border-primary/10">
                   <p className="font-body-md text-secondary">Type a skill and press <strong className="text-primary">Enter</strong> to add a tag.</p>
                   
-                  <input 
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 10 }}>
+                    {(resume.skills || []).map((skill, i) => (
+                      <div
+                        key={i}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 6,
+                          border: "1px solid #000",
+                          padding: "4px 10px",
+                          fontSize: 12,
+                          background: "#fff",
+                        }}
+                      >
+                        <span>{skill}</span>
+                        <button
+                          type="button"
+                          onClick={() => removeSkill(skill)}
+                          style={{
+                            background: "none",
+                            border: "none",
+                            cursor: "pointer",
+                            fontSize: 14,
+                            color: "#888",
+                            lineHeight: 1,
+                            padding: "0 0 0 2px",
+                          }}
+                          aria-label={`Remove ${skill}`}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+
+                  <input
                     type="text"
                     value={skillInput}
                     onChange={(e) => setSkillInput(e.target.value)}
                     onKeyDown={addSkill}
-                    placeholder="e.g. Figma"
-                    className="w-full border border-primary bg-transparent p-3 focus:ring-0 focus:border-black font-body-md"
+                    placeholder="Type a skill and press Enter"
+                    style={{
+                      border: "1px solid #ccc",
+                      padding: "8px 12px",
+                      fontSize: 13,
+                      width: "100%",
+                      outline: "none",
+                    }}
                   />
-
-                  <div className="flex flex-wrap gap-2 pt-2">
-                    {(resume.skills || []).map((skill, idx) => (
-                      <span key={idx} className="flex items-center gap-2 px-3 py-1 border border-primary text-[10px] font-bold uppercase bg-white">
-                        {skill}
-                        <button type="button" onClick={() => removeSkill(skill)} className="text-secondary hover:text-primary">
-                          <span className="material-symbols-outlined text-[12px]" data-icon="close">close</span>
-                        </button>
-                      </span>
-                    ))}
-                  </div>
                 </div>
               )}
             </div>

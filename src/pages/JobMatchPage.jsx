@@ -21,6 +21,8 @@ function JobMatchPage() {
   const [matchPercent, setMatchPercent] = useState(null);
   const [presentKeywords, setPresentKeywords] = useState([]);
   const [missingKeywords, setMissingKeywords] = useState([]);
+  const [addingKeywords, setAddingKeywords] = useState(false);
+  const [keywordsAdded, setKeywordsAdded] = useState(false);
 
   useEffect(() => {
     if (!user || !id) return;
@@ -53,6 +55,7 @@ function JobMatchPage() {
     setAnalyzing(true);
     setError(null);
     setMatchPercent(null);
+    setKeywordsAdded(false);
 
     try {
       const resumeCopy = { ...resume };
@@ -76,35 +79,23 @@ function JobMatchPage() {
     }
   };
 
-  const handleAddMissingKeywords = async () => {
-    if (missingKeywords.length === 0) return;
-
+  const addKeywordsToResume = async () => {
+    if (!id || !missingKeywords?.length) return;
+    setAddingKeywords(true);
     try {
-      const currentSkills = resume.skills || [];
-      const updatedSkills = [...currentSkills];
+      const resumeRef = doc(db, "resumes", id);
+      const resumeSnap = await getDoc(resumeRef);
+      const currentSkills = resumeSnap.data()?.skills || [];
 
-      missingKeywords.forEach(kw => {
-        if (!updatedSkills.some(s => s.toLowerCase() === kw.toLowerCase())) {
-          updatedSkills.push(kw);
-        }
-      });
+      // Merge without duplicates
+      const merged = [...new Set([...currentSkills, ...missingKeywords])];
 
-      const docRef = doc(db, 'resumes', id);
-      await updateDoc(docRef, {
-        skills: updatedSkills,
-        updatedAt: new Date().toISOString()
-      });
-
-      // Update local state
-      setResume(prev => ({ ...prev, skills: updatedSkills }));
-      setToast("Missing keywords appended to resume skills successfully!");
-      setTimeout(() => setToast(null), 3000);
-      
-      // Clear missing keywords list so button goes inactive
-      setMissingKeywords([]);
+      await updateDoc(resumeRef, { skills: merged });
+      setKeywordsAdded(true);
     } catch (err) {
-      console.error("Error adding missing keywords:", err);
-      alert("Could not update resume skills. Try again.");
+      console.error("Failed to add keywords:", err);
+    } finally {
+      setAddingKeywords(false);
     }
   };
 
@@ -223,12 +214,26 @@ function JobMatchPage() {
 
                     {/* Add Missing Keywords CTA */}
                     {missingKeywords.length > 0 && (
-                      <button 
-                        onClick={handleAddMissingKeywords}
-                        className="w-full bg-primary text-on-primary py-4 font-label-sm uppercase tracking-widest hover:opacity-95 transition-all flex items-center justify-center gap-2"
+                      <button
+                        onClick={addKeywordsToResume}
+                        disabled={addingKeywords || keywordsAdded}
+                        style={{
+                          background: keywordsAdded ? "#fff" : "#000",
+                          color: keywordsAdded ? "#000" : "#fff",
+                          border: "1px solid #000",
+                          padding: "10px 22px",
+                          fontSize: 13,
+                          fontWeight: 600,
+                          cursor: keywordsAdded ? "default" : "pointer",
+                          width: "100%",
+                          marginTop: 16
+                        }}
                       >
-                        <span className="material-symbols-outlined" data-icon="add_circle">add_circle</span>
-                        Add Missing Keywords to Resume
+                        {keywordsAdded
+                          ? "✓ Keywords Added to Resume"
+                          : addingKeywords
+                          ? "Adding..."
+                          : "Add Missing Keywords to Resume"}
                       </button>
                     )}
                   </div>

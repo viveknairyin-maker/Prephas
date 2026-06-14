@@ -22,6 +22,17 @@ const getJsonModel = () => {
   });
 };
 
+// Robust JSON extraction — handles cases where Gemini still adds backticks or text around JSON
+const extractJson = (text) => {
+  const cleaned = text
+    .replace(/```json/gi, "")
+    .replace(/```/g, "")
+    .trim();
+  const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error("Gemini did not return valid JSON");
+  return JSON.parse(jsonMatch[0]);
+};
+
 /**
  * 1. AI Resume Improver
  * Input: raw bullet text like "Built a college app"
@@ -29,10 +40,17 @@ const getJsonModel = () => {
  */
 export async function improveBulletPoint(bulletText) {
   try {
-    const model = getModel();
-    const prompt = `Rewrite this resume bullet point to sound professional, result-oriented, and ATS-friendly. Use action verbs. Return only the improved sentence, nothing else: ${bulletText}`;
+    const model = getJsonModel();
+    const prompt = `Rewrite this resume bullet point to sound professional, result-oriented, and ATS-friendly. Use action verbs.
+Return ONLY a valid JSON object with this structure:
+{
+  "improvedBullet": "the rewritten bullet point"
+}
+Bullet point: ${bulletText}`;
     const result = await model.generateContent(prompt);
-    return result.response.text().trim();
+    const text = result.response.text();
+    const json = extractJson(text);
+    return json.improvedBullet || bulletText;
   } catch (error) {
     console.error("Error in improveBulletPoint:", error);
     throw error;
@@ -46,7 +64,7 @@ export async function improveBulletPoint(bulletText) {
  */
 export async function generateSummary({ name, role, skills, experience, education, projects, achievements }) {
   try {
-    const model = getModel();
+    const model = getJsonModel();
     const inputStr = `
 Name: ${name || ""}
 Target Role: ${role || ""}
@@ -60,9 +78,15 @@ Achievements: ${JSON.stringify(achievements || [])}
 Make sure to summarize their actual experience, education, projects, achievements, and skills. 
 Do not invent facts, companies, or universities that are not listed in the background data. 
 If the background data is extremely sparse (e.g. empty experience or skills), write a short, clean objective statement focusing only on their target role and name, without fabricating false employment history.
-Return only the 3-sentence summary text.`;
+
+Return ONLY a valid JSON object with this structure:
+{
+  "summary": "the 3-sentence summary text"
+}`;
     const result = await model.generateContent(prompt);
-    return result.response.text().trim();
+    const text = result.response.text();
+    const json = extractJson(text);
+    return json.summary || "";
   } catch (error) {
     console.error("Error in generateSummary:", error);
     throw error;
@@ -76,16 +100,20 @@ Return only the 3-sentence summary text.`;
  */
 export async function generateBulletPoints(role, company) {
   try {
-    const model = getModel();
-    const prompt = `Generate 3 professional resume bullet points for someone who was a ${role} at ${company}. Use action verbs, be specific, sound ATS-friendly. Return only 3 bullet points, each on a new line starting with •`;
+    const model = getJsonModel();
+    const prompt = `Generate 3 professional resume bullet points for someone who was a ${role} at ${company}. Use action verbs, be specific, sound ATS-friendly.
+Return ONLY a valid JSON object with this structure:
+{
+  "bullets": [
+    "bullet point 1",
+    "bullet point 2",
+    "bullet point 3"
+  ]
+}`;
     const result = await model.generateContent(prompt);
-    const text = result.response.text().trim();
-    // Parse the lines and clean them
-    return text
-      .split("\n")
-      .map(line => line.replace(/^•\s*/, "").trim())
-      .filter(line => line.length > 0)
-      .slice(0, 3);
+    const text = result.response.text();
+    const json = extractJson(text);
+    return json.bullets || [];
   } catch (error) {
     console.error("Error in generateBulletPoints:", error);
     throw error;
@@ -109,8 +137,8 @@ export async function calculateAtsScore(resumeJson) {
 Check for: summary presence, skills quantity, contact completeness, bullet point quality, measurable achievements, proper sections.
 Resume JSON: ${resumeJson}`;
     const result = await model.generateContent(prompt);
-    const text = result.response.text().trim();
-    return JSON.parse(text);
+    const text = result.response.text();
+    return extractJson(text);
   } catch (error) {
     console.error("Error in calculateAtsScore:", error);
     throw error;
@@ -122,25 +150,61 @@ Resume JSON: ${resumeJson}`;
  * Input: resume JSON + pasted job description text
  * Output: displayed on Job Match page
  */
-export async function matchJobDescription(resumeJson, jobDescriptionText) {
-  try {
-    const model = getJsonModel();
-    const prompt = `Compare this resume to this job description. Return ONLY a valid JSON object:
+export const matchJobDescription = async (resumeData, jobDescription) => {
+  const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+
+  const prompt = `
+You are a resume and job description analyzer.
+
+Compare the resume below to the job description and return ONLY a raw JSON object.
+No markdown. No code fences. No explanation. No text before or after.
+Start your response with { and end with }.
+
+Return this exact structure:
 {
-  "matchPercent": number,
-  "missingKeywords": [ "string" ],
-  "presentKeywords": [ "string" ]
+  "matchPercent": <number 0-100>,
+  "presentKeywords": ["<keyword>"],
+  "missingKeywords": ["<keyword>"],
+  "suggestion": "<one sentence tip>"
 }
-Resume: ${resumeJson}
-Job Description: ${jobDescriptionText}`;
-    const result = await model.generateContent(prompt);
-    const text = result.response.text().trim();
-    return JSON.parse(text);
-  } catch (error) {
-    console.error("Error in matchJobDescription:", error);
-    throw error;
-  }
-}
+
+Resume:
+${JSON.stringify(resumeData)}
+
+Job Description:
+${jobDescription}
+`;
+
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.1,
+          maxOutputTokens: 1000,
+        },
+      }),
+    }
+  );
+
+  const data = await response.json();
+  const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+
+  // Robust JSON extraction — handles cases where Gemini still adds backticks
+  const cleaned = raw
+    .replace(/```json/gi, "")
+    .replace(/```/g, "")
+    .trim();
+
+  // Extract just the JSON object in case there's stray text
+  const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error("Gemini did not return valid JSON");
+
+  return JSON.parse(jsonMatch[0]);
+};
 
 /**
  * 6. Parse Resume from Raw Text
@@ -212,8 +276,8 @@ Raw text:
 ${rawText}
 """`;
     const result = await model.generateContent(prompt);
-    const text = result.response.text().trim();
-    return JSON.parse(text);
+    const text = result.response.text();
+    return extractJson(text);
   } catch (error) {
     console.error("Error in parseResumeFromText:", error);
     throw error;
@@ -265,10 +329,8 @@ Job Description:
 ${jobDescriptionText}`;
 
     const result = await model.generateContent(prompt);
-    const text = result.response.text().trim();
-    // Clean up code fences just in case the model ignored our formatting instructions
-    const cleaned = text.replace(/```json|```/g, "").trim();
-    return JSON.parse(cleaned);
+    const text = result.response.text();
+    return extractJson(text);
   } catch (error) {
     console.error("Error in calculateJobMatchScore:", error);
     throw error;

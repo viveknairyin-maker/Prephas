@@ -9,8 +9,22 @@ function SignupPage() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  const getAuthError = (code) => {
+    const errors = {
+      "auth/wrong-password": "Incorrect password. Please try again.",
+      "auth/user-not-found": "No account found with this email.",
+      "auth/email-already-in-use": "This email is already registered. Try logging in.",
+      "auth/weak-password": "Password must be at least 6 characters.",
+      "auth/invalid-email": "Please enter a valid email address.",
+      "auth/too-many-requests": "Too many attempts. Please wait a few minutes.",
+      "auth/network-request-failed": "Network error. Check your connection.",
+      "auth/invalid-credential": "Incorrect email or password.",
+    };
+    return errors[code] || "Something went wrong. Please try again.";
+  };
 
   const handleEmailSignup = async (e) => {
     e.preventDefault();
@@ -19,7 +33,7 @@ function SignupPage() {
       return;
     }
     setLoading(true);
-    setError(null);
+    setError("");
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
@@ -36,11 +50,7 @@ function SignupPage() {
       navigate('/dashboard');
     } catch (err) {
       console.error("Signup error:", err);
-      if (err.code === 'auth/email-already-in-use') {
-        setError("This email address is already in use.");
-      } else {
-        setError("Failed to create an account. Please try again.");
-      }
+      setError(getAuthError(err.code));
     } finally {
       setLoading(false);
     }
@@ -82,12 +92,6 @@ function SignupPage() {
           <Link className="font-display text-[32px] tracking-tighter text-primary" to="/">PREPHAS</Link>
           <p className="font-label-sm text-label-sm text-secondary uppercase tracking-widest mt-2">Create a new account</p>
         </div>
-
-        {error && (
-          <div className="border border-error p-4 mb-6 bg-error-container text-on-error-container font-body-md text-body-md">
-            {error}
-          </div>
-        )}
 
         <form onSubmit={handleEmailSignup} className="space-y-4">
           <div className="space-y-2">
@@ -143,9 +147,22 @@ function SignupPage() {
             disabled={loading}
             className="w-full bg-primary text-on-primary py-4 font-label-sm uppercase tracking-widest hover:opacity-90 transition-opacity active:translate-y-0.5 mt-2"
           >
-            {loading ? 'Creating Account...' : 'Get Started Free'}
+            {loading ? 'Please wait...' : 'Get Started Free'}
           </button>
         </form>
+
+        {error && (
+          <div style={{
+            border: "1px solid #000",
+            padding: "10px 14px",
+            fontSize: 13,
+            color: "#c00",
+            marginTop: 12,
+            background: "#fff8f8"
+          }}>
+            {error}
+          </div>
+        )}
 
         <div className="relative my-6 flex items-center justify-center">
           <div className="absolute w-full h-[1px] bg-outline-variant"></div>

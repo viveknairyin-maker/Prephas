@@ -2,24 +2,58 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword, signInWithPopup, auth, googleProvider, db } from '../utils/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { sendPasswordResetEmail } from "firebase/auth";
 
 function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
+  const [resetSent, setResetSent] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
   const navigate = useNavigate();
+
+  const getAuthError = (code) => {
+    const errors = {
+      "auth/wrong-password": "Incorrect password. Please try again.",
+      "auth/user-not-found": "No account found with this email.",
+      "auth/email-already-in-use": "This email is already registered. Try logging in.",
+      "auth/weak-password": "Password must be at least 6 characters.",
+      "auth/invalid-email": "Please enter a valid email address.",
+      "auth/too-many-requests": "Too many attempts. Please wait a few minutes.",
+      "auth/network-request-failed": "Network error. Check your connection.",
+      "auth/invalid-credential": "Incorrect email or password.",
+    };
+    return errors[code] || "Something went wrong. Please try again.";
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setError("Enter your email above first, then click Forgot Password.");
+      return;
+    }
+    setResetLoading(true);
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setResetSent(true);
+      setError("");
+    } catch (err) {
+      setError(getAuthError(err.code));
+    } finally {
+      setResetLoading(false);
+    }
+  };
 
   const handleEmailLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
+    setError("");
     try {
       await signInWithEmailAndPassword(auth, email, password);
       navigate('/dashboard');
     } catch (err) {
       console.error("Login error:", err);
-      setError("Invalid email or password. Please try again.");
+      setError(getAuthError(err.code));
     } finally {
       setLoading(false);
     }
@@ -62,12 +96,6 @@ function LoginPage() {
           <p className="font-label-sm text-label-sm text-secondary uppercase tracking-widest mt-2">Sign in to your account</p>
         </div>
 
-        {error && (
-          <div className="border border-error p-4 mb-6 bg-error-container text-on-error-container font-body-md text-body-md">
-            {error}
-          </div>
-        )}
-
         <form onSubmit={handleEmailLogin} className="space-y-6">
           <div className="space-y-2">
             <label className="block font-label-sm text-label-sm uppercase text-primary">Email Address</label>
@@ -91,6 +119,36 @@ function LoginPage() {
               className="w-full border border-primary bg-transparent p-3 focus:ring-0 focus:border-black font-body-md text-body-md"
               placeholder="••••••••"
             />
+            
+            <div style={{ textAlign: "right", marginTop: 6 }}>
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                disabled={resetLoading}
+                style={{
+                  background: "none",
+                  border: "none",
+                  fontSize: 12,
+                  color: "#555",
+                  cursor: "pointer",
+                  textDecoration: "underline",
+                }}
+              >
+                {resetLoading ? "Sending..." : "Forgot password?"}
+              </button>
+            </div>
+
+            {resetSent && (
+              <div style={{
+                border: "1px solid #000",
+                padding: "10px 14px",
+                fontSize: 13,
+                marginTop: 10,
+                background: "#f9f9f9"
+              }}>
+                ✓ Password reset email sent. Check your inbox.
+              </div>
+            )}
           </div>
 
           <button
@@ -98,9 +156,22 @@ function LoginPage() {
             disabled={loading}
             className="w-full bg-primary text-on-primary py-4 font-label-sm uppercase tracking-widest hover:opacity-90 transition-opacity active:translate-y-0.5"
           >
-            {loading ? 'Signing In...' : 'Sign In'}
+            {loading ? 'Please wait...' : 'Sign In'}
           </button>
         </form>
+
+        {error && (
+          <div style={{
+            border: "1px solid #000",
+            padding: "10px 14px",
+            fontSize: 13,
+            color: "#c00",
+            marginTop: 12,
+            background: "#fff8f8"
+          }}>
+            {error}
+          </div>
+        )}
 
         <div className="relative my-8 flex items-center justify-center">
           <div className="absolute w-full h-[1px] bg-outline-variant"></div>
