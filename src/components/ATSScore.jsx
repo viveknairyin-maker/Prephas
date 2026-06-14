@@ -88,12 +88,13 @@ async function analyzeJobMatch(resumeText, jobDescription) {
   });
 
   const prompt = `\
-You are an expert ATS and job match analyst. Compare the provided resume text with the job description. Return ONLY a valid JSON object (no markdown, no code fences) with the following structure:\
+You are an expert ATS (Applicant Tracking System) and job match analyst. Compare the provided resume text with the job description. Return ONLY a valid JSON object (no markdown, no code fences) with the following structure:\
 {\
   "matchScore": <number 0-100>,\
-  "summary": "<short summary>",\
+  "summary": "<2-3 sentence overall match verdict and compatibility explanation>",\
   "strengths": ["<string>", "<string>", "<string>"],\
   "issues": [{"severity": "high|medium|low", "issue": "<string>", "fix": "<string>"}],\
+  "recommendedSkillsToLearn": [{"skill": "<skill name>", "reason": "<why the candidate should learn/prepare for this skill for the target role>"}],\
   "missingKeywords": ["<keyword>"]\
 }\
 \
@@ -108,6 +109,7 @@ Job Description:\
   const cleaned = raw.replace(/```json|```/g, "").trim();
   return JSON.parse(cleaned);
 }
+
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 const SEVERITY_COLOR = { high: "#c00", medium: "#b86000", low: "#666" };
@@ -545,29 +547,131 @@ export default function ATSScore({ existingResumeData }) {
           {/* Job Description Match Score */}
           <Card title="Job Description Match Score">
             {jobResult ? (
-              <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 28, fontWeight: 900, marginBottom: 8 }}>{jobResult.matchScore}% Match</div>
-                <p style={{ marginBottom: 12 }}>{jobResult.summary}</p>
+              <div style={{ textAlign: "left", display: "flex", flexDirection: "column", gap: 20 }}>
+                {/* Compatibility Banner */}
+                <div style={{ display: "flex", gap: 16, alignItems: "center", borderBottom: "2px solid #000", paddingBottom: 16 }}>
+                  <div style={{
+                    background: jobResult.matchScore >= 70 ? "#e6f4ea" : jobResult.matchScore >= 45 ? "#fef7e0" : "#fce8e6",
+                    border: "2px solid #000",
+                    padding: "10px 20px",
+                    fontWeight: 900,
+                    fontSize: 22,
+                    boxShadow: "3px 3px 0 #000",
+                    color: "#000"
+                  }}>
+                    {jobResult.matchScore}% Match
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 800, fontSize: 14, textTransform: "uppercase", color: "#000" }}>
+                      {jobResult.matchScore >= 70 ? "High Compatibility" : jobResult.matchScore >= 45 ? "Moderate Alignment" : "Low Overlap"}
+                    </div>
+                    <div style={{ fontSize: 11, color: "#666", marginTop: 2 }}>Target Role compatibility review</div>
+                  </div>
+                </div>
+
+                {/* Match Summary */}
+                <div>
+                  <div style={{ fontSize: 10, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1, color: "#888", marginBottom: 6 }}>Summary Analysis</div>
+                  <p style={{ margin: 0, fontSize: 13, lineHeight: 1.6, fontWeight: 500, color: "#111" }}>{jobResult.summary}</p>
+                </div>
+
                 {/* Strengths */}
                 {jobResult.strengths && jobResult.strengths.length > 0 && (
                   <div>
-                    <div style={{ fontWeight: 800, marginBottom: 4 }}>Strengths</div>
-                    {jobResult.strengths.map((s, i) => (
-                      <div key={i} style={{ textAlign: "left", marginBottom: 4 }}>✓ {s}</div>
-                    ))}
+                    <div style={{ fontSize: 10, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1, color: "#888", marginBottom: 8 }}>Matching Strengths</div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                      {jobResult.strengths.map((s, i) => (
+                        <div key={i} style={{ display: "flex", gap: 8, alignItems: "flex-start", padding: "10px 12px", border: "1px solid #e0e0e0", background: "#f9f9f9" }}>
+                          <span style={{ color: "#1a7a3c", fontWeight: 900, fontSize: 14, lineHeight: 1 }}>✓</span>
+                          <span style={{ fontSize: 13, color: "#333", lineHeight: 1.3 }}>{s}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
-                {/* Issues */}
+
+                {/* Skills to Learn (New Feature!) */}
+                {jobResult.recommendedSkillsToLearn && jobResult.recommendedSkillsToLearn.length > 0 && (
+                  <div>
+                    <div style={{ fontSize: 10, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1, color: "#888", marginBottom: 8 }}>Recommended Skills to Learn</div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                      {jobResult.recommendedSkillsToLearn.map((item, i) => (
+                        <div key={i} style={{ padding: "12px", border: "2px solid #000", background: "#fff", boxShadow: "3px 3px 0 #000" }}>
+                          <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                            <span style={{
+                              background: "#000",
+                              color: "#fff",
+                              fontSize: 9,
+                              fontWeight: 800,
+                              padding: "2px 6px",
+                              textTransform: "uppercase",
+                              letterSpacing: 0.5
+                            }}>
+                              {item.skill}
+                            </span>
+                            <span style={{ fontSize: 10, color: "#666", fontWeight: 600 }}>Suggested preparation</span>
+                          </div>
+                          <div style={{ fontSize: 12, color: "#444", marginTop: 6, lineHeight: 1.4, fontWeight: 500 }}>
+                            {item.reason}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Gaps / Issues */}
                 {jobResult.issues && jobResult.issues.length > 0 && (
-                  <div style={{ marginTop: 8 }}>
-                    <div style={{ fontWeight: 800, marginBottom: 4 }}>Issues</div>
-                    {jobResult.issues.map((issue, i) => (
-                      <div key={i} style={{ color: issue.severity === "high" ? "#c00" : issue.severity === "medium" ? "#b86000" : "#666", marginBottom: 4 }}>
-                        {issue.severity.toUpperCase()}: {issue.issue} - {issue.fix}
-                      </div>
-                    ))}
+                  <div>
+                    <div style={{ fontSize: 10, fontWeight: 900, textTransform: "uppercase", letterSpacing: 1, color: "#888", marginBottom: 8 }}>Issues & Gaps to Address</div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                      {jobResult.issues.map((issue, i) => (
+                        <div key={i} style={{ padding: "10px 12px", border: "1px solid #e0e0e0", background: "#fffdfd", borderLeft: `3px solid ${SEVERITY_COLOR[issue.severity] || "#ccc"}` }}>
+                          <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                            <span style={{
+                              fontSize: 8,
+                              fontWeight: 900,
+                              padding: "1px 5px",
+                              background: SEVERITY_COLOR[issue.severity],
+                              color: "#fff",
+                              textTransform: "uppercase"
+                            }}>
+                              {issue.severity} priority
+                            </span>
+                          </div>
+                          <div style={{ fontWeight: 700, fontSize: 13, color: "#000", marginTop: 4 }}>{issue.issue}</div>
+                          <div style={{ color: "#555", fontSize: 12, marginTop: 2, fontWeight: 500 }}>{issue.fix}</div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
+
+                {/* Reset button */}
+                <div style={{ borderTop: "1px solid #eee", paddingTop: 14, display: "flex", justifyContent: "flex-end" }}>
+                  <button
+                    onClick={() => {
+                      setJobResult(null);
+                      setJobDesc("");
+                    }}
+                    style={{
+                      background: "#fff",
+                      color: "#000",
+                      border: "2px solid #000",
+                      padding: "8px 16px",
+                      cursor: "pointer",
+                      fontSize: 12,
+                      fontWeight: 800,
+                      textTransform: "uppercase",
+                      boxShadow: "2px 2px 0 #000",
+                      transition: "transform 0.1s, box-shadow 0.1s"
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.transform = "translate(-1px, -1px)"; e.currentTarget.style.boxShadow = "3px 3px 0 #000"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "2px 2px 0 #000"; }}
+                  >
+                    Clear & Try Another Job
+                  </button>
+                </div>
               </div>
             ) : (
               <div>
