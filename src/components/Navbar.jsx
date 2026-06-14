@@ -76,16 +76,6 @@ function Navbar() {
                 >
                   ATS Analyser
                 </Link>
-                <Link
-                  className={`font-body-md text-body-md transition-opacity hover:opacity-70 ${
-                    location.pathname === '/dashboard'
-                      ? 'text-primary font-bold border-b-2 border-primary'
-                      : 'text-secondary'
-                  }`}
-                  to="/dashboard"
-                >
-                  Dashboard
-                </Link>
               </>
             )}
             <Link
