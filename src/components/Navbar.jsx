@@ -23,10 +23,7 @@ function Navbar() {
     setMenuOpen(false);
     if (location.pathname === '/') {
       e.preventDefault();
-      const featuresSection = document.getElementById('features');
-      if (featuresSection) {
-        featuresSection.scrollIntoView({ behavior: 'smooth' });
-      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -49,10 +46,10 @@ function Navbar() {
           <nav className="hidden md:flex gap-6">
             <a
               className="text-secondary hover:opacity-70 transition-opacity font-body-md text-body-md"
-              href="/#features"
+              href="/"
               onClick={handleFeaturesClick}
             >
-              Features
+              Home
             </a>
             {user && (
               <>
@@ -166,11 +163,11 @@ function Navbar() {
 
           <a
             className="flex items-center gap-3 px-6 py-4 text-secondary hover:bg-zinc-50 hover:text-primary transition-colors font-body-md border-b border-primary/5 min-h-[52px]"
-            href="/#features"
+            href="/"
             onClick={handleFeaturesClick}
           >
-            <span className="material-symbols-outlined text-xl flex-shrink-0">auto_awesome</span>
-            Features
+            <span className="material-symbols-outlined text-xl flex-shrink-0">home</span>
+            Home
           </a>
 
           {user && (
