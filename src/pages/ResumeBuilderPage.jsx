@@ -519,13 +519,7 @@ function ResumeBuilderPage() {
   const handleDownload = async () => {
     if (!resume) return;
 
-    if (profile?.plan === 'free') {
-      const count = profile.downloadCount || 0;
-      if (count >= 3) {
-        setShowUpgradeModal(true);
-        return;
-      }
-    }
+
 
     const previewDiv = document.getElementById('resume-preview-root');
     if (!previewDiv) return;
@@ -663,7 +657,6 @@ service cloud.firestore {
             <a className="text-secondary hover:opacity-70 transition-opacity font-body-md text-body-md" href="/#features">Features</a>
             <Link className="text-secondary hover:opacity-70 transition-opacity font-body-md text-body-md" to="/templates">Templates</Link>
             <Link className="text-secondary hover:opacity-70 transition-opacity font-body-md text-body-md" to="/dashboard">Dashboard</Link>
-            <Link className="text-secondary hover:opacity-70 transition-opacity font-body-md text-body-md" to="/pricing">Pricing</Link>
           </nav>
         </div>
         <div className="flex items-center gap-2 md:gap-4">

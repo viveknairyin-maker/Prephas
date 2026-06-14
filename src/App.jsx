@@ -12,7 +12,6 @@ import ResumeBuilderPage from './pages/ResumeBuilderPage';
 import AtsScorePage from './pages/AtsScorePage';
 import JobMatchPage from './pages/JobMatchPage';
 import TemplatesPage from './pages/TemplatesPage';
-import PricingPage from './pages/PricingPage';
 
 function App() {
   return (
@@ -22,7 +21,6 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
-          <Route path="/pricing" element={<PricingPage />} />
           
           {/* Protected Routes */}
           <Route path="/dashboard" element={

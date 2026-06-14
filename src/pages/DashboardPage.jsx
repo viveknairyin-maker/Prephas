@@ -64,13 +64,7 @@ function DashboardPage() {
     e.preventDefault();
     e.stopPropagation();
 
-    if (profile?.plan === 'free') {
-      const count = profile.downloadCount || 0;
-      if (count >= 3) {
-        setShowUpgradeModal(true);
-        return;
-      }
-    }
+
 
     const printEl = document.createElement('div');
     printEl.style.width = '595px';
