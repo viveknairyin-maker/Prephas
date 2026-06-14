@@ -31,7 +31,7 @@ function Navbar() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 md:px-margin-desktop py-0 bg-surface border-b border-primary h-16 md:h-20">
+      <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 md:px-margin-desktop py-0 bg-surface border-b border-primary h-16 md:h-20 navbar">
         {/* Left: Logo + Desktop Nav */}
         <div className="flex items-center gap-8">
           <Link

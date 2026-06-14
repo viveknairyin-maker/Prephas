@@ -732,9 +732,9 @@ service cloud.firestore {
         </button>
       </div>
 
-      <main className="flex min-h-screen pt-14 md:pt-16 lg:pt-20" style={{ paddingBottom: '72px' }}>
+      <main className="flex min-h-screen pt-14 md:pt-16 lg:pt-20 builder-split" style={{ paddingBottom: '72px' }}>
         {/* Left Side Navigation (Resume Section Navigator) — desktop only */}
-        <nav className="hidden lg:fixed lg:flex lg:left-0 lg:top-20 lg:h-[calc(100vh-80px)] lg:w-56 lg:flex-col border-r border-primary bg-surface z-40 py-6 overflow-y-auto custom-scrollbar">
+        <nav className="hidden lg:fixed lg:flex lg:left-0 lg:top-20 lg:h-[calc(100vh-80px)] lg:w-56 lg:flex-col border-r border-primary bg-surface z-40 py-6 overflow-y-auto custom-scrollbar sidebar">
           <div className="px-4 py-2 text-[9px] uppercase tracking-widest text-secondary font-bold mb-2">
             Resume Sections
           </div>
@@ -791,7 +791,7 @@ service cloud.firestore {
         </nav>
 
         {/* Form Editor Column — full-width on mobile, half-width on desktop */}
-        <section className={`${activeTab === 'edit' ? 'block' : 'hidden'} lg:block w-full lg:ml-56 lg:w-1/2 h-full overflow-y-auto px-4 md:px-8 lg:px-12 py-6 lg:py-12 bg-white pb-32 mt-10 lg:mt-0`}>
+        <section className={`${activeTab === 'edit' ? 'block' : 'hidden'} lg:block w-full lg:ml-56 lg:w-1/2 h-full overflow-y-auto px-4 md:px-8 lg:px-12 py-6 lg:py-12 bg-white pb-32 mt-10 lg:mt-0 builder-form`}>
           <div className="max-w-2xl mx-auto space-y-8">
             <div className="flex justify-between items-end border-b border-primary pb-4">
               <div>
@@ -1578,7 +1578,7 @@ service cloud.firestore {
         </section>
 
         {/* Right Side Live Preview Panel — full-width on mobile (when preview tab active), half-width on desktop */}
-        <section className={`${activeTab === 'preview' ? 'block' : 'hidden'} lg:block w-full lg:w-1/2 bg-surface-container-highest flex flex-col items-center py-6 lg:py-12 overflow-y-auto border-l border-primary mt-10 lg:mt-0`} style={{ minHeight: 'calc(100vh - 56px)' }}>
+        <section className={`${activeTab === 'preview' ? 'block' : 'hidden'} lg:block w-full lg:w-1/2 bg-surface-container-highest flex flex-col items-center py-6 lg:py-12 overflow-y-auto border-l border-primary mt-10 lg:mt-0 builder-preview`} style={{ minHeight: 'calc(100vh - 56px)' }}>
           {/* Preview wrapper — scales down to fit viewport on mobile */}
           <div
             style={{

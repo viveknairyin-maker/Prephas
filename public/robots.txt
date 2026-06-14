@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Allow: /templates
+Allow: /pricing
+Allow: /login
+Allow: /signup
+
+Disallow: /dashboard
+Disallow: /builder/
+Disallow: /ats/
+Disallow: /match/
+Disallow: /settings
+
+Sitemap: https://prephas.in/sitemap.xml

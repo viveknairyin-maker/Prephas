@@ -318,7 +318,7 @@ function DashboardPage() {
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter dashboard-grid">
                   {resumes.map((resume) => (
                     <div 
                       key={resume.id} 

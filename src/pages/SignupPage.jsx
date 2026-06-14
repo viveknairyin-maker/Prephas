@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { createUserWithEmailAndPassword, signInWithPopup, auth, googleProvider, db } from '../utils/firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 
@@ -85,6 +86,11 @@ function SignupPage() {
 
   return (
     <div className="bg-surface text-on-surface min-h-screen flex items-center justify-center px-margin-mobile md:px-margin-desktop py-20 relative">
+      <Helmet>
+        <title>Sign Up Free — PREPHAS Resume Builder</title>
+        <meta name="description" content="Create a free PREPHAS account and start building your ATS-friendly resume in minutes." />
+        <link rel="canonical" href="https://prephas.in/signup" />
+      </Helmet>
       <div className="absolute inset-0 grid-bg pointer-events-none"></div>
       
       <div className="relative z-10 w-full max-w-md bg-white border border-primary p-8 md:p-12 block-shadow">

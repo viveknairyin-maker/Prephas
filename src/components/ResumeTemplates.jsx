@@ -844,6 +844,7 @@ export default function ResumeTemplates({ resumeData, onSelectTemplate }) {
       {/* Template grid — responsive vertical grid for both mobile and desktop */}
       {!preview && (
         <div
+          className="template-grid"
           style={{
             maxWidth: 900,
             margin: "0 auto",

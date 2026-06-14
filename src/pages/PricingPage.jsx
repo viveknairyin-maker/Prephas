@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
 import { db, doc, updateDoc } from '../utils/firebase';
 import Navbar from '../components/Navbar';
+import { Helmet } from 'react-helmet-async';
 
 function PricingPage() {
   const { user, profile, refreshProfile } = useAuth();
@@ -49,6 +50,11 @@ function PricingPage() {
 
   return (
     <div className="bg-background text-on-background min-h-screen flex flex-col">
+      <Helmet>
+        <title>Pricing — Free & Premium Plans | PREPHAS</title>
+        <meta name="description" content="PREPHAS is free to start. Premium plan at just ₹99/month for unlimited downloads, all templates, AI improvements, and job matching." />
+        <link rel="canonical" href="https://prephas.in/pricing" />
+      </Helmet>
       <Navbar />
 
       {/* Toast Notification */}
@@ -68,7 +74,7 @@ function PricingPage() {
         </section>
 
         {/* Pricing Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter pricing-grid">
           {/* Free Plan */}
           <div className="border border-primary bg-surface p-12 flex flex-col justify-between transition-all duration-300 hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative z-10">
             {profile?.plan === 'free' && (
