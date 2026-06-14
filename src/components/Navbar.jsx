@@ -35,11 +35,11 @@ function Navbar() {
         {/* Left: Logo + Desktop Nav */}
         <div className="flex items-center gap-8">
           <Link
-            className="font-display text-xl md:text-headline-md tracking-tighter text-primary flex-shrink-0"
+            className="flex items-center flex-shrink-0"
             to="/"
             onClick={closeMenu}
           >
-            PREPHAS
+            <img src="/logo.png" alt="PREPHAS Logo" className="h-8 md:h-10 w-auto object-contain" />
           </Link>
 
           {/* Desktop Nav — hidden on mobile */}

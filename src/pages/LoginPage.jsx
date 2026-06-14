@@ -98,7 +98,9 @@ function LoginPage() {
       
       <div className="relative z-10 w-full max-w-md bg-white border border-primary p-8 md:p-12 block-shadow">
         <div className="mb-8 text-center">
-          <Link className="font-display text-[32px] tracking-tighter text-primary" to="/">PREPHAS</Link>
+          <Link className="flex justify-center" to="/">
+            <img src="/logo.png" alt="PREPHAS Logo" className="h-12 w-auto object-contain" />
+          </Link>
           <p className="font-label-sm text-label-sm text-secondary uppercase tracking-widest mt-2">Sign in to your account</p>
         </div>
 
