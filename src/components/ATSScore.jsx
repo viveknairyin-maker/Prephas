@@ -324,28 +324,97 @@ export default function ATSScore({ existingResumeData }) {
     if (f) analyzeFile(f);
   };
 
+  const compileResumeToText = (data) => {
+    if (!data) return "";
+    let text = "";
+    if (data.personalInfo) {
+      const { name, role, email, phone, location, linkedin } = data.personalInfo;
+      if (name) text += `${name}\n`;
+      if (role) text += `${role}\n`;
+      if (email || phone || location || linkedin) {
+        text += `${[email, phone, location, linkedin].filter(Boolean).join(" | ")}\n`;
+      }
+      text += "\n";
+    }
+    if (data.summary) {
+      text += `PROFESSIONAL SUMMARY\n${data.summary}\n\n`;
+    }
+    if (data.experience && data.experience.length > 0) {
+      text += `WORK EXPERIENCE\n`;
+      data.experience.forEach(exp => {
+        text += `${exp.position || ""} at ${exp.company || ""} (${exp.duration || ""})\n${exp.description || ""}\n\n`;
+      });
+    }
+    if (data.projects && data.projects.length > 0) {
+      text += `PROJECTS\n`;
+      data.projects.forEach(proj => {
+        text += `${proj.name || ""} - ${proj.role || ""}\n${proj.description || ""}\n\n`;
+      });
+    }
+    if (data.education && data.education.length > 0) {
+      text += `EDUCATION\n`;
+      data.education.forEach(edu => {
+        text += `${edu.degree || ""} - ${edu.institution || ""} (${edu.duration || ""})\n\n`;
+      });
+    }
+    if (data.skills && data.skills.length > 0) {
+      text += `SKILLS\n${data.skills.join(", ")}\n\n`;
+    }
+    if (data.certifications && data.certifications.length > 0) {
+      text += `CERTIFICATIONS\n`;
+      data.certifications.forEach(cert => {
+        text += `${cert.name || ""} by ${cert.authority || ""} (${cert.year || ""})\n`;
+      });
+      text += "\n";
+    }
+    if (data.languages && data.languages.length > 0) {
+      text += `LANGUAGES\n`;
+      data.languages.forEach(lang => {
+        text += `${lang.name || ""} (${lang.level || ""})\n`;
+      });
+      text += "\n";
+    }
+    return text;
+  };
+
   // ── Analyze existing builder resume ──────────────────────────────────────────────
   const analyzeBuilderResume = async () => {
     if (!existingResumeData) return;
     setMode('loading');
-    setLoadingMsg('Analyzing your builder resume...');
+    setLoadingMsg('Analyzing your builder resume with AI...');
+    trackEvent('ATS Analysis Started');
     try {
-      const mockResult = {
-        score: existingResumeData.atsScore || 0,
-        grade: (existingResumeData.atsScore >= 80) ? 'A' : (existingResumeData.atsScore >= 60) ? 'B' : (existingResumeData.atsScore >= 40) ? 'C' : 'D',
-        summary: existingResumeData.atsScore ? `Your builder resume scored ${existingResumeData.atsScore} out of 100.` : 'No ATS score available.',
-        sections: existingResumeData.sections || {},
-        issues: existingResumeData.issues || [],
-        strengths: existingResumeData.strengths || [],
-        missingKeywords: existingResumeData.missingKeywords || [],
-        topKeywordsFound: existingResumeData.topKeywordsFound || [],
-        // Additional fields can be added as needed
-      };
-      setResult(mockResult);
+      const text = compileResumeToText(existingResumeData);
+      if (!text || text.trim().length < 50) {
+        throw new Error("Your resume is empty. Please fill in your details in the builder before running the ATS analysis.");
+      }
+
+      const analysis = await analyzeWithGemini(text);
+      setResult(analysis);
       setMode('result');
+
+      // Update Firestore document with new ATS score
+      try {
+        const docRef = doc(db, 'resumes', existingResumeData.id);
+        await updateDoc(docRef, {
+          atsScore: analysis.score || 0,
+          updatedAt: new Date().toISOString()
+        });
+      } catch (dbErr) {
+        console.error("Failed to update ATS score in Firestore:", dbErr);
+      }
+
+      trackEvent('ATS Analysis Completed', {
+        ats_score: analysis?.score || 0
+      });
     } catch (err) {
+      console.error("Failed to analyze builder resume:", err);
       setErrorMsg(err.message || 'Failed to analyze builder resume.');
       setMode('error');
+      trackEvent('ATS Analysis Failed', {
+        error_type: 'ats_analysis_error',
+        error_message: err.message || 'Failed to analyze builder resume'
+      });
     }
   };
 

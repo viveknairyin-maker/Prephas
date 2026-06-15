@@ -5,9 +5,7 @@
   .builder-split {
     flex-direction: column;
   }
-  .builder-preview {
-    display: none;
-  }
+
   .dashboard-grid {
     grid-template-columns: repeat(2, 1fr);
   }

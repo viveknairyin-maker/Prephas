@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AuthProvider } from './components/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import { initGA, trackPageView } from './utils/analytics';
@@ -13,7 +13,6 @@ import ResumeBuilderPage from './pages/ResumeBuilderPage';
 import AtsScorePage from './pages/AtsScorePage';
 import JobMatchPage from './pages/JobMatchPage';
 import TemplatesPage from './pages/TemplatesPage';
-import PricingPage from './pages/PricingPage';
 
 // Component to handle automatic page tracking on route changes
 function AnalyticsTracker() {
@@ -103,11 +102,8 @@ function App() {
             </ProtectedRoute>
           } />
           
-          <Route path="/pricing" element={
-            <ProtectedRoute>
-              <PricingPage />
-            </ProtectedRoute>
-          } />
+
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
     </AuthProvider>
