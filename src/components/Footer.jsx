@@ -26,8 +26,8 @@ function Footer() {
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             <Link to="/login" style={{ color: "#ccc", fontSize: 13, textDecoration: "none" }}>Login</Link>
             <Link to="/signup" style={{ color: "#ccc", fontSize: 13, textDecoration: "none" }}>Sign Up Free</Link>
-            <a href="#" style={{ color: "#ccc", fontSize: 13, textDecoration: "none" }}>Privacy Policy</a>
-            <a href="#" style={{ color: "#ccc", fontSize: 13, textDecoration: "none" }}>Terms of Service</a>
+            <Link to="/privacy-policy" style={{ color: "#ccc", fontSize: 13, textDecoration: "none" }}>Privacy Policy</Link>
+            <Link to="/terms-and-conditions" style={{ color: "#ccc", fontSize: 13, textDecoration: "none" }}>Terms & Conditions</Link>
           </div>
         </div>
       </div>

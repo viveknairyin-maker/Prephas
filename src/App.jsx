@@ -13,6 +13,8 @@ import ResumeBuilderPage from './pages/ResumeBuilderPage';
 import AtsScorePage from './pages/AtsScorePage';
 import JobMatchPage from './pages/JobMatchPage';
 import TemplatesPage from './pages/TemplatesPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsPage from './pages/TermsPage';
 
 // Component to handle automatic page tracking on route changes
 function AnalyticsTracker() {
@@ -102,6 +104,9 @@ function App() {
             </ProtectedRoute>
           } />
           
+
+          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms-and-conditions" element={<TermsPage />} />
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

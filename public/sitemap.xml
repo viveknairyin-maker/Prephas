@@ -32,4 +32,18 @@
     <priority>0.6</priority>
   </url>
 
+  <url>
+    <loc>https://www.prephas.online/privacy-policy</loc>
+    <lastmod>2026-06-15</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <url>
+    <loc>https://www.prephas.online/terms-and-conditions</loc>
+    <lastmod>2026-06-15</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
 </urlset>
