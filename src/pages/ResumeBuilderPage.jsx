@@ -286,7 +286,7 @@ function ResumeBuilderPage() {
   const addSkill = (e) => {
     if (e.key === 'Enter' && skillInput.trim()) {
       e.preventDefault();
-      if (!resume.skills?.includes(skillInput.trim())) {
+      if (!resume?.skills?.includes(skillInput.trim())) {
         setResume(prev => ({
           ...prev,
           skills: [...(prev.skills || []), skillInput.trim()]
@@ -679,8 +679,10 @@ service cloud.firestore {
     );
   }
 
-  const ActiveTemplate = TEMPLATE_COMPONENTS[resume.template || 'classic'] || TEMPLATE_COMPONENTS['classic'];
-  const strength = calculateStrength(resume);
+  const ActiveTemplate = resume 
+    ? (TEMPLATE_COMPONENTS[resume.template || 'classic'] || TEMPLATE_COMPONENTS['classic']) 
+    : TEMPLATE_COMPONENTS['classic'];
+  const strength = resume ? calculateStrength(resume) : { experience: 0, projects: 0, skills: 0, education: 0, overall: 0 };
 
   return (
     <div className="bg-surface text-on-surface antialiased overflow-x-hidden min-h-screen flex flex-col">
@@ -707,7 +709,7 @@ service cloud.firestore {
           {/* ATS Score badge — hide on small phones */}
           <div className="hidden sm:flex items-center gap-2 px-2 md:px-4 py-1.5 md:py-2 border border-primary bg-white">
             <span className="font-label-sm text-[10px] uppercase tracking-widest text-secondary">ATS</span>
-            <span className="font-headline-md text-base md:text-headline-md">{resume.atsScore || 0}<span className="text-secondary text-xs md:text-body-md">/100</span></span>
+                        <span className="font-headline-md text-base md:text-headline-md">{resume?.atsScore || 0}<span className="text-secondary text-xs md:text-body-md">/100</span></span>
           </div>
           {/* Download — hidden on mobile (available in sticky bar) */}
           <button 
@@ -803,7 +805,7 @@ service cloud.firestore {
               <div>
                 <input 
                   type="text" 
-                  value={resume.title || ''}
+                  value={resume?.title || ''}
                   onChange={(e) => setResume(prev => ({ ...prev, title: e.target.value }))}
                   className="font-headline-lg text-headline-lg uppercase tracking-tight bg-transparent border-none p-0 focus:ring-0 w-full"
                   placeholder="Untitled Resume"
@@ -852,7 +854,7 @@ service cloud.firestore {
                     layout: 'sidebar-left'
                   }
                 ].map(tpl => {
-                  const isActive = (resume.template || 'classic') === tpl.id;
+                  const isActive = (resume?.template || 'classic') === tpl.id;
                   return (
                     <button
                       key={tpl.id}
@@ -935,7 +937,7 @@ service cloud.firestore {
                     <input 
                       className="w-full border border-primary bg-transparent p-3 focus:ring-0 focus:border-black font-body-md"
                       type="text" 
-                      value={resume.personalInfo?.name || ''}
+                      value={resume?.personalInfo?.name || ''}
                       onChange={(e) => updatePersonalInfo('name', e.target.value)}
                       placeholder="Alexander Vance"
                     />
@@ -945,7 +947,7 @@ service cloud.firestore {
                     <input 
                       className="w-full border border-primary bg-transparent p-3 focus:ring-0 focus:border-black font-body-md"
                       type="text" 
-                      value={resume.personalInfo?.role || ''}
+                      value={resume?.personalInfo?.role || ''}
                       onChange={(e) => updatePersonalInfo('role', e.target.value)}
                       placeholder="e.g. Senior Software Architect"
                     />
@@ -955,7 +957,7 @@ service cloud.firestore {
                     <input 
                       className="w-full border border-primary bg-transparent p-3 focus:ring-0 focus:border-black font-body-md"
                       type="email" 
-                      value={resume.personalInfo?.email || ''}
+                      value={resume?.personalInfo?.email || ''}
                       onChange={(e) => updatePersonalInfo('email', e.target.value)}
                       placeholder="alex.vance@work.io"
                     />
@@ -965,7 +967,7 @@ service cloud.firestore {
                     <input 
                       className="w-full border border-primary bg-transparent p-3 focus:ring-0 focus:border-black font-body-md"
                       type="text" 
-                      value={resume.personalInfo?.phone || ''}
+                      value={resume?.personalInfo?.phone || ''}
                       onChange={(e) => updatePersonalInfo('phone', e.target.value)}
                       placeholder="+1 917 222 3443"
                     />
@@ -975,7 +977,7 @@ service cloud.firestore {
                     <input 
                       className="w-full border border-primary bg-transparent p-3 focus:ring-0 focus:border-black font-body-md"
                       type="text" 
-                      value={resume.personalInfo?.location || ''}
+                      value={resume?.personalInfo?.location || ''}
                       onChange={(e) => updatePersonalInfo('location', e.target.value)}
                       placeholder="New York, NY"
                     />
@@ -985,7 +987,7 @@ service cloud.firestore {
                     <input 
                       className="w-full border border-primary bg-transparent p-3 focus:ring-0 focus:border-black font-body-md"
                       type="text" 
-                      value={resume.personalInfo?.linkedin || ''}
+                      value={resume?.personalInfo?.linkedin || ''}
                       onChange={(e) => updatePersonalInfo('linkedin', e.target.value)}
                       placeholder="linkedin.com/in/alex"
                     />
@@ -1008,7 +1010,7 @@ service cloud.firestore {
                     <input 
                       className="w-full border border-primary bg-transparent p-3 focus:ring-0 focus:border-black font-body-md"
                       type="text" 
-                      value={resume.links?.linkedin || ''}
+                      value={resume?.links?.linkedin || ''}
                       onChange={(e) => updateLink('linkedin', e.target.value)}
                       placeholder="linkedin.com/in/username"
                     />
@@ -1018,7 +1020,7 @@ service cloud.firestore {
                     <input 
                       className="w-full border border-primary bg-transparent p-3 focus:ring-0 focus:border-black font-body-md"
                       type="text" 
-                      value={resume.links?.github || ''}
+                      value={resume?.links?.github || ''}
                       onChange={(e) => updateLink('github', e.target.value)}
                       placeholder="github.com/username"
                     />
@@ -1028,7 +1030,7 @@ service cloud.firestore {
                     <input 
                       className="w-full border border-primary bg-transparent p-3 focus:ring-0 focus:border-black font-body-md"
                       type="text" 
-                      value={resume.links?.portfolio || ''}
+                      value={resume?.links?.portfolio || ''}
                       onChange={(e) => updateLink('portfolio', e.target.value)}
                       placeholder="portfolio.dev"
                     />
@@ -1038,7 +1040,7 @@ service cloud.firestore {
                     <input 
                       className="w-full border border-primary bg-transparent p-3 focus:ring-0 focus:border-black font-body-md"
                       type="text" 
-                      value={resume.links?.leetcode || ''}
+                      value={resume?.links?.leetcode || ''}
                       onChange={(e) => updateLink('leetcode', e.target.value)}
                       placeholder="leetcode.com/username"
                     />
@@ -1598,7 +1600,7 @@ service cloud.firestore {
               id="resume-preview-root"
               className="bg-white w-[595px] min-h-[842px] resume-shadow transition-all duration-300 p-0"
             >
-              <ActiveTemplate data={deferredResume} editable={false} onEdit={() => {}} />
+              <ActiveTemplate data={deferredResume || resume} editable={false} onEdit={() => {}} />
             </div>
           </div>
         </section>

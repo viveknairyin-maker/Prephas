@@ -96,6 +96,7 @@ function SidebarSection({ title, children, dark = false }) {
 // TEMPLATE 1 — Software Engineer (Two-column technical grid layout)
 // ══════════════════════════════════════════════════════════════════════════════
 export function SoftwareEngineerTemplate({ data }) {
+  if (!data) return null;
   const d = data;
   const linksArr = getLinksArray(d.links);
 
@@ -233,6 +234,7 @@ export function SoftwareEngineerTemplate({ data }) {
 // TEMPLATE 2 — Fresher / Student (Education-first single-column layout)
 // ══════════════════════════════════════════════════════════════════════════════
 export function FresherTemplate({ data }) {
+  if (!data) return null;
   const d = data;
   const linksArr = getLinksArray(d.links);
 
@@ -367,6 +369,7 @@ export function FresherTemplate({ data }) {
 // TEMPLATE 3 — Modern Professional (Tinted left sidebar layout)
 // ══════════════════════════════════════════════════════════════════════════════
 export function ModernProfessionalTemplate({ data }) {
+  if (!data) return null;
   const d = data;
   const linksArr = getLinksArray(d.links);
 
@@ -510,6 +513,7 @@ export function ModernProfessionalTemplate({ data }) {
 // TEMPLATE 4 — Executive (Centered serif layout)
 // ══════════════════════════════════════════════════════════════════════════════
 export function ExecutiveTemplate({ data }) {
+  if (!data) return null;
   const d = data;
   const linksArr = getLinksArray(d.links);
 
@@ -654,6 +658,7 @@ export function ExecutiveTemplate({ data }) {
 // TEMPLATE 5 — Creative (Asymmetric modern layout)
 // ══════════════════════════════════════════════════════════════════════════════
 export function CreativeTemplate({ data }) {
+  if (!data) return null;
   const d = data;
   const linksArr = getLinksArray(d.links);
 
