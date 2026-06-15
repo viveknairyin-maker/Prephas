@@ -113,7 +113,7 @@ function LandingPage() {
         {/* Features Bento Grid */}
         <section id="features" className="px-margin-mobile md:px-margin-desktop py-32 border-b border-primary">
           <div className="max-w-container-max-width mx-auto">
-            <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-20 gap-8">
               <div className="max-w-2xl">
                 <span className="font-label-sm text-primary uppercase tracking-widest block mb-4">Core Modules</span>
                 <h2 className="font-display text-headline-lg md:text-[48px] leading-tight">Why PREPHAS Works</h2>
