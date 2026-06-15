@@ -6,6 +6,7 @@ import Navbar from '../components/Navbar';
 import ResumeTemplates from '../components/ResumeTemplates';
 import Footer from '../components/Footer';
 import { Helmet } from 'react-helmet-async';
+import { trackEvent } from '../utils/analytics';
 
 function TemplatesPage() {
   const { user } = useAuth();
@@ -47,6 +48,7 @@ function TemplatesPage() {
           template: templateId,
           updatedAt: new Date().toISOString()
         });
+        trackEvent('Template Selected', { template_name: templateId });
         navigate(`/builder/${latestResume.id}`);
       } else {
         // Create a new resume
@@ -54,6 +56,7 @@ function TemplatesPage() {
           userId: user.uid,
           title: `New Resume (${templateId})`,
           template: templateId,
+          source: 'template_selection',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           personalInfo: { name: '', email: '', phone: '', linkedin: '', location: '', role: '' },
@@ -70,10 +73,18 @@ function TemplatesPage() {
           strengthScores: { experience: 0, projects: 0, skills: 0, education: 0 }
         };
         const docRef = await addDoc(collection(db, 'resumes'), newResume);
+        trackEvent('Resume Created', {
+          source: 'template_selection',
+          template_name: templateId
+        });
         navigate(`/builder/${docRef.id}`);
       }
     } catch (error) {
       console.error("Error applying template:", error);
+      trackEvent('Resume Creation Failed', {
+        error_type: 'template_apply_error',
+        error_message: error.message || 'Failed to apply template'
+      });
       alert(`Something went wrong: ${error.message}`);
     }
   };

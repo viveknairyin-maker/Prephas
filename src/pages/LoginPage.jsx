@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { signInWithEmailAndPassword, signInWithPopup, auth, googleProvider, db } from '../utils/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { sendPasswordResetEmail } from "firebase/auth";
+import { trackEvent } from '../utils/analytics';
 
 function LoginPage() {
   const [email, setEmail] = useState('');
@@ -51,9 +52,14 @@ function LoginPage() {
     setError("");
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      trackEvent('Login', { method: 'email' });
       navigate('/dashboard');
     } catch (err) {
       console.error("Login error:", err);
+      trackEvent('Login Failed', {
+        error_type: 'email_login_error',
+        error_message: err.message || err.code || 'Unknown email login error'
+      });
       setError(getAuthError(err.code));
     } finally {
       setLoading(false);
@@ -77,10 +83,17 @@ function LoginPage() {
           plan: 'free',
           downloadCount: 0
         });
+        trackEvent('Signup', { method: 'google', user_type: 'free' });
+      } else {
+        trackEvent('Login', { method: 'google' });
       }
       navigate('/dashboard');
     } catch (err) {
       console.error("Google sign-in error:", err);
+      trackEvent('Login Failed', {
+        error_type: 'google_login_error',
+        error_message: err.message || 'Unknown Google login error'
+      });
       setError(`Google Sign-In failed: ${err.message} (${err.code || 'unknown'})`);
     } finally {
       setLoading(false);

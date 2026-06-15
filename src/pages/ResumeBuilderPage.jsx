@@ -11,11 +11,13 @@ import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 import { TEMPLATE_COMPONENTS, TEMPLATES, TemplateThumbnail } from '../components/ResumeTemplates';
 import { Helmet } from 'react-helmet-async';
+import { trackEvent } from '../utils/analytics';
 
 function ResumeBuilderPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user, profile, refreshProfile } = useAuth();
+  const builderOpenedTracked = useRef(false);
 
   // Resume State
   const [resume, setResume] = useState(null);
@@ -89,10 +91,11 @@ function ResumeBuilderPage() {
       const initBlank = async () => {
         try {
           setError(null);
-          const docRef = await addDoc(collection(db, 'resumes'), {
+          const newDoc = {
             userId: user.uid,
             title: 'Untitled Resume',
             template: 'software-engineer',
+            source: 'blank',
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             personalInfo: { name: '', email: '', phone: '', linkedin: '', location: '', role: '' },
@@ -107,10 +110,19 @@ function ResumeBuilderPage() {
             links: { linkedin: '', github: '', portfolio: '', leetcode: '' },
             atsScore: 0,
             strengthScores: { experience: 0, projects: 0, skills: 0, education: 0 }
+          };
+          const docRef = await addDoc(collection(db, 'resumes'), newDoc);
+          trackEvent('Resume Created', {
+            source: 'blank',
+            template_name: 'software-engineer'
           });
           navigate(`/builder/${docRef.id}`, { replace: true });
         } catch (err) {
           console.error("Error creating blank resume:", err);
+          trackEvent('Resume Creation Failed', {
+            error_type: 'firestore_error',
+            error_message: err.message || 'Failed to create blank resume'
+          });
           setError("Failed to create a new resume. This is typically caused by locked Firestore Security Rules in your Firebase Project (insufficient permissions).");
           setLoading(false);
         }
@@ -125,7 +137,15 @@ function ResumeBuilderPage() {
         const docRef = doc(db, 'resumes', id);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          setResume(docSnap.data());
+          const data = docSnap.data();
+          setResume(data);
+          if (!builderOpenedTracked.current) {
+            trackEvent('Resume Builder Opened', {
+              template_name: data.template || 'classic',
+              source: data.source || 'blank'
+            });
+            builderOpenedTracked.current = true;
+          }
         } else {
           navigate('/dashboard');
         }
@@ -586,6 +606,14 @@ function ResumeBuilderPage() {
       const name = resume.personalInfo?.name || 'resume';
       pdf.save(`${name.toLowerCase().replace(/\s+/g, '-')}-resume.pdf`);
 
+      // Compute page count
+      const pageCount = imgHeight <= pageHeight ? 1 : Math.ceil(imgHeight / pageHeight);
+
+      trackEvent('Resume Downloaded', {
+        template_name: resume.template || 'classic',
+        page_count: pageCount
+      });
+
       if (profile?.plan === 'free') {
         const userRef = doc(db, 'users', user.uid);
         await updateDoc(userRef, {
@@ -595,6 +623,10 @@ function ResumeBuilderPage() {
       }
     } catch (err) {
       console.error("PDF generation error:", err);
+      trackEvent('Resume Download Failed', {
+        error_type: 'pdf_generation_error',
+        error_message: err.message || 'Unknown PDF generation error'
+      });
     } finally {
       document.head.removeChild(style);
     }
@@ -858,7 +890,10 @@ service cloud.firestore {
                   return (
                     <button
                       key={tpl.id}
-                      onClick={() => setResume(prev => ({ ...prev, template: tpl.id }))}
+                      onClick={() => {
+                        setResume(prev => ({ ...prev, template: tpl.id }));
+                        trackEvent('Template Selected', { template_name: tpl.id });
+                      }}
                       className={`text-left p-4 border transition-all flex flex-col justify-between h-40 group relative block-shadow-hover ${
                         isActive 
                           ? 'border-primary bg-zinc-50 border-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]' 

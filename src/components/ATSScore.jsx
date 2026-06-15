@@ -6,6 +6,7 @@ import { parseResumeFromText } from "../utils/gemini";
 import * as pdfjsLib from "pdfjs-dist";
 import pdfjsWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { trackEvent } from "../utils/analytics";
 
 // Configure local worker source
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -193,6 +194,7 @@ export default function ATSScore({ existingResumeData }) {
     setFile(f);
     setMode("loading");
     setLoadingMsg("Reading your resume...");
+    trackEvent('ATS Analysis Started');
 
     try {
       const text = await extractTextFromPDF(f);
@@ -202,9 +204,16 @@ export default function ATSScore({ existingResumeData }) {
       const analysis = await analyzeWithGemini(text);
       setResult(analysis);
       setMode("result");
+      trackEvent('ATS Analysis Completed', {
+        ats_score: analysis?.score || 0
+      });
     } catch (err) {
       setErrorMsg(err.message || "Something went wrong. Please try again.");
       setMode("error");
+      trackEvent('ATS Analysis Failed', {
+        error_type: 'ats_analysis_error',
+        error_message: err.message || 'Unknown analysis error'
+      });
     }
   };
 
@@ -213,11 +222,19 @@ export default function ATSScore({ existingResumeData }) {
     if (!jobDesc) return;
     setJobLoading(true);
     setJobError("");
+    trackEvent('Job Match Analysis Started');
     try {
       const data = await analyzeJobMatch(rawText, jobDesc);
       setJobResult(data);
+      trackEvent('Job Match Analysis Completed', {
+        match_score: data?.matchScore || 0
+      });
     } catch (err) {
       setJobError("Analysis failed. Try again.");
+      trackEvent('Job Match Analysis Failed', {
+        error_type: 'job_match_error',
+        error_message: err.message || 'Unknown job match error'
+      });
     } finally {
       setJobLoading(false);
     }
@@ -272,15 +289,24 @@ export default function ATSScore({ existingResumeData }) {
           userId: user.uid,
           title: `Imported (${file.name.replace(/\.pdf$/i, '')})`,
           template: "classic",
+          source: "ats_import",
           createdAt: new Date().toISOString(),
           strengthScores: { experience: 0, projects: 0, skills: 0, education: 0 },
           ...resumeData
         };
         const docRef = await addDoc(collection(db, 'resumes'), newResume);
+        trackEvent('Resume Created', {
+          source: 'ats_import',
+          template_name: 'classic'
+        });
         navigate(`/builder/${docRef.id}`);
       }
     } catch (err) {
       console.error("Failed to parse and import resume:", err);
+      trackEvent('Resume Creation Failed', {
+        error_type: 'ats_import_error',
+        error_message: err.message || 'Failed to import resume'
+      });
       setErrorMsg(err.message || "Failed to convert resume. You can manually copy details into the builder.");
       setMode("error");
     }
