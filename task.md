@@ -12,3 +12,5 @@
 - [x] Update `src/pages/PricingPage.jsx` to integrate Helmet and shared Footer
 - [x] Update `src/pages/LoginPage.jsx` & `src/pages/SignupPage.jsx` with Helmet tags
 - [x] Verify build compiles cleanly (`npm run build`)
+- [x] Resolve mobile app crash on "Fix & Build" navigation using optional chaining and null checks
+- [x] Configure dynamic `authDomain` and Vercel rewrite proxy to remove default Firebase branding
