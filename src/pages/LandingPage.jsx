@@ -84,8 +84,13 @@ function LandingPage() {
         <section className="relative min-h-[819px] flex flex-col justify-center items-center text-center px-margin-mobile md:px-margin-desktop py-24 overflow-hidden border-b border-primary">
           <div className="absolute inset-0 grid-bg pointer-events-none"></div>
           <div className="relative z-10 max-w-4xl mx-auto">
-            <h1 className="font-display text-display md:text-[80px] leading-tight mb-8">
-              Build a Resume Recruiters Actually Notice.
+            <h1 className="font-display text-[38px] md:text-[68px] lg:text-[76px] leading-[1.05] tracking-tighter mb-8 font-black uppercase text-primary">
+              Build a Resume <br className="hidden md:inline" />
+              <span className="font-serif italic font-normal text-zinc-500 normal-case">that</span>{" "}
+              <span className="bg-primary text-on-primary px-4 py-1.5 inline-block transform -rotate-1 border border-primary">
+                Recruiters
+              </span>{" "}
+              Actually Notice.
             </h1>
             <p className="font-body-lg text-secondary max-w-2xl mx-auto mb-12">
               ATS-optimized. AI-improved. Interview-ready. Stop sending resumes into a black hole. Let PREPHAS turn your experience into an unfair advantage.
