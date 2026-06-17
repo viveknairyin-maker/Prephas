@@ -14,3 +14,6 @@
 - [x] Verify build compiles cleanly (`npm run build`)
 - [x] Resolve mobile app crash on "Fix & Build" navigation using optional chaining and null checks
 - [x] Configure dynamic `authDomain` and Vercel rewrite proxy to remove default Firebase branding
+- [x] Optimize social sharing: 
+  - **Link Preview Image**: Standardized `og:image` to `logo.png` for cleaner social card previews.
+  - **Detailed Sharing Text**: Implemented structured 2-line messaging for ATS scores, job matches, and invitations to improve click-through rates.
