@@ -49,23 +49,23 @@ function LandingPage() {
   const faqs = [
     {
       q: "What is an ATS Resume?",
-      a: "An ATS (Applicant Tracking System) resume is formatted to pass through automated recruiting software that companies use to filter job applications. PREPHAS helps you build resumes with the exact layout, structure, and keywords that ATS systems search for."
-    },
-    {
-      q: "How does ATS Score work?",
-      a: "PREPHAS analyzes your resume against key ATS parameters including contact formatting, section headers, keyword match, and experience bullet points. It gives you a score out of 100 with clear, actionable recommendations to improve."
+      a: "An Applicant Tracking System (ATS) resume is formatted to pass through automated recruiting software that companies use to filter job applications. When you apply online, your resume is processed by the ATS first. The software parses your resume text, dividing it into structured fields like experience, education, and skills. Recruiters then search this database using specific keywords from the job description. If your resume format is too complex or lacks the correct keywords, it may get scrambled or automatically filtered out before a human ever looks at it. PREPHAS builds resumes using layout formats optimized specifically for these tracking systems."
     },
     {
       q: "Is PREPHAS free?",
-      a: "Yes, PREPHAS offers a free tier that allows you to build your resume and run a basic ATS check. Our premium tier offers unlimited downloads, access to all templates, AI bullet generator, and deep job description matching."
+      a: "Yes, PREPHAS is completely free. We do not have any paid tiers, hidden subscriptions, or premium locks on resume creation. You can use all of our professional, ATS-optimized templates, run unlimited ATS score checks, analyze your resume against job descriptions using our Job Match Analysis tool, and download your finalized resumes as PDFs without paying anything. Our mission is to democratize job search tools, making high-end AI optimization accessible to all students and job seekers across India and beyond without any financial barriers."
     },
     {
-      q: "Can I download resumes as PDF?",
-      a: "Yes, all resumes created on PREPHAS can be downloaded instantly as print-ready, professional PDFs. The format is designed to be highly readable by both human recruiters and ATS software."
+      q: "How accurate is ATS scoring?",
+      a: "The ATS compatibility score calculated by PREPHAS is designed to simulate the parsing engines used by major enterprise tracking systems (like Workday, Taleo, Greenhouse, and Lever). We check for structural layout errors, clean sections, contact formatting, and key terminology. While no simulation can match every proprietary system configuration, our checker gives you an accurate relative indicator of whether your document is clean, readable, and keyword-rich. By hitting a score of 80+ on PREPHAS, you minimize the risk of layout corruption and ensure that recruiters can find you in search results."
     },
     {
       q: "How does Job Match Analysis work?",
-      a: "You can copy and paste any job description into PREPHAS. Our AI will analyze the posting, compare it with your resume, identify missing skills and keywords, and calculate a match score."
+      a: "Job Match Analysis evaluates your resume against a specific job description to find relevance gaps. When you paste the job posting into our tool, our semantic model identifies required hard skills, certifications, programming languages, and soft skills listed in the description. It then compares these requirements against your resume draft. The output shows a percentage match score and highlights exactly which keywords are present and which ones are missing. Adding these missing keywords to your experience or skills section naturally increases your search relevancy inside applicant tracking databases."
+    },
+    {
+      q: "Which resume format should I use?",
+      a: "We strongly recommend using a clean, single-column chronological format, especially if you are applying through online portals. The chronological format lists your work history in reverse chronological order, which is the default expectation for ATS parsers and recruiters alike. Single-column layouts ensure that text reads top-to-bottom without scrambling details from adjacent columns. Avoid using graphics, sidebars, charts, or images, as parsers cannot extract text from graphical objects, leading to blank fields in recruiter profiles. All templates in PREPHAS follow these compliance guidelines."
     }
   ];
 
@@ -199,6 +199,89 @@ function LandingPage() {
           </div>
         </section>
 
+        {/* Real Resume Example - Before & After (Trust / Authority Improvements) */}
+        <section id="resume-comparison" className="px-margin-mobile md:px-margin-desktop py-32 border-b border-primary bg-zinc-50/50">
+          <div className="max-w-container-max-width mx-auto">
+            <div className="text-center mb-20">
+              <span className="font-label-sm text-primary uppercase tracking-widest block mb-4">Optimization In Action</span>
+              <h2 className="font-display text-headline-lg md:text-[48px] leading-tight uppercase font-black">Before & After Resume Example</h2>
+              <p className="font-body-lg text-secondary max-w-2xl mx-auto mt-4">
+                Observe how correcting layout issues, summary structure, and keyword densities directly shifts your index readiness and ATS scores.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter max-w-4xl mx-auto">
+              {/* Before Card */}
+              <div className="border border-primary bg-white p-8 md:p-12 flex flex-col justify-between hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all">
+                <div>
+                  <div className="flex justify-between items-center mb-6">
+                    <span className="font-label-sm uppercase tracking-widest text-red-600 font-bold text-xs">Before Optimization</span>
+                    <div className="border border-red-600 px-3 py-1 text-red-600 font-bold text-xs">
+                      ATS Score: 42
+                    </div>
+                  </div>
+                  <div className="w-full h-px bg-zinc-200 mb-6"></div>
+                  
+                  <div className="space-y-6 text-sm">
+                    <div>
+                      <h4 className="font-bold text-primary uppercase tracking-wide text-xs mb-1.5">Missing Keywords</h4>
+                      <p className="text-secondary leading-relaxed">
+                        Lacked industry-specific programming terms, frameworks, and tools listed under the core job qualifications.
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-primary uppercase tracking-wide text-xs mb-1.5">Weak Summary</h4>
+                      <p className="text-secondary leading-relaxed">
+                        \"Hardworking team player looking for a software role to utilize my education and skills.\" (Too generic, provides zero context).
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-primary uppercase tracking-wide text-xs mb-1.5">Poor Formatting</h4>
+                      <p className="text-secondary leading-relaxed">
+                        Multi-column tables and skill graphs scrambled reading order. Contact info was embedded inside a header image block.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* After Card */}
+              <div className="border border-primary bg-white p-8 md:p-12 flex flex-col justify-between hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all">
+                <div>
+                  <div className="flex justify-between items-center mb-6">
+                    <span className="font-label-sm uppercase tracking-widest text-emerald-600 font-bold text-xs">After Optimization</span>
+                    <div className="border border-emerald-600 px-3 py-1 text-emerald-600 font-bold text-xs bg-emerald-50">
+                      ATS Score: 89
+                    </div>
+                  </div>
+                  <div className="w-full h-px bg-zinc-200 mb-6"></div>
+                  
+                  <div className="space-y-6 text-sm">
+                    <div>
+                      <h4 className="font-bold text-primary uppercase tracking-wide text-xs mb-1.5">Added Relevant Keywords</h4>
+                      <p className="text-secondary leading-relaxed">
+                        Naturally integrated required keywords (e.g. TypeScript, REST APIs, unit testing) inside chronological work histories.
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-primary uppercase tracking-wide text-xs mb-1.5">Action-Oriented Summary</h4>
+                      <p className="text-secondary leading-relaxed">
+                        \"Frontend Developer with 3+ years experience building responsive interfaces using React, TypeScript, and unit testing schemas.\"
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-primary uppercase tracking-wide text-xs mb-1.5">Clean Formatting</h4>
+                      <p className="text-secondary leading-relaxed">
+                        Standard single-column chronological layout. Clean section dividers and email/phone details placed clearly in the main body.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Proof Section */}
         <section className="px-margin-mobile md:px-margin-desktop py-24 border-b border-primary bg-primary text-on-primary">
           <div className="max-w-container-max-width mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
@@ -253,38 +336,58 @@ function LandingPage() {
           {/* 3-column desktop, 2-column tablet, 1-column mobile grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Card 1 */}
-            <div className="border border-primary bg-white p-8 flex flex-col justify-between hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-150 min-h-[200px]">
+            <div className="border border-primary bg-white p-8 flex flex-col justify-between hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-150 min-h-[340px]">
               <div>
                 <span className="material-symbols-outlined text-[32px] text-primary mb-4" data-icon="analytics">analytics</span>
-                <h3 className="font-headline-md text-headline-md mb-2 text-primary">ATS Score Checker</h3>
-                <p className="font-body-md text-secondary text-sm leading-relaxed">Instant ATS analysis with actionable recommendations.</p>
+                <h3 className="font-headline-md text-headline-md mb-2 text-primary font-bold">ATS Score Checker</h3>
+                <div className="text-secondary text-xs space-y-2 mt-4 leading-relaxed">
+                  <p><strong>What it does:</strong> Scans your resume layout and simulates parsing algorithms used by recruiter software.</p>
+                  <p><strong>Why it matters:</strong> Prevents automatic filtering of your resume due to structural errors before a human reads it.</p>
+                  <p><strong>When to use:</strong> Use it as a final validation step before submitting applications to online jobs.</p>
+                  <p><strong>What you learn:</strong> Gain concrete insights on layout errors, parsing blocks, and get an immediate score out of 100.</p>
+                </div>
               </div>
             </div>
 
             {/* Card 2 */}
-            <div className="border border-primary bg-white p-8 flex flex-col justify-between hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-150 min-h-[200px]">
+            <div className="border border-primary bg-white p-8 flex flex-col justify-between hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-150 min-h-[340px]">
               <div>
                 <span className="material-symbols-outlined text-[32px] text-primary mb-4" data-icon="person_search">person_search</span>
-                <h3 className="font-headline-md text-headline-md mb-2 text-primary">Job Match Analysis</h3>
-                <p className="font-body-md text-secondary text-sm leading-relaxed">Compare resumes against job descriptions and measure relevance.</p>
+                <h3 className="font-headline-md text-headline-md mb-2 text-primary font-bold">Job Match Analysis</h3>
+                <div className="text-secondary text-xs space-y-2 mt-4 leading-relaxed">
+                  <p><strong>What it does:</strong> Compares your resume vocabulary directly with target job descriptions.</p>
+                  <p><strong>Why it matters:</strong> Optimizes your relevance rank, ensuring your profile highlights critical qualifications.</p>
+                  <p><strong>When to use:</strong> Whenever you are tailoring your CV for a specific job opening or career path.</p>
+                  <p><strong>What you learn:</strong> Receive a clear, actionable gaps checklist highlighting missing hard skills and tools.</p>
+                </div>
               </div>
             </div>
 
             {/* Card 3 */}
-            <div className="border border-primary bg-white p-8 flex flex-col justify-between hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-150 min-h-[200px]">
+            <div className="border border-primary bg-white p-8 flex flex-col justify-between hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-150 min-h-[340px]">
               <div>
                 <span className="material-symbols-outlined text-[32px] text-primary mb-4" data-icon="auto_awesome">auto_awesome</span>
-                <h3 className="font-headline-md text-headline-md mb-2 text-primary">AI Resume Suggestions</h3>
-                <p className="font-body-md text-secondary text-sm leading-relaxed">Improve wording, impact, and keyword optimization.</p>
+                <h3 className="font-headline-md text-headline-md mb-2 text-primary font-bold">AI Resume Builder</h3>
+                <div className="text-secondary text-xs space-y-2 mt-4 leading-relaxed">
+                  <p><strong>What it does:</strong> Guided builder interface that structures input fields into compliant sections.</p>
+                  <p><strong>Why it matters:</strong> Prompts you for required details (metrics, actions) that recruiters seek in standard profiles.</p>
+                  <p><strong>When to use:</strong> When drafting, formatting, and refining your professional experience history.</p>
+                  <p><strong>What you learn:</strong> Learn how to frame work history using the star-method and write strong accomplishments.</p>
+                </div>
               </div>
             </div>
 
             {/* Card 4 */}
-            <div className="border border-primary bg-white p-8 flex flex-col justify-between hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-150 min-h-[200px]">
+            <div className="border border-primary bg-white p-8 flex flex-col justify-between hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-150 min-h-[340px]">
               <div>
                 <span className="material-symbols-outlined text-[32px] text-primary mb-4" data-icon="description">description</span>
-                <h3 className="font-headline-md text-headline-md mb-2 text-primary">Professional Templates</h3>
-                <p className="font-body-md text-secondary text-sm leading-relaxed">ATS-friendly resume templates for different careers.</p>
+                <h3 className="font-headline-md text-headline-md mb-2 text-primary font-bold">Resume Templates</h3>
+                <div className="text-secondary text-xs space-y-2 mt-4 leading-relaxed">
+                  <p><strong>What it does:</strong> Provides pre-coded, chronological, single-column document presets.</p>
+                  <p><strong>Why it matters:</strong> Guarantees standard reading order for parsing robots and human recruiters alike.</p>
+                  <p><strong>When to use:</strong> When creating a new resume or replacing complex, graphic-heavy layouts.</p>
+                  <p><strong>What you learn:</strong> Understand clean design hierarchies, spacing rules, and typography standard styles.</p>
+                </div>
               </div>
             </div>
 

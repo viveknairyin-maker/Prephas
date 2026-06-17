@@ -215,6 +215,32 @@ function Navbar() {
             ATS Analyser
           </Link>
 
+          <Link
+            className={`flex items-center gap-3 px-6 py-4 hover:bg-zinc-50 transition-colors font-body-md border-b border-primary/5 min-h-[52px] ${
+              location.pathname === '/help'
+                ? 'text-primary font-semibold bg-zinc-50'
+                : 'text-secondary'
+            }`}
+            to="/help"
+            onClick={closeMenu}
+          >
+            <span className="material-symbols-outlined text-xl flex-shrink-0">help</span>
+            Help Center
+          </Link>
+
+          <Link
+            className={`flex items-center gap-3 px-6 py-4 hover:bg-zinc-50 transition-colors font-body-md border-b border-primary/5 min-h-[52px] ${
+              location.pathname === '/contact'
+                ? 'text-primary font-semibold bg-zinc-50'
+                : 'text-secondary'
+            }`}
+            to="/contact"
+            onClick={closeMenu}
+          >
+            <span className="material-symbols-outlined text-xl flex-shrink-0">mail</span>
+            Contact
+          </Link>
+
 
 
           {user && (

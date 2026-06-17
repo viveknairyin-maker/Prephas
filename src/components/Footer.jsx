@@ -24,6 +24,9 @@ function Footer() {
         <div>
           <div style={{ fontWeight: 700, marginBottom: 16, fontSize: 13, letterSpacing: 1, textTransform: "uppercase", color: "#888" }}>Legal & Resources</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <Link to="/about" style={{ color: "#ccc", fontSize: 13, textDecoration: "none" }}>About Us</Link>
+            <Link to="/help" style={{ color: "#ccc", fontSize: 13, textDecoration: "none" }}>Help Center</Link>
+            <Link to="/contact" style={{ color: "#ccc", fontSize: 13, textDecoration: "none" }}>Contact</Link>
             <Link to="/login" style={{ color: "#ccc", fontSize: 13, textDecoration: "none" }}>Login</Link>
             <Link to="/signup" style={{ color: "#ccc", fontSize: 13, textDecoration: "none" }}>Sign Up Free</Link>
             <Link to="/privacy-policy" style={{ color: "#ccc", fontSize: 13, textDecoration: "none" }}>Privacy Policy</Link>

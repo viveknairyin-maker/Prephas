@@ -5,7 +5,7 @@ export const blogPosts = [
     title: "How to Write an ATS-Friendly Resume in 2026",
     excerpt: "Learn the essential rules, formats, and keyword strategies to ensure your resume passes applicant tracking systems and reaches human recruiters.",
     category: "ATS Optimization",
-    author: "PREPHAS Career Team",
+    author: "PREPHAS Editorial Team",
     coverImage: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?q=80&w=600&auto=format&fit=crop",
     readingTime: "8 min read",
     publishedDate: "June 15, 2026",
@@ -87,7 +87,7 @@ export const blogPosts = [
     title: "10 Resume Mistakes That Cost You Interviews",
     excerpt: "Avoid these common resume blunders that trigger automatic rejections from applicant tracking systems and human recruiters alike.",
     category: "Resume Writing",
-    author: "PREPHAS Career Team",
+    author: "PREPHAS Editorial Team",
     coverImage: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=600&auto=format&fit=crop",
     readingTime: "9 min read",
     publishedDate: "June 12, 2026",
@@ -178,7 +178,7 @@ export const blogPosts = [
     title: "Resume Keywords: How to Beat ATS Systems",
     excerpt: "Discover how to identify, select, and naturally integrate the right keywords into your resume to rank higher in recruiter searches.",
     category: "ATS Optimization",
-    author: "PREPHAS Career Team",
+    author: "PREPHAS Editorial Team",
     coverImage: "https://images.unsplash.com/photo-1512486130939-2c4f79935e4f?q=80&w=600&auto=format&fit=crop",
     readingTime: "7 min read",
     publishedDate: "June 10, 2026",
@@ -256,7 +256,7 @@ export const blogPosts = [
     title: "Best Resume Format for Freshers in 2026",
     excerpt: "A comprehensive guide to structured layouts, project highlights, and education formatting for students and entry-level job seekers.",
     category: "Students & Freshers",
-    author: "PREPHAS Career Team",
+    author: "PREPHAS Editorial Team",
     coverImage: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=600&auto=format&fit=crop",
     readingTime: "8 min read",
     publishedDate: "June 08, 2026",
@@ -343,7 +343,7 @@ export const blogPosts = [
     title: "How ATS Software Actually Works",
     excerpt: "Demystify the parsing, scoring, and filtering algorithms of applicant tracking systems to optimize your applications.",
     category: "ATS Optimization",
-    author: "PREPHAS Career Team",
+    author: "PREPHAS Editorial Team",
     coverImage: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?q=80&w=600&auto=format&fit=crop",
     readingTime: "9 min read",
     publishedDate: "June 05, 2026",
@@ -430,7 +430,7 @@ export const blogPosts = [
     title: "One Page vs Two Page Resume",
     excerpt: "Should your resume be one page or two? Learn the rules of length, layout density, and target seniority to make the right choice.",
     category: "Resume Writing",
-    author: "PREPHAS Career Team",
+    author: "PREPHAS Editorial Team",
     coverImage: "https://images.unsplash.com/photo-1506784983877-45594efa4cbe?q=80&w=600&auto=format&fit=crop",
     readingTime: "5 min read",
     publishedDate: "June 02, 2026",
@@ -441,7 +441,7 @@ export const blogPosts = [
         title: "The Gold Standard",
         paragraphs: [
           "As a general rule, a one-page resume is best for students, freshers, and professionals with less than 5 years of experience. A single page keeps your pitch concise, high-impact, and easy to read. For senior professionals, executives, or individuals with a long list of jobs, projects, or publications, a two-page resume is acceptable and often necessary to show depth.",
-          "Never stretch your resume to two pages by adding filler words or formatting it with wide margins. It is always better to have a dense, highly relevant one-page resume than a sparse, repetitive two-page document."
+          "Never stretch your resume to two pages by adding filler words or formatting it with wide margins. It is always better to have a dense, highly relevant one-page resume than a sparse, repetitive two-page document. To get started with a pre-formatted template that fits everything perfectly, select one of our [Resume Templates](https://www.prephas.online/templates) or build your document directly in our [Resume Builder](https://www.prephas.online/resume-builder)."
         ]
       }
     ]
@@ -452,7 +452,7 @@ export const blogPosts = [
     title: "How to Match Your Resume to a Job Description",
     excerpt: "Step-by-step guide to tailoring your resume keywords, summary, and experience to fit specific job requirements perfectly.",
     category: "Job Search",
-    author: "PREPHAS Career Team",
+    author: "PREPHAS Editorial Team",
     coverImage: "https://images.unsplash.com/photo-1450133064473-71024230f91b?q=80&w=600&auto=format&fit=crop",
     readingTime: "6 min read",
     publishedDate: "May 28, 2026",
@@ -474,7 +474,7 @@ export const blogPosts = [
     title: "Top Skills Employers Want in 2026",
     excerpt: "Explore the most in-demand technical and soft skills employers are searching for in candidates this year.",
     category: "Career Advice",
-    author: "PREPHAS Career Team",
+    author: "PREPHAS Editorial Team",
     coverImage: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=600&auto=format&fit=crop",
     readingTime: "7 min read",
     publishedDate: "May 25, 2026",
@@ -485,7 +485,7 @@ export const blogPosts = [
         title: "In-Demand Skills for 2026",
         paragraphs: [
           "This year, technical skills like AI integration, cloud architecture, and data engineering continue to lead the job market. At the same time, employers are placing a higher value on soft skills like problem-solving, emotional intelligence, adaptability, and remote collaboration.",
-          "Make sure your resume includes both specific technical competencies and examples of how you have applied your soft skills to drive success in your previous projects."
+          "Make sure your resume includes both specific technical competencies and examples of how you have applied your soft skills to drive success in your previous projects. You can check how well your skills match your target roles using our [ATS Analyzer](https://www.prephas.online/ats-analyzer)."
         ]
       }
     ]
@@ -496,7 +496,7 @@ export const blogPosts = [
     title: "How to Build a Resume with No Experience",
     excerpt: "No job history? No problem. Learn how to highlight your education, skills, and projects to secure your first role.",
     category: "Students & Freshers",
-    author: "PREPHAS Career Team",
+    author: "PREPHAS Editorial Team",
     coverImage: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=600&auto=format&fit=crop",
     readingTime: "6 min read",
     publishedDate: "May 20, 2026",
@@ -518,7 +518,7 @@ export const blogPosts = [
     title: "Best ATS-Friendly Resume Templates",
     excerpt: "Review and choose from the best minimalist, developer, and executive templates designed to pass automated systems.",
     category: "Resume Templates",
-    author: "PREPHAS Career Team",
+    author: "PREPHAS Editorial Team",
     coverImage: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=600&auto=format&fit=crop",
     readingTime: "5 min read",
     publishedDate: "May 15, 2026",

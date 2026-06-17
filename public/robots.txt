@@ -3,6 +3,9 @@ Allow: /
 Allow: /templates
 Allow: /ats-analyzer
 Allow: /ats
+Allow: /help
+Allow: /about
+Allow: /contact
 Allow: /login
 Allow: /signup
 

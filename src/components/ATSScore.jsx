@@ -455,6 +455,7 @@ export default function ATSScore({ existingResumeData }) {
             />
           )}
         </div>
+        <HowAtsWorks />
       </Page>
     );
   }
@@ -508,6 +509,7 @@ export default function ATSScore({ existingResumeData }) {
             ← Back
           </button>
         </div>
+        <HowAtsWorks />
       </Page>
     );
   }
@@ -839,6 +841,7 @@ export default function ATSScore({ existingResumeData }) {
             </div>
           )}
         </div>
+        <HowAtsWorks />
       </Page>
     );
   }
@@ -901,6 +904,64 @@ function Spinner() {
         .ats-spinner { width: 48px; height: 48px; border: 4px solid #eee; border-top-color: #000; border-radius: 50%; animation: spin 0.8s linear infinite; }
       `}</style>
       <div className="ats-spinner" />
+    </div>
+  );
+}
+
+function HowAtsWorks() {
+  return (
+    <div style={{ marginTop: 64, borderTop: "2px solid #000", paddingTop: 48 }}>
+      <div style={{ maxWidth: 800, margin: "0 auto" }}>
+        <h2 style={{ fontSize: 24, fontWeight: 900, textTransform: "uppercase", letterSpacing: -0.5, marginBottom: 24, textAlign: "center" }}>
+          How ATS Scoring Works
+        </h2>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 32 }}>
+          <div style={{ background: "#fff", border: "2px solid #000", boxShadow: "4px 4px 0px #000", padding: 24 }}>
+            <h3 style={{ fontWeight: 800, fontSize: 16, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 12, borderBottom: "1px solid #000", paddingBottom: 8 }}>
+              What is an ATS?
+            </h3>
+            <p style={{ color: "#555", fontSize: 14, lineHeight: 1.6, margin: 0 }}>
+              An Applicant Tracking System (ATS) is a software application used by employers to automate the intake, organization, and screening of job applications. Instead of reading every resume, recruiters search a database of parsed candidate profiles.
+            </p>
+          </div>
+
+          <div style={{ background: "#fff", border: "2px solid #000", boxShadow: "4px 4px 0px #000", padding: 24 }}>
+            <h3 style={{ fontWeight: 800, fontSize: 16, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 12, borderBottom: "1px solid #000", paddingBottom: 8 }}>
+              How Resumes are Scanned & Parsed
+            </h3>
+            <p style={{ color: "#555", fontSize: 14, lineHeight: 1.6, margin: 0 }}>
+              When you upload a resume, the parser scans the text content, separating it into data fields such as Work Experience, Education, and Skills. Complicated layout elements like text boxes, graphics, and multiple columns can disrupt this parsing, resulting in corrupted profiles or missing details.
+            </p>
+          </div>
+
+          <div style={{ background: "#fff", border: "2px solid #000", boxShadow: "4px 4px 0px #000", padding: 24 }}>
+            <h3 style={{ fontWeight: 800, fontSize: 16, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 12, borderBottom: "1px solid #000", paddingBottom: 8 }}>
+              What Affects ATS Scores?
+            </h3>
+            <p style={{ color: "#555", fontSize: 14, lineHeight: 1.6, margin: 0 }}>
+              ATS scores evaluate keyword alignment, formatting compliance, and structured readability. Having correct contact details, standardized headers (e.g. &quot;Work Experience&quot; instead of &quot;Where I've Been&quot;), and chronological layouts increases parsing success.
+            </p>
+          </div>
+
+          <div style={{ background: "#fff", border: "2px solid #000", boxShadow: "4px 4px 0px #000", padding: 24 }}>
+            <h3 style={{ fontWeight: 800, fontSize: 16, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 12, borderBottom: "1px solid #000", paddingBottom: 8 }}>
+              Why Keyword Matching Matters
+            </h3>
+            <p style={{ color: "#555", fontSize: 14, lineHeight: 1.6, margin: 0 }}>
+              Recruiters search the candidate database using specific keywords (e.g. hard skills, certifications, tools). Resumes that naturally incorporate these precise phrases from the job description are ranked higher, ensuring they are seen by human recruiters first.
+            </p>
+          </div>
+
+          <div style={{ background: "#fff", border: "2px solid #000", boxShadow: "4px 4px 0px #000", padding: 24 }}>
+            <h3 style={{ fontWeight: 800, fontSize: 16, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 12, borderBottom: "1px solid #000", paddingBottom: 8 }}>
+              How PREPHAS Calculates Compatibility
+            </h3>
+            <p style={{ color: "#555", fontSize: 14, lineHeight: 1.6, margin: 0 }}>
+              Our analyzer uses algorithms to simulate recruiter parsers. We scan your resume layout for compatibility errors, identify recognized headers, and compare your keyword density against standard industry profiles or user-provided job descriptions.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
