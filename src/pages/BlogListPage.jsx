@@ -59,7 +59,7 @@ function BlogListPage() {
         {/* Open Graph Tags */}
         <meta property="og:title" content="PREPHAS Blog | Career Tips & ATS Guides" />
         <meta property="og:description" content="Read our latest career insights, resume templates guidance, and step-by-step guides on passing ATS checkers." />
-        <meta property="og:image" content="https://www.prephas.online/og-image.png" />
+        <meta property="og:image" content="https://www.prephas.online/logo.png" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.prephas.online/blog" />
         
@@ -67,7 +67,7 @@ function BlogListPage() {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="PREPHAS Blog | Resume & Career Tips" />
         <meta name="twitter:description" content="Unlock expert strategies for optimizing your resume templates and understanding ATS scores." />
-        <meta name="twitter:image" content="https://www.prephas.online/og-image.png" />
+        <meta name="twitter:image" content="https://www.prephas.online/logo.png" />
 
         {/* Breadcrumb Schema */}
         <script type="application/ld+json">

@@ -110,7 +110,7 @@ function LoginPage() {
         {/* Open Graph Tags */}
         <meta property="og:title" content="Login | PREPHAS AI Resume Builder" />
         <meta property="og:description" content="Sign in to your account to update your resume, check your ATS score, and run job match analysis." />
-        <meta property="og:image" content="https://www.prephas.online/og-image.png" />
+        <meta property="og:image" content="https://www.prephas.online/logo.png" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.prephas.online/login" />
         
@@ -118,7 +118,7 @@ function LoginPage() {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Login | PREPHAS" />
         <meta name="twitter:description" content="Access your PREPHAS dashboard to resume building and ATS score checking." />
-        <meta name="twitter:image" content="https://www.prephas.online/og-image.png" />
+        <meta name="twitter:image" content="https://www.prephas.online/logo.png" />
       </Helmet>
       <div className="absolute inset-0 grid-bg pointer-events-none"></div>
       

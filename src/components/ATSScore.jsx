@@ -563,7 +563,7 @@ export default function ATSScore({ existingResumeData }) {
     const score = result.score || 0;
 
     const handleCopyScoreLink = () => {
-      const text = `🚀 I scored ${score}/100 on PREPHAS ATS Analyzer.\n\nCheck your ATS score and improve your resume for free:\nhttps://www.prephas.online`;
+      const text = `🚀 I just scored ${score}/100 on the PREPHAS ATS Analyzer! My resume format is solid, but I have some keyword gaps to fix.\nCheck your ATS compatibility score and get a detailed improvement report for free: https://www.prephas.online`;
       navigator.clipboard.writeText(text)
         .then(() => {
           alert("Share link copied to clipboard!");
@@ -575,7 +575,7 @@ export default function ATSScore({ existingResumeData }) {
     };
 
     const handleShareScoreResult = () => {
-      const text = `🚀 I scored ${score}/100 on PREPHAS ATS Analyzer. Check your ATS score and improve your resume for free:`;
+      const text = `🚀 I just scored ${score}/100 on the PREPHAS ATS Analyzer! My resume format is solid, but I have some keyword gaps to fix. Check your ATS compatibility score and get a detailed improvement report for free:`;
       if (navigator.share) {
         navigator.share({
           title: 'PREPHAS ATS Score',
@@ -684,7 +684,7 @@ export default function ATSScore({ existingResumeData }) {
     };
 
     const handleInviteFriends = () => {
-      const text = "I'm using PREPHAS to build ATS-friendly resumes and check ATS scores. Try it here: https://www.prephas.online";
+      const text = `💼 Build recruiter-ready, ATS-optimized resumes in minutes with PREPHAS.\nScan your CV for free, identify keyword gaps, and use professional templates: https://www.prephas.online`;
       if (navigator.share) {
         navigator.share({
           title: 'PREPHAS',

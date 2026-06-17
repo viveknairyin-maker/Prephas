@@ -14,7 +14,7 @@ function AboutPage() {
         {/* Social Meta */}
         <meta property="og:title" content="About Us & Transparency | PREPHAS" />
         <meta property="og:description" content="A clear, honest breakdown of how our resume analysis algorithms and tools work, who they are built for, and their limitations." />
-        <meta property="og:image" content="https://www.prephas.online/og-image.png" />
+        <meta property="og:image" content="https://www.prephas.online/logo.png" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.prephas.online/about" />
       </Helmet>

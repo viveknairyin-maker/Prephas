@@ -1928,7 +1928,7 @@ service cloud.firestore {
               <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
                 <button
                   onClick={() => {
-                    const text = "I just built my resume using PREPHAS.\n\nFree Resume Builder + ATS Score Checker:\nhttps://www.prephas.online";
+                    const text = `📄 I just built and downloaded a professional, recruiter-ready resume on PREPHAS for free!\nGet a clean chronological layout, test your ATS score, and match your CV to job listings: https://www.prephas.online`;
                     trackEvent('Share Link Copied', { source: 'download_success' });
                     if (navigator.share) {
                       navigator.share({

@@ -74,7 +74,7 @@ function AtsScorePage() {
         {/* Open Graph Tags */}
         <meta property="og:title" content="AI ATS Resume Checker & Score Analyzer | PREPHAS" />
         <meta property="og:description" content="Find layout issues, scan keyword coverage, and test your resume against recruiter screening models using our free ATS analyzer." />
-        <meta property="og:image" content="https://www.prephas.online/og-image.png" />
+        <meta property="og:image" content="https://www.prephas.online/logo.png" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.prephas.online/ats-analyzer" />
         
@@ -82,7 +82,7 @@ function AtsScorePage() {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Free AI ATS Resume Checker | PREPHAS" />
         <meta name="twitter:description" content="Upload your CV and run a comprehensive ATS score audit. Check keyword matches and fix layouts instantly." />
-        <meta name="twitter:image" content="https://www.prephas.online/og-image.png" />
+        <meta name="twitter:image" content="https://www.prephas.online/logo.png" />
       </Helmet>
       <Navbar />
       <main className="pt-16 md:pt-20">

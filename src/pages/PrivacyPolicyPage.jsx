@@ -14,7 +14,7 @@ function PrivacyPolicyPage() {
         {/* Open Graph Tags */}
         <meta property="og:title" content="Privacy Policy | PREPHAS Resume Builder" />
         <meta property="og:description" content="Review the privacy policy for PREPHAS to understand how your personal details and resume files are stored and protected." />
-        <meta property="og:image" content="https://www.prephas.online/og-image.png" />
+        <meta property="og:image" content="https://www.prephas.online/logo.png" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.prephas.online/privacy-policy" />
         
@@ -22,7 +22,7 @@ function PrivacyPolicyPage() {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Privacy Policy | PREPHAS" />
         <meta name="twitter:description" content="Read our privacy policy to learn about our data collection and protection standards." />
-        <meta name="twitter:image" content="https://www.prephas.online/og-image.png" />
+        <meta name="twitter:image" content="https://www.prephas.online/logo.png" />
       </Helmet>
       <Navbar />
       <main className="pt-24 pb-20 px-margin-mobile md:px-margin-desktop flex-grow">

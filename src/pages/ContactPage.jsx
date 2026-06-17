@@ -28,7 +28,7 @@ function ContactPage() {
         {/* Social Meta */}
         <meta property="og:title" content="Contact Us | PREPHAS" />
         <meta property="og:description" content="Reach out to the PREPHAS team. We are here to support your resume building and ATS optimization journey." />
-        <meta property="og:image" content="https://www.prephas.online/og-image.png" />
+        <meta property="og:image" content="https://www.prephas.online/logo.png" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.prephas.online/contact" />
       </Helmet>

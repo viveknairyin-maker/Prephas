@@ -101,7 +101,7 @@ function JobMatchPage() {
   };
 
   const handleCopyMatchLink = () => {
-    const text = `🎯 My resume matched ${matchPercent}% with this job description.\n\nCheck your match score for free on PREPHAS:\nhttps://www.prephas.online`;
+    const text = `🎯 My resume matched ${matchPercent}% with the target job description on the PREPHAS Job Analyzer!\nCompare your CV with any job description, see missing keywords, and optimize it for free: https://www.prephas.online`;
     navigator.clipboard.writeText(text)
       .then(() => {
         alert("Share link copied to clipboard!");
@@ -113,7 +113,7 @@ function JobMatchPage() {
   };
 
   const handleShareMatchResult = () => {
-    const text = `🎯 My resume matched ${matchPercent}% with this job description. Check your match score for free on PREPHAS:`;
+    const text = `🎯 My resume matched ${matchPercent}% with the target job description on the PREPHAS Job Analyzer! Compare your CV with any job description, see missing keywords, and optimize it for free:`;
     if (navigator.share) {
       navigator.share({
         title: 'PREPHAS Job Match Score',
@@ -217,7 +217,7 @@ function JobMatchPage() {
   };
 
   const handleInviteFriends = () => {
-    const text = "I'm using PREPHAS to build ATS-friendly resumes and check ATS scores. Try it here: https://www.prephas.online";
+    const text = `💼 Build recruiter-ready, ATS-optimized resumes in minutes with PREPHAS.\nScan your CV for free, identify keyword gaps, and use professional templates: https://www.prephas.online`;
     if (navigator.share) {
       navigator.share({
         title: 'PREPHAS',

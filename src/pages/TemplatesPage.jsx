@@ -102,7 +102,7 @@ function TemplatesPage() {
         {/* Open Graph Tags */}
         <meta property="og:title" content="Recruiter-Approved ATS Resume Templates | PREPHAS" />
         <meta property="og:description" content="Select from a curated collection of single-column, minimalist, and ATS-optimized resume templates designed to get past automated filters." />
-        <meta property="og:image" content="https://www.prephas.online/og-image.png" />
+        <meta property="og:image" content="https://www.prephas.online/logo.png" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.prephas.online/templates" />
         
@@ -110,7 +110,7 @@ function TemplatesPage() {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="ATS-Friendly Resume Templates | PREPHAS" />
         <meta name="twitter:description" content="Choose from recruiter-approved, ATS-optimized resume templates to start building your professional CV today." />
-        <meta name="twitter:image" content="https://www.prephas.online/og-image.png" />
+        <meta name="twitter:image" content="https://www.prephas.online/logo.png" />
       </Helmet>
       <Navbar />
       <main className="pt-20">

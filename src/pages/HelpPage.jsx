@@ -133,7 +133,7 @@ function HelpPage() {
         {/* Social Meta */}
         <meta property="og:title" content="Help Center & Resume Guides | PREPHAS" />
         <meta property="og:description" content="Learn how to optimize your resume templates, write ATS-friendly bullets, and analyze your score to land more interviews." />
-        <meta property="og:image" content="https://www.prephas.online/og-image.png" />
+        <meta property="og:image" content="https://www.prephas.online/logo.png" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.prephas.online/help" />
       </Helmet>
