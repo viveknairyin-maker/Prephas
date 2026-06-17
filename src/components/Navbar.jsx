@@ -61,31 +61,26 @@ function Navbar() {
             >
               Blog
             </Link>
-            {user && (
-              <>
-                <Link
-                  className={`font-body-md text-body-md transition-opacity hover:opacity-70 ${
-                    location.pathname === '/templates'
-                      ? 'text-primary font-bold border-b-2 border-primary'
-                      : 'text-secondary'
-                  }`}
-                  to="/templates"
-                >
-                  Templates
-                </Link>
-                <Link
-                  className={`font-body-md text-body-md transition-opacity hover:opacity-70 ${
-                    location.pathname.startsWith('/ats')
-                      ? 'text-primary font-bold border-b-2 border-primary'
-                      : 'text-secondary'
-                  }`}
-                  to="/ats-analyzer"
-                >
-                  ATS Analyser
-                </Link>
-
-              </>
-            )}
+            <Link
+              className={`font-body-md text-body-md transition-opacity hover:opacity-70 ${
+                location.pathname === '/templates'
+                  ? 'text-primary font-bold border-b-2 border-primary'
+                  : 'text-secondary'
+              }`}
+              to="/templates"
+            >
+              Templates
+            </Link>
+            <Link
+              className={`font-body-md text-body-md transition-opacity hover:opacity-70 ${
+                location.pathname.startsWith('/ats')
+                  ? 'text-primary font-bold border-b-2 border-primary'
+                  : 'text-secondary'
+              }`}
+              to="/ats-analyzer"
+            >
+              ATS Analyser
+            </Link>
           </nav>
         </div>
 
@@ -194,36 +189,36 @@ function Navbar() {
             Blog
           </Link>
 
+          <Link
+            className={`flex items-center gap-3 px-6 py-4 hover:bg-zinc-50 transition-colors font-body-md border-b border-primary/5 min-h-[52px] ${
+              location.pathname === '/templates'
+                ? 'text-primary font-semibold bg-zinc-50'
+                : 'text-secondary'
+            }`}
+            to="/templates"
+            onClick={closeMenu}
+          >
+            <span className="material-symbols-outlined text-xl flex-shrink-0">description</span>
+            Templates
+          </Link>
+
+          <Link
+            className={`flex items-center gap-3 px-6 py-4 hover:bg-zinc-50 transition-colors font-body-md border-b border-primary/5 min-h-[52px] ${
+              location.pathname.startsWith('/ats')
+                ? 'text-primary font-semibold bg-zinc-50'
+                : 'text-secondary'
+            }`}
+            to="/ats-analyzer"
+            onClick={closeMenu}
+          >
+            <span className="material-symbols-outlined text-xl flex-shrink-0">analytics</span>
+            ATS Analyser
+          </Link>
+
+
+
           {user && (
             <>
-              <Link
-                className={`flex items-center gap-3 px-6 py-4 hover:bg-zinc-50 transition-colors font-body-md border-b border-primary/5 min-h-[52px] ${
-                  location.pathname === '/templates'
-                    ? 'text-primary font-semibold bg-zinc-50'
-                    : 'text-secondary'
-                }`}
-                to="/templates"
-                onClick={closeMenu}
-              >
-                <span className="material-symbols-outlined text-xl flex-shrink-0">description</span>
-                Templates
-              </Link>
-
-              <Link
-                className={`flex items-center gap-3 px-6 py-4 hover:bg-zinc-50 transition-colors font-body-md border-b border-primary/5 min-h-[52px] ${
-                  location.pathname.startsWith('/ats')
-                    ? 'text-primary font-semibold bg-zinc-50'
-                    : 'text-secondary'
-                }`}
-                to="/ats-analyzer"
-                onClick={closeMenu}
-              >
-                <span className="material-symbols-outlined text-xl flex-shrink-0">analytics</span>
-                ATS Analyser
-              </Link>
-
-
-
               <Link
                 className={`flex items-center gap-3 px-6 py-4 hover:bg-zinc-50 transition-colors font-body-md border-b border-primary/5 min-h-[52px] ${
                   location.pathname.startsWith('/builder')

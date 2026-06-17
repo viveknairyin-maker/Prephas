@@ -10,6 +10,19 @@ function TermsPage() {
         <title>Terms and Conditions | PREPHAS Resume Builder</title>
         <meta name="description" content="Terms and Conditions for PREPHAS - AI Resume Builder and ATS Score Checker. Review rules, content responsibilities, and service disclaimers." />
         <link rel="canonical" href="https://www.prephas.online/terms-and-conditions" />
+        
+        {/* Open Graph Tags */}
+        <meta property="og:title" content="Terms and Conditions | PREPHAS Resume Builder" />
+        <meta property="og:description" content="Understand the terms of service, usage guidelines, and intellectual property conditions for PREPHAS resume builder." />
+        <meta property="og:image" content="https://www.prephas.online/og-image.png" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.prephas.online/terms-and-conditions" />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Terms and Conditions | PREPHAS" />
+        <meta name="twitter:description" content="Review our user guidelines, disclaimer of warranties, and limitations of liability." />
+        <meta name="twitter:image" content="https://www.prephas.online/og-image.png" />
       </Helmet>
       <Navbar />
       <main className="pt-24 pb-20 px-margin-mobile md:px-margin-desktop flex-grow">

@@ -73,21 +73,13 @@ function App() {
           } />
           
           {/* ATS Analyzer Routes */}
-          <Route path="/ats-analyzer" element={
-            <ProtectedRoute>
-              <AtsScorePage />
-            </ProtectedRoute>
-          } />
+          <Route path="/ats-analyzer" element={<AtsScorePage />} />
           <Route path="/ats-analyzer/:id" element={
             <ProtectedRoute>
               <AtsScorePage />
             </ProtectedRoute>
           } />
-          <Route path="/ats" element={
-            <ProtectedRoute>
-              <AtsScorePage />
-            </ProtectedRoute>
-          } />
+          <Route path="/ats" element={<AtsScorePage />} />
           <Route path="/ats/:id" element={
             <ProtectedRoute>
               <AtsScorePage />
@@ -100,11 +92,7 @@ function App() {
             </ProtectedRoute>
           } />
           
-          <Route path="/templates" element={
-            <ProtectedRoute>
-              <TemplatesPage />
-            </ProtectedRoute>
-          } />
+          <Route path="/templates" element={<TemplatesPage />} />
           
 
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />

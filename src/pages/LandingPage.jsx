@@ -75,6 +75,19 @@ function LandingPage() {
         <title>PREPHAS | Free ATS Resume Builder & ATS Score Checker</title>
         <meta name="description" content="Build ATS-friendly resumes with PREPHAS. Free AI resume builder, ATS score checker, job match analysis, resume templates, and instant PDF export." />
         <link rel="canonical" href="https://www.prephas.online/" />
+        
+        {/* Open Graph Tags */}
+        <meta property="og:title" content="PREPHAS | Free ATS Resume Builder & ATS Score Checker" />
+        <meta property="og:description" content="ATS-optimized. AI-improved. Interview-ready. Build your resume in minutes and get past recruiter filters." />
+        <meta property="og:image" content="https://www.prephas.online/og-image.png" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.prephas.online/" />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="PREPHAS — Free ATS Resume Builder" />
+        <meta name="twitter:description" content="ATS-optimized. AI-improved. Interview-ready. Stop sending resumes into a black hole." />
+        <meta name="twitter:image" content="https://www.prephas.online/og-image.png" />
       </Helmet>
 
       <Navbar />

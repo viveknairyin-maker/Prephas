@@ -15,7 +15,14 @@ function AtsScorePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      if (id) {
+        navigate('/login');
+      } else {
+        setLoading(false);
+      }
+      return;
+    }
 
     if (!id) {
       setLoading(false);
@@ -41,7 +48,7 @@ function AtsScorePage() {
     };
 
     fetchResume();
-  }, [id, user]);
+  }, [id, user, navigate]);
 
   if (loading) {
     return (
@@ -61,8 +68,21 @@ function AtsScorePage() {
     <div className="bg-surface text-on-surface font-body-md min-h-screen">
       <Helmet>
         <title>ATS Resume Checker | Analyze Resume ATS Score</title>
-        <meta name="description" content="Build ATS-friendly resumes with PREPHAS. Free AI resume builder, ATS score checker, job match analysis, resume templates, and instant PDF export." />
+        <meta name="description" content="Analyze your resume with our free AI ATS Resume Checker. Get an instant ATS score out of 100, identify skill gaps, and match your CV to target jobs." />
         <link rel="canonical" href="https://www.prephas.online/ats-analyzer" />
+        
+        {/* Open Graph Tags */}
+        <meta property="og:title" content="AI ATS Resume Checker & Score Analyzer | PREPHAS" />
+        <meta property="og:description" content="Find layout issues, scan keyword coverage, and test your resume against recruiter screening models using our free ATS analyzer." />
+        <meta property="og:image" content="https://www.prephas.online/og-image.png" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.prephas.online/ats-analyzer" />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Free AI ATS Resume Checker | PREPHAS" />
+        <meta name="twitter:description" content="Upload your CV and run a comprehensive ATS score audit. Check keyword matches and fix layouts instantly." />
+        <meta name="twitter:image" content="https://www.prephas.online/og-image.png" />
       </Helmet>
       <Navbar />
       <main className="pt-16 md:pt-20">

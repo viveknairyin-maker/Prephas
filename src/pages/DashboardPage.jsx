@@ -13,7 +13,6 @@ function DashboardPage() {
   const { user, profile, refreshProfile } = useAuth();
   const [resumes, setResumes] = useState([]);
   const [loadingResumes, setLoadingResumes] = useState(true);
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const navigate = useNavigate();
 
   // State per card
@@ -600,35 +599,6 @@ function DashboardPage() {
           Create New Resume
         </div>
       </button>
-
-      {/* Upgrade to Premium Modal */}
-      {showUpgradeModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-white border border-primary p-8 md:p-12 max-w-md w-full block-shadow relative">
-            <h3 className="font-headline-lg uppercase text-primary mb-4">Upgrade to Premium</h3>
-            <p className="font-body-lg text-secondary mb-8">
-              You have reached your limit of 3 downloads on the Free Plan. Upgrade to Premium for unlimited resume downloads and access to all premium templates.
-            </p>
-            <div className="flex gap-4">
-              <button 
-                onClick={() => {
-                  setShowUpgradeModal(false);
-                  navigate('/pricing');
-                }} 
-                className="flex-1 bg-primary text-on-primary py-4 font-label-sm uppercase tracking-widest hover:opacity-90"
-              >
-                View Plans
-              </button>
-              <button 
-                onClick={() => setShowUpgradeModal(false)} 
-                className="flex-1 border border-primary bg-white text-primary py-4 font-label-sm uppercase tracking-widest hover:bg-zinc-50"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

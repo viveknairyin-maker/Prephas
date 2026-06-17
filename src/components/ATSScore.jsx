@@ -242,7 +242,10 @@ export default function ATSScore({ existingResumeData }) {
 
   // ── Convert uploaded PDF to builder resume document ──────────────────────
   const handleFixInBuilder = async () => {
-    if (!user) return;
+    if (!user) {
+      navigate('/login');
+      return;
+    }
 
     // If they analyzed their builder resume directly without uploading any PDF
     if (!file) {

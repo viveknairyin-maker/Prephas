@@ -122,9 +122,43 @@ function BlogPostPage() {
         <meta property="og:type" content="article" />
         <meta property="og:url" content={`https://www.prephas.online/blog/${post.slug}`} />
         
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={post.seoTitle || post.title} />
+        <meta name="twitter:description" content={post.seoDescription || post.excerpt} />
+        <meta name="twitter:image" content={post.coverImage} />
+        
         {/* Schema Markup */}
         <script type="application/ld+json">
           {JSON.stringify(articleSchema)}
+        </script>
+        
+        {/* Breadcrumb Schema */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://www.prephas.online"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Blog",
+                "item": "https://www.prephas.online/blog"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": post.title,
+                "item": `https://www.prephas.online/blog/${post.slug}`
+              }
+            ]
+          })}
         </script>
       </Helmet>
 

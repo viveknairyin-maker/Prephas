@@ -104,8 +104,21 @@ function LoginPage() {
     <div className="bg-surface text-on-surface min-h-screen flex items-center justify-center px-margin-mobile md:px-margin-desktop py-20 relative">
       <Helmet>
         <title>Login | PREPHAS Resume Builder</title>
-        <meta name="description" content="Build ATS-friendly resumes with PREPHAS. Free AI resume builder, ATS score checker, job match analysis, resume templates, and instant PDF export." />
+        <meta name="description" content="Sign in to your PREPHAS account to build, edit, and optimize your ATS-friendly resumes. Access your dashboard and resume checker tool." />
         <link rel="canonical" href="https://www.prephas.online/login" />
+        
+        {/* Open Graph Tags */}
+        <meta property="og:title" content="Login | PREPHAS AI Resume Builder" />
+        <meta property="og:description" content="Sign in to your account to update your resume, check your ATS score, and run job match analysis." />
+        <meta property="og:image" content="https://www.prephas.online/og-image.png" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.prephas.online/login" />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Login | PREPHAS" />
+        <meta name="twitter:description" content="Access your PREPHAS dashboard to resume building and ATS score checking." />
+        <meta name="twitter:image" content="https://www.prephas.online/og-image.png" />
       </Helmet>
       <div className="absolute inset-0 grid-bg pointer-events-none"></div>
       

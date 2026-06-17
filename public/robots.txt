@@ -1,15 +1,16 @@
 User-agent: *
 Allow: /
 Allow: /templates
-Allow: /pricing
+Allow: /ats-analyzer
+Allow: /ats
 Allow: /login
 Allow: /signup
 
 Disallow: /dashboard
 Disallow: /builder/
 Disallow: /resume-builder/
-Disallow: /ats/
 Disallow: /ats-analyzer/
+Disallow: /ats/
 Disallow: /match/
 Disallow: /settings
 

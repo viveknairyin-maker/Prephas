@@ -101,8 +101,21 @@ function SignupPage() {
     <div className="bg-surface text-on-surface min-h-screen flex items-center justify-center px-margin-mobile md:px-margin-desktop py-20 relative">
       <Helmet>
         <title>Sign Up | PREPHAS Resume Builder</title>
-        <meta name="description" content="Build ATS-friendly resumes with PREPHAS. Free AI resume builder, ATS score checker, job match analysis, resume templates, and instant PDF export." />
+        <meta name="description" content="Create your free PREPHAS account today. Build professional, ATS-optimized resumes with AI, check ATS scores, and match your CV to job descriptions." />
         <link rel="canonical" href="https://www.prephas.online/signup" />
+        
+        {/* Open Graph Tags */}
+        <meta property="og:title" content="Sign Up for Free | PREPHAS AI Resume Builder" />
+        <meta property="og:description" content="Get started with PREPHAS today. Build an ATS-friendly resume, check your score, and download a professional PDF in minutes." />
+        <meta property="og:image" content="https://www.prephas.online/og-image.png" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.prephas.online/signup" />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Sign Up for Free | PREPHAS" />
+        <meta name="twitter:description" content="Build an interview-ready resume today with PREPHAS AI Resume Builder and ATS Checker." />
+        <meta name="twitter:image" content="https://www.prephas.online/og-image.png" />
       </Helmet>
       <div className="absolute inset-0 grid-bg pointer-events-none"></div>
       
