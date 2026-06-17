@@ -93,14 +93,29 @@ function DashboardPage() {
     e.preventDefault();
     e.stopPropagation();
 
+    console.log("[PDF Export Diagnostic - Dashboard] Starting PDF download for resume:", resume.id);
+
+    // 1. Verify fonts are loaded
+    console.log("[PDF Export Diagnostic - Dashboard] Waiting for document fonts to be ready...");
+    if (document.fonts && document.fonts.ready) {
+      await document.fonts.ready;
+      console.log("[PDF Export Diagnostic - Dashboard] Fonts are loaded and ready.");
+    }
+
     const printEl = document.createElement('div');
     const elementId = 'print-resume-element';
     printEl.id = elementId;
+    printEl.style.position = 'absolute';
+    printEl.style.left = '0px';
+    printEl.style.top = '0px';
     printEl.style.width = '595px';
     printEl.style.minHeight = '842px';
-    printEl.style.position = 'fixed';
-    printEl.style.left = '-9999px';
-    printEl.style.top = '-9999px';
+    printEl.style.zIndex = '-9999';
+    printEl.style.background = '#ffffff';
+    printEl.style.transform = 'none';
+    printEl.style.opacity = '1';
+    printEl.style.visibility = 'visible';
+    printEl.style.display = 'block';
     printEl.className = 'bg-white p-0';
 
     const ActiveTemplate = TEMPLATE_COMPONENTS[resume.template || 'classic'] || TEMPLATE_COMPONENTS['classic'];
@@ -108,9 +123,64 @@ function DashboardPage() {
 
     document.body.appendChild(printEl);
 
+    // 2. Wait for next render cycle
+    console.log("[PDF Export Diagnostic - Dashboard] Waiting for next render cycle...");
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    // 3. Pre-capture validations on printEl
+    const rect = printEl.getBoundingClientRect();
+    const width = printEl.offsetWidth || rect.width;
+    const height = printEl.offsetHeight || rect.height;
+    const textContentLength = (printEl.textContent || "").trim().length;
+    const innerHtmlLength = printEl.innerHTML.length;
+
+    const style = window.getComputedStyle(printEl);
+
+    console.log("[PDF Export Diagnostic - Dashboard] Print element validation metrics:", {
+      width,
+      height,
+      innerHTML_length: innerHtmlLength,
+      textContent_length: textContentLength,
+      transform: style.transform,
+      display: style.display,
+      visibility: style.visibility,
+      opacity: style.opacity
+    });
+
+    let validationFailed = false;
+    let failureReason = "";
+
+    if (width <= 0) {
+      validationFailed = true;
+      failureReason = `Print element width is invalid: ${width}px.`;
+    } else if (height <= 0) {
+      validationFailed = true;
+      failureReason = `Print element height is invalid: ${height}px.`;
+    } else if (textContentLength === 0) {
+      validationFailed = true;
+      failureReason = "Print element does not contain any text content.";
+    } else if (style.display === 'none') {
+      validationFailed = true;
+      failureReason = "Print element has display: none.";
+    } else if (style.visibility === 'hidden') {
+      validationFailed = true;
+      failureReason = "Print element has visibility: hidden.";
+    } else if (parseFloat(style.opacity) === 0) {
+      validationFailed = true;
+      failureReason = "Print element has opacity: 0.";
+    }
+
+    if (validationFailed) {
+      console.error("[PDF Export Diagnostic - Dashboard] Pre-capture validation failed! Aborting export. Reason:", failureReason);
+      alert(`Export aborted: ${failureReason}`);
+      document.body.removeChild(printEl);
+      return;
+    }
+
     // Add print-safe styles temporarily
-    const style = document.createElement("style");
-    style.innerHTML = `
+    const printStyle = document.createElement("style");
+    printStyle.innerHTML = `
       #${elementId} * {
         page-break-inside: avoid !important;
         break-inside: avoid !important;
@@ -120,16 +190,60 @@ function DashboardPage() {
         break-before: auto;
       }
     `;
-    document.head.appendChild(style);
+    document.head.appendChild(printStyle);
 
     try {
+      console.log("[PDF Export Diagnostic - Dashboard] Running html2canvas...");
       const canvas = await html2canvas(printEl, {
         scale: 2,
         useCORS: true,
-        logging: false,
+        logging: true,
         backgroundColor: "#ffffff",
-        windowWidth: 794, // A4 width in px at 96dpi
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: 595,
       });
+
+      console.log("[PDF Export Diagnostic - Dashboard] html2canvas complete. Canvas dimensions:", {
+        width: canvas.width,
+        height: canvas.height
+      });
+
+      // 4. Post-capture Validation: Detect if the canvas is entirely white
+      let isBlank = true;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        const imgWidth = canvas.width;
+        const imgHeight = canvas.height;
+        const stepX = Math.max(1, Math.floor(imgWidth / 100));
+        const stepY = Math.max(1, Math.floor(imgHeight / 100));
+        
+        outerLoop:
+        for (let x = 0; x < imgWidth; x += stepX) {
+          for (let y = 0; y < imgHeight; y += stepY) {
+            const pixel = ctx.getImageData(x, y, 1, 1).data;
+            const r = pixel[0];
+            const g = pixel[1];
+            const b = pixel[2];
+            
+            if (r !== 255 || g !== 255 || b !== 255) {
+              isBlank = false;
+              break outerLoop;
+            }
+          }
+        }
+      } else {
+        console.warn("[PDF Export Diagnostic - Dashboard] Could not get 2D context from canvas. Skipping blank validation.");
+        isBlank = false;
+      }
+
+      if (isBlank) {
+        console.error("[PDF Export Diagnostic - Dashboard] Post-capture validation failed: The generated canvas is entirely white/blank!");
+        alert("Export failed: Generated PDF is blank. Please try again.");
+        return;
+      }
+
+      console.log("[PDF Export Diagnostic - Dashboard] Canvas blank check passed. Generating PDF...");
 
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF({
@@ -170,6 +284,9 @@ function DashboardPage() {
       const name = resume.personalInfo?.name || 'resume';
       pdf.save(`${name.toLowerCase().replace(/\s+/g, '-')}-resume.pdf`);
 
+      const pageCount = imgHeight <= pageHeight ? 1 : Math.ceil(imgHeight / pageHeight);
+      console.log("[PDF Export Diagnostic - Dashboard] Generated PDF page count:", pageCount);
+
       if (profile?.plan === 'free') {
         const userRef = doc(db, 'users', user.uid);
         await updateDoc(userRef, {
@@ -178,11 +295,15 @@ function DashboardPage() {
         refreshProfile();
       }
     } catch (err) {
-      console.error("PDF generation failed:", err);
-      alert("Something went wrong while exporting PDF. Try again.");
+      console.error("[PDF Export Diagnostic - Dashboard] Error in PDF generation:", err);
+      alert("Failed to generate PDF. Please try again.");
     } finally {
-      document.head.removeChild(style);
-      document.body.removeChild(printEl);
+      if (printStyle.parentNode) {
+        printStyle.parentNode.removeChild(printStyle);
+      }
+      if (printEl.parentNode) {
+        printEl.parentNode.removeChild(printEl);
+      }
     }
   };
 

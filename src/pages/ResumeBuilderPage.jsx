@@ -541,17 +541,142 @@ function ResumeBuilderPage() {
     if (!resume) return;
 
     const elementId = 'resume-preview-root';
-    const element = document.getElementById(elementId);
-    if (!element) return;
+    const originalElement = document.getElementById(elementId);
+    
+    console.log("[PDF Export Diagnostic] Target element ID:", elementId);
+    if (!originalElement) {
+      console.error("[PDF Export Diagnostic] Validation failed: Export target NOT found!");
+      alert("Error: Resume preview element not found.");
+      return;
+    }
 
-    // Add print-safe styles temporarily
+    console.log("[PDF Export Diagnostic] Export target found.");
+
+    // Log computed transform and other styles of original element and its ancestors
+    let currentEl = originalElement;
+    while (currentEl) {
+      const s = window.getComputedStyle(currentEl);
+      if (s.display === 'none' || s.visibility === 'hidden' || parseFloat(s.opacity) === 0) {
+        console.warn(`[PDF Export Diagnostic] Warning: Element or ancestor ${currentEl.tagName}${currentEl.id ? '#' + currentEl.id : ''} has hiding style: display=${s.display}, visibility=${s.visibility}, opacity=${s.opacity}`);
+      }
+      if (s.transform && s.transform !== 'none') {
+        console.log(`[PDF Export Diagnostic] Element or ancestor ${currentEl.tagName}${currentEl.id ? '#' + currentEl.id : ''} has transform: ${s.transform}`);
+      }
+      currentEl = currentEl.parentElement;
+    }
+
+    const origRect = originalElement.getBoundingClientRect();
+    const origWidth = originalElement.offsetWidth || origRect.width;
+    const origHeight = originalElement.offsetHeight || origRect.height;
+    const origTextLength = (originalElement.textContent || "").trim().length;
+    const origHtmlLength = originalElement.innerHTML.length;
+
+    console.log("[PDF Export Diagnostic] Original element details:", {
+      width: origWidth,
+      height: origHeight,
+      innerHTML_length: origHtmlLength,
+      textContent_length: origTextLength
+    });
+
+    // 1. Verify fonts are loaded
+    console.log("[PDF Export Diagnostic] Waiting for document fonts to be ready...");
+    if (document.fonts && document.fonts.ready) {
+      await document.fonts.ready;
+      console.log("[PDF Export Diagnostic] Fonts are loaded and ready.");
+    }
+
+    // 2. Create temporary container to host a clean clone of the preview element
+    const tempContainer = document.createElement('div');
+    const tempElementId = 'temp-resume-print-root';
+    tempContainer.id = tempElementId;
+    tempContainer.style.position = 'absolute';
+    tempContainer.style.left = '0px';
+    tempContainer.style.top = '0px';
+    tempContainer.style.width = '595px'; 
+    tempContainer.style.zIndex = '-9999';
+    tempContainer.style.background = '#ffffff';
+    tempContainer.style.transform = 'none';
+    tempContainer.style.opacity = '1';
+    tempContainer.style.visibility = 'visible';
+    tempContainer.style.display = 'block';
+
+    const clonedElement = originalElement.cloneNode(true);
+    clonedElement.style.transform = 'none';
+    clonedElement.style.width = '595px';
+    clonedElement.style.minHeight = '842px';
+    clonedElement.style.margin = '0';
+    clonedElement.style.padding = '0';
+    clonedElement.style.boxShadow = 'none';
+    clonedElement.style.display = 'block';
+    clonedElement.style.visibility = 'visible';
+    clonedElement.style.opacity = '1';
+
+    tempContainer.appendChild(clonedElement);
+    document.body.appendChild(tempContainer);
+
+    // 3. Wait for the next render cycle before capturing
+    console.log("[PDF Export Diagnostic] Waiting for next render cycle...");
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    // 4. Validate cloned target before capture
+    const clonedRect = clonedElement.getBoundingClientRect();
+    const clonedWidth = clonedElement.offsetWidth || clonedRect.width;
+    const clonedHeight = clonedElement.offsetHeight || clonedRect.height;
+    const clonedTextLength = (clonedElement.textContent || "").trim().length;
+    const clonedHtmlLength = clonedElement.innerHTML.length;
+    const computedStyle = window.getComputedStyle(clonedElement);
+    const containerStyle = window.getComputedStyle(tempContainer);
+
+    console.log("[PDF Export Diagnostic] Cloned element validation metrics:", {
+      width: clonedWidth,
+      height: clonedHeight,
+      innerHTML_length: clonedHtmlLength,
+      textContent_length: clonedTextLength,
+      transform: computedStyle.transform,
+      display: computedStyle.display,
+      visibility: computedStyle.visibility,
+      opacity: computedStyle.opacity
+    });
+
+    let validationFailed = false;
+    let failureReason = "";
+
+    if (clonedWidth <= 0) {
+      validationFailed = true;
+      failureReason = `Width is invalid: ${clonedWidth}px (must be > 0).`;
+    } else if (clonedHeight <= 0) {
+      validationFailed = true;
+      failureReason = `Height is invalid: ${clonedHeight}px (must be > 0).`;
+    } else if (clonedTextLength === 0) {
+      validationFailed = true;
+      failureReason = "Target does not contain any text nodes/content.";
+    } else if (computedStyle.display === 'none' || containerStyle.display === 'none') {
+      validationFailed = true;
+      failureReason = "Target element or container has display: none.";
+    } else if (computedStyle.visibility === 'hidden' || containerStyle.visibility === 'hidden') {
+      validationFailed = true;
+      failureReason = "Target element or container has visibility: hidden.";
+    } else if (parseFloat(computedStyle.opacity) === 0 || parseFloat(containerStyle.opacity) === 0) {
+      validationFailed = true;
+      failureReason = "Target element or container has opacity: 0.";
+    }
+
+    if (validationFailed) {
+      console.error("[PDF Export Diagnostic] Pre-capture validation failed! Aborting export. Reason:", failureReason);
+      alert(`Export aborted: ${failureReason}`);
+      document.body.removeChild(tempContainer);
+      return;
+    }
+
+    // Add print-safe styles temporarily to the head for the temporary element
     const style = document.createElement("style");
     style.innerHTML = `
-      #${elementId} * {
+      #${tempElementId} * {
         page-break-inside: avoid !important;
         break-inside: avoid !important;
       }
-      #${elementId} .resume-section {
+      #${tempElementId} .resume-section {
         page-break-before: auto;
         break-before: auto;
       }
@@ -559,13 +684,59 @@ function ResumeBuilderPage() {
     document.head.appendChild(style);
 
     try {
-      const canvas = await html2canvas(element, {
+      console.log("[PDF Export Diagnostic] Running html2canvas on cloned element...");
+      const canvas = await html2canvas(clonedElement, {
         scale: 2,
         useCORS: true,
-        logging: false,
+        logging: true,
         backgroundColor: "#ffffff",
-        windowWidth: 794, // A4 width in px at 96dpi
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: 595,
       });
+
+      console.log("[PDF Export Diagnostic] html2canvas complete. Canvas dimensions:", {
+        width: canvas.width,
+        height: canvas.height
+      });
+
+      // 5. Post-capture Validation: Detect if the canvas is entirely white
+      let isBlank = true;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        const imgWidth = canvas.width;
+        const imgHeight = canvas.height;
+        // Sample a grid of pixels to check if they are all white
+        const stepX = Math.max(1, Math.floor(imgWidth / 100));
+        const stepY = Math.max(1, Math.floor(imgHeight / 100));
+        
+        outerLoop:
+        for (let x = 0; x < imgWidth; x += stepX) {
+          for (let y = 0; y < imgHeight; y += stepY) {
+            const pixel = ctx.getImageData(x, y, 1, 1).data;
+            const r = pixel[0];
+            const g = pixel[1];
+            const b = pixel[2];
+            
+            // If any pixel has non-white content, the canvas is not blank
+            if (r !== 255 || g !== 255 || b !== 255) {
+              isBlank = false;
+              break outerLoop;
+            }
+          }
+        }
+      } else {
+        console.warn("[PDF Export Diagnostic] Could not get 2D context from canvas. Skipping blank validation.");
+        isBlank = false;
+      }
+
+      if (isBlank) {
+        console.error("[PDF Export Diagnostic] Post-capture validation failed: The generated canvas is entirely white/blank!");
+        alert("Export failed: Generated PDF is blank. Please verify the template content and try again.");
+        return;
+      }
+
+      console.log("[PDF Export Diagnostic] Canvas blank check passed. Generating PDF...");
 
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF({
@@ -608,6 +779,7 @@ function ResumeBuilderPage() {
 
       // Compute page count
       const pageCount = imgHeight <= pageHeight ? 1 : Math.ceil(imgHeight / pageHeight);
+      console.log("[PDF Export Diagnostic] Generated PDF page count:", pageCount);
 
       trackEvent('Resume Downloaded', {
         template_name: resume.template || 'classic',
@@ -622,13 +794,19 @@ function ResumeBuilderPage() {
         refreshProfile();
       }
     } catch (err) {
-      console.error("PDF generation error:", err);
+      console.error("[PDF Export Diagnostic] PDF generation error:", err);
       trackEvent('Resume Download Failed', {
         error_type: 'pdf_generation_error',
         error_message: err.message || 'Unknown PDF generation error'
       });
+      alert("Something went wrong while exporting PDF. Try again.");
     } finally {
-      document.head.removeChild(style);
+      if (style.parentNode) {
+        style.parentNode.removeChild(style);
+      }
+      if (tempContainer.parentNode) {
+        tempContainer.parentNode.removeChild(tempContainer);
+      }
     }
   };
 
