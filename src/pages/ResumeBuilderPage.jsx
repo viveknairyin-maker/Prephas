@@ -904,7 +904,12 @@ service cloud.firestore {
       {/* Top Navigation Bar */}
       <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-3 md:px-6 lg:px-margin-desktop py-0 bg-surface border-b border-primary h-14 md:h-16 lg:h-20">
         <div className="flex items-center gap-4 lg:gap-8 min-w-0">
-          <Link className="font-display text-lg lg:text-headline-md tracking-tighter text-primary flex-shrink-0" to="/">PREPHAS</Link>
+          <Link
+            className="flex items-center flex-shrink-0"
+            to="/"
+          >
+            <img src="/logo.png" alt="PREPHAS Logo" className="h-8 md:h-10 w-auto object-contain" />
+          </Link>
           <nav className="hidden xl:flex gap-6">
             <a className="text-secondary hover:opacity-70 transition-opacity font-body-md text-body-md" href="/#features">Features</a>
             <Link className="text-secondary hover:opacity-70 transition-opacity font-body-md text-body-md" to="/templates">Templates</Link>
