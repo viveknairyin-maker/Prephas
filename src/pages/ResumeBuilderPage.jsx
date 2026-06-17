@@ -63,6 +63,7 @@ function ResumeBuilderPage() {
   });
 
   const [skillInput, setSkillInput] = useState('');
+  const [showDownloadSuccess, setShowDownloadSuccess] = useState(false);
 
   // Preview scale — recalculate on resize so preview fits mobile screen
   useEffect(() => {
@@ -792,6 +793,8 @@ function ResumeBuilderPage() {
         });
         refreshProfile();
       }
+
+      setShowDownloadSuccess(true);
     } catch (err) {
       console.error("[PDF Export Diagnostic] PDF generation error:", err);
       trackEvent('Resume Download Failed', {
@@ -1861,6 +1864,130 @@ service cloud.firestore {
           <span className="text-[9px] uppercase tracking-wide mt-0.5">PDF</span>
         </button>
       </div>
+
+      {/* Download Success Modal */}
+      {showDownloadSuccess && (
+        <div style={{
+          position: "fixed",
+          inset: 0,
+          background: "rgba(0,0,0,0.8)",
+          backdropFilter: "blur(4px)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 9999,
+          padding: 16
+        }}>
+          <div style={{
+            background: "#fff",
+            border: "2px solid #000",
+            boxShadow: "8px 8px 0px #000",
+            padding: "36px",
+            maxWidth: "500px",
+            width: "100%",
+            position: "relative",
+            boxSizing: "border-box"
+          }}>
+            <button
+              onClick={() => setShowDownloadSuccess(false)}
+              style={{
+                position: "absolute",
+                top: 12,
+                right: 16,
+                background: "none",
+                border: "none",
+                fontSize: 24,
+                fontWeight: "bold",
+                cursor: "pointer",
+                color: "#000"
+              }}
+            >
+              ×
+            </button>
+
+            <div style={{ textAlign: "center", marginBottom: 24 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 48, color: "#000" }} data-icon="check_circle">
+                check_circle
+              </span>
+              <h2 style={{ fontSize: 22, fontWeight: 900, textTransform: "uppercase", letterSpacing: -0.5, marginTop: 12, marginBottom: 8, color: "#000" }}>
+                Resume Downloaded!
+              </h2>
+              <p style={{ color: "#555", fontSize: 14, lineHeight: 1.6, margin: 0 }}>
+                Your ATS-optimized resume PDF has been saved successfully.
+              </p>
+            </div>
+
+            <div style={{ borderTop: "2px solid #000", paddingTop: 20, textAlign: "center" }}>
+              <h3 style={{ fontSize: 14, fontWeight: 800, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8, marginTop: 0, color: "#000" }}>
+                Know someone looking for a job?
+              </h3>
+              <p style={{ color: "#666", fontSize: 13, lineHeight: 1.5, marginBottom: 20, marginTop: 0 }}>
+                Share PREPHAS with them to help them build their resume and check their ATS score for free.
+              </p>
+
+              <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
+                <button
+                  onClick={() => {
+                    const text = "I just built my resume using PREPHAS.\n\nFree Resume Builder + ATS Score Checker:\nhttps://www.prephas.online";
+                    trackEvent('Share Link Copied', { source: 'download_success' });
+                    if (navigator.share) {
+                      navigator.share({
+                        title: 'PREPHAS',
+                        text: text,
+                        url: 'https://www.prephas.online'
+                      })
+                      .then(() => trackEvent('Invite Friend Clicked', { method: 'native_share', source: 'download_success' }))
+                      .catch((err) => console.log('Share failed:', err));
+                    } else {
+                      navigator.clipboard.writeText(text)
+                      .then(() => alert("Share message copied to clipboard!"))
+                      .catch((err) => console.error("Clipboard copy failed:", err));
+                    }
+                  }}
+                  style={{
+                    background: "#000",
+                    color: "#fff",
+                    border: "2px solid #000",
+                    padding: "12px 28px",
+                    fontSize: 13,
+                    fontWeight: 800,
+                    cursor: "pointer",
+                    textTransform: "uppercase",
+                    letterSpacing: 1,
+                    boxShadow: "4px 4px 0 #000",
+                    transition: "all 0.1s"
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.transform = "translate(-2px, -2px)"; e.currentTarget.style.boxShadow = "6px 6px 0 #000"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "4px 4px 0 #000"; }}
+                >
+                  Share PREPHAS
+                </button>
+                
+                <button
+                  onClick={() => setShowDownloadSuccess(false)}
+                  style={{
+                    background: "#fff",
+                    color: "#000",
+                    border: "2px solid #000",
+                    padding: "12px 24px",
+                    fontSize: 13,
+                    fontWeight: 800,
+                    cursor: "pointer",
+                    textTransform: "uppercase",
+                    letterSpacing: 1,
+                    boxShadow: "4px 4px 0 #000",
+                    transition: "all 0.1s"
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.transform = "translate(-2px, -2px)"; e.currentTarget.style.boxShadow = "6px 6px 0 #000"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "4px 4px 0 #000"; }}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

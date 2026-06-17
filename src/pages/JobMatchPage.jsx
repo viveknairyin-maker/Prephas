@@ -4,6 +4,7 @@ import { useAuth } from '../components/AuthContext';
 import { db, doc, getDoc, updateDoc } from '../utils/firebase';
 import { matchJobDescription } from '../utils/gemini';
 import Navbar from '../components/Navbar';
+import { trackEvent } from '../utils/analytics';
 
 function JobMatchPage() {
   const { id } = useParams();
@@ -99,6 +100,143 @@ function JobMatchPage() {
     }
   };
 
+  const handleCopyMatchLink = () => {
+    const text = `🎯 My resume matched ${matchPercent}% with this job description.\n\nCheck your match score for free on PREPHAS:\nhttps://www.prephas.online`;
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        alert("Share link copied to clipboard!");
+        trackEvent('Share Link Copied', { source: 'job_match' });
+      })
+      .catch(err => {
+        console.error("Failed to copy link:", err);
+      });
+  };
+
+  const handleShareMatchResult = () => {
+    const text = `🎯 My resume matched ${matchPercent}% with this job description. Check your match score for free on PREPHAS:`;
+    if (navigator.share) {
+      navigator.share({
+        title: 'PREPHAS Job Match Score',
+        text: text,
+        url: 'https://www.prephas.online'
+      })
+      .then(() => trackEvent('Job Match Shared', { match_percent: matchPercent, method: 'native_share' }))
+      .catch(err => console.log('Share failed:', err));
+    } else {
+      handleCopyMatchLink();
+    }
+  };
+
+  const handleDownloadMatchCard = () => {
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = 800;
+      canvas.height = 418;
+      const ctx = canvas.getContext('2d');
+
+      // Draw background (solid white)
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw border (solid 8px black)
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = 16;
+      ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+      // Draw inner line (solid 2px black)
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+
+      // Draw PREPHAS logo (solid black square with white 'P', and bold 'PREPHAS' text)
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(50, 50, 48, 48);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 30px "Inter", "Arial", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('P', 50 + 24, 50 + 24);
+
+      ctx.fillStyle = '#000000';
+      ctx.font = '900 24px "Inter", "Arial", sans-serif';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('PREPHAS', 110, 50 + 24);
+
+      // Draw Score box (large rectangle on the right side)
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = 4;
+      // Drop shadow for the score box
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(510, 80, 240, 240); // Shadow offset
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(500, 70, 240, 240);
+      ctx.strokeRect(500, 70, 240, 240);
+
+      // Score label inside box
+      ctx.fillStyle = '#555555';
+      ctx.font = 'bold 12px "Inter", "Arial", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('JOB DESCRIPTION MATCH', 500 + 120, 70 + 40);
+
+      // Score value (e.g. 92%)
+      ctx.fillStyle = '#000000';
+      ctx.font = '900 80px "Inter", "Arial", sans-serif';
+      ctx.fillText(`${matchPercent}%`, 500 + 120, 70 + 140);
+
+      // Draw Title / Content on the left
+      ctx.fillStyle = '#000000';
+      ctx.font = '900 32px "Inter", "Arial", sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('JOB MATCH OVERLAP', 50, 160);
+
+      // Short tagline
+      ctx.fillStyle = '#555555';
+      ctx.font = '500 16px "Inter", "Arial", sans-serif';
+      ctx.fillText('Compare your resume vocabulary with job postings.', 50, 210);
+
+      ctx.fillStyle = '#777777';
+      ctx.font = 'bold 12px "Inter", "Arial", sans-serif';
+      ctx.fillText('Identify missing keywords and skills instantly.', 50, 240);
+
+      // Website URL at the bottom left
+      ctx.fillStyle = '#000000';
+      ctx.font = 'bold 14px "Inter", "Arial", sans-serif';
+      ctx.fillText('www.prephas.online', 50, 350);
+
+      // Convert to image download
+      const link = document.createElement('a');
+      link.download = `prephas-job-match-${matchPercent}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      trackEvent('Share Image Downloaded', { type: 'job_match', score: matchPercent });
+    } catch (err) {
+      console.error("Failed to generate match card:", err);
+    }
+  };
+
+  const handleInviteFriends = () => {
+    const text = "I'm using PREPHAS to build ATS-friendly resumes and check ATS scores. Try it here: https://www.prephas.online";
+    if (navigator.share) {
+      navigator.share({
+        title: 'PREPHAS',
+        text: text,
+        url: 'https://www.prephas.online'
+      })
+      .then(() => trackEvent('Invite Friend Clicked', { source: 'job_match', method: 'native_share' }))
+      .catch(err => console.log('Share failed:', err));
+    } else {
+      navigator.clipboard.writeText(text)
+        .then(() => {
+          alert("Invite message copied to clipboard!");
+          trackEvent('Share Link Copied', { source: 'invite_friends_match' });
+          trackEvent('Invite Friend Clicked', { source: 'job_match', method: 'copy_link' });
+        })
+        .catch(err => console.error("Clipboard copy failed:", err));
+    }
+  };
+
   return (
     <div className="bg-surface text-on-surface font-body-md min-h-screen">
       <Navbar />
@@ -161,7 +299,8 @@ function JobMatchPage() {
               {/* Match Feedback Results Column */}
               <div className="lg:col-span-6 space-y-8">
                 {matchPercent !== null ? (
-                  <div className="border border-primary bg-white p-8 block-shadow-sm space-y-8">
+                  <>
+                    <div className="border border-primary bg-white p-8 block-shadow-sm space-y-8">
                     {/* Score circle */}
                     <div className="flex items-center gap-8">
                       <div className="w-32 h-32 border border-primary flex flex-col items-center justify-center bg-zinc-50 block-shadow-sm">
@@ -236,7 +375,49 @@ function JobMatchPage() {
                           : "Add Missing Keywords to Resume"}
                       </button>
                     )}
+                    {/* Share Your Match Score section */}
+                    <div className="border-t border-primary/10 pt-6 space-y-4">
+                      <h5 className="font-label-sm text-label-sm uppercase tracking-widest text-primary font-bold">Share Your Match Score</h5>
+                      <p className="text-secondary text-xs leading-relaxed">
+                        Challenge your friends to compare their resumes.
+                      </p>
+                      <div className="flex flex-wrap gap-3">
+                        <button
+                          onClick={handleCopyMatchLink}
+                          className="bg-white text-primary border border-primary px-4 py-2 text-xs font-bold uppercase tracking-wider hover:bg-zinc-50 transition-colors"
+                        >
+                          Copy Link
+                        </button>
+                        <button
+                          onClick={handleShareMatchResult}
+                          className="bg-primary text-on-primary border border-primary px-4 py-2 text-xs font-bold uppercase tracking-wider hover:opacity-90 transition-opacity"
+                        >
+                          Share Result
+                        </button>
+                        <button
+                          onClick={handleDownloadMatchCard}
+                          className="bg-white text-primary border border-primary px-4 py-2 text-xs font-bold uppercase tracking-wider hover:bg-zinc-50 transition-colors"
+                        >
+                          Download Card
+                        </button>
+                      </div>
+                    </div>
                   </div>
+
+                  {/* Invite Friends Block */}
+                  <div className="border border-primary bg-white p-8 block-shadow-sm space-y-4 mt-6">
+                    <h4 className="font-headline-md uppercase text-primary font-bold">Invite a Friend</h4>
+                    <p className="font-body-md text-secondary leading-normal text-xs">
+                      Know someone applying for internships or jobs? Help them improve their resume.
+                    </p>
+                    <button
+                      onClick={handleInviteFriends}
+                      className="bg-primary text-on-primary px-6 py-3 font-label-sm text-xs uppercase tracking-widest hover:opacity-90 transition-opacity"
+                    >
+                      Invite Friends
+                    </button>
+                  </div>
+                </>
                 ) : (
                   <div className="border-2 border-dashed border-primary p-12 text-center text-secondary bg-white block-shadow-sm flex flex-col items-center justify-center h-80 space-y-4">
                     <span className="material-symbols-outlined text-4xl text-secondary" data-icon="work">work</span>

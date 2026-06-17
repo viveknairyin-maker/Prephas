@@ -560,10 +560,154 @@ export default function ATSScore({ existingResumeData }) {
       formatting: "Formatting",
     };
 
+    const score = result.score || 0;
+
+    const handleCopyScoreLink = () => {
+      const text = `🚀 I scored ${score}/100 on PREPHAS ATS Analyzer.\n\nCheck your ATS score and improve your resume for free:\nhttps://www.prephas.online`;
+      navigator.clipboard.writeText(text)
+        .then(() => {
+          alert("Share link copied to clipboard!");
+          trackEvent('Share Link Copied', { source: 'ats_score' });
+        })
+        .catch(err => {
+          console.error("Failed to copy link:", err);
+        });
+    };
+
+    const handleShareScoreResult = () => {
+      const text = `🚀 I scored ${score}/100 on PREPHAS ATS Analyzer. Check your ATS score and improve your resume for free:`;
+      if (navigator.share) {
+        navigator.share({
+          title: 'PREPHAS ATS Score',
+          text: text,
+          url: 'https://www.prephas.online'
+        })
+        .then(() => trackEvent('ATS Score Shared', { score, method: 'native_share' }))
+        .catch(err => console.log('Share failed:', err));
+      } else {
+        handleCopyScoreLink();
+      }
+    };
+
+    const handleDownloadScoreCard = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = 800;
+        canvas.height = 418;
+        const ctx = canvas.getContext('2d');
+
+        // Draw background (solid white)
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Draw border (solid 8px black)
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 16;
+        ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+        // Draw inner line (solid 2px black)
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+
+        // Draw PREPHAS logo (solid black square with white 'P', and bold 'PREPHAS' text)
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(50, 50, 48, 48);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 30px "Inter", "Arial", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('P', 50 + 24, 50 + 24);
+
+        ctx.fillStyle = '#000000';
+        ctx.font = '900 24px "Inter", "Arial", sans-serif';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('PREPHAS', 110, 50 + 24);
+
+        // Draw Score box (large rectangle on the right side)
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 4;
+        // Drop shadow for the score box
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(510, 80, 240, 240); // Shadow offset
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(500, 70, 240, 240);
+        ctx.strokeRect(500, 70, 240, 240);
+
+        // Score label inside box
+        ctx.fillStyle = '#555555';
+        ctx.font = 'bold 12px "Inter", "Arial", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('ATS COMPATIBILITY SCORE', 500 + 120, 70 + 40);
+
+        // Score value (e.g. 87)
+        ctx.fillStyle = '#000000';
+        ctx.font = '900 80px "Inter", "Arial", sans-serif';
+        ctx.fillText(score.toString(), 500 + 120, 70 + 130);
+
+        // Total score (e.g. /100)
+        ctx.fillStyle = '#555555';
+        ctx.font = 'bold 20px "Inter", "Arial", sans-serif';
+        ctx.fillText('/100', 500 + 120, 70 + 190);
+
+        // Draw Title / Content on the left
+        ctx.fillStyle = '#000000';
+        ctx.font = '900 32px "Inter", "Arial", sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('RESUME PERFORMANCE', 50, 160);
+
+        // Short tagline
+        ctx.fillStyle = '#555555';
+        ctx.font = '500 16px "Inter", "Arial", sans-serif';
+        ctx.fillText('Pass applicant tracking systems and get more interviews.', 50, 210);
+
+        ctx.fillStyle = '#777777';
+        ctx.font = 'bold 12px "Inter", "Arial", sans-serif';
+        ctx.fillText('Check your ATS compatibility score for free.', 50, 240);
+
+        // Website URL at the bottom left
+        ctx.fillStyle = '#000000';
+        ctx.font = 'bold 14px "Inter", "Arial", sans-serif';
+        ctx.fillText('www.prephas.online', 50, 350);
+
+        // Convert to image download
+        const link = document.createElement('a');
+        link.download = `prephas-ats-score-${score}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        trackEvent('Share Image Downloaded', { type: 'ats_score', score });
+      } catch (err) {
+        console.error("Failed to generate score card:", err);
+      }
+    };
+
+    const handleInviteFriends = () => {
+      const text = "I'm using PREPHAS to build ATS-friendly resumes and check ATS scores. Try it here: https://www.prephas.online";
+      if (navigator.share) {
+        navigator.share({
+          title: 'PREPHAS',
+          text: text,
+          url: 'https://www.prephas.online'
+        })
+        .then(() => trackEvent('Invite Friend Clicked', { source: 'ats_score', method: 'native_share' }))
+        .catch(err => console.log('Share failed:', err));
+      } else {
+        navigator.clipboard.writeText(text)
+          .then(() => {
+            alert("Invite message copied to clipboard!");
+            trackEvent('Share Link Copied', { source: 'invite_friends_ats' });
+            trackEvent('Invite Friend Clicked', { source: 'ats_score', method: 'copy_link' });
+          })
+          .catch(err => console.error("Clipboard copy failed:", err));
+      }
+    };
+
     return (
       <Page>
         {/* Top: Score + grade */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", marginBottom: 48, textAlign: "center" }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyCenter: "center", marginBottom: 48, textAlign: "center" }}>
           <ScoreRing score={result.score} />
           <div style={{ marginTop: 24 }}>
             <span style={{
@@ -578,6 +722,90 @@ export default function ATSScore({ existingResumeData }) {
             </span>
           </div>
           <p style={{ color: "#333", marginTop: 20, fontSize: 16, maxWidth: 600, margin: "20px auto 0", fontWeight: 500, lineHeight: 1.6 }}>{result.summary}</p>
+        </div>
+
+        {/* Share Your Score block */}
+        <div style={{
+          border: "2px solid #000",
+          boxShadow: "4px 4px 0px #000",
+          padding: "24px",
+          background: "#fff",
+          maxWidth: 600,
+          width: "100%",
+          margin: "0 auto 48px auto",
+          boxSizing: "border-box",
+          textAlign: "center"
+        }}>
+          <h3 style={{ fontSize: 16, fontWeight: 900, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8, marginTop: 0 }}>
+            Share Your Score
+          </h3>
+          <p style={{ color: "#555", fontSize: 13, margin: "0 0 16px 0", lineHeight: 1.5 }}>
+            Help your friends improve their resumes too.
+          </p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 12, justifyContent: "center" }}>
+            <button
+              onClick={handleCopyScoreLink}
+              style={{
+                background: "#fff",
+                color: "#000",
+                border: "2px solid #000",
+                padding: "10px 20px",
+                fontSize: 12,
+                fontWeight: 800,
+                cursor: "pointer",
+                textTransform: "uppercase",
+                letterSpacing: 1,
+                boxShadow: "3px 3px 0 #000",
+                transition: "all 0.1s"
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = "translate(-1px, -1px)"; e.currentTarget.style.boxShadow = "4px 4px 0 #000"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "3px 3px 0 #000"; }}
+            >
+              Copy Link
+            </button>
+            
+            <button
+              onClick={handleShareScoreResult}
+              style={{
+                background: "#000",
+                color: "#fff",
+                border: "2px solid #000",
+                padding: "10px 20px",
+                fontSize: 12,
+                fontWeight: 800,
+                cursor: "pointer",
+                textTransform: "uppercase",
+                letterSpacing: 1,
+                boxShadow: "3px 3px 0 #000",
+                transition: "all 0.1s"
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = "translate(-1px, -1px)"; e.currentTarget.style.boxShadow = "4px 4px 0 #000"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "3px 3px 0 #000"; }}
+            >
+              Share Result
+            </button>
+
+            <button
+              onClick={handleDownloadScoreCard}
+              style={{
+                background: "#fff",
+                color: "#000",
+                border: "2px solid #000",
+                padding: "10px 20px",
+                fontSize: 12,
+                fontWeight: 800,
+                cursor: "pointer",
+                textTransform: "uppercase",
+                letterSpacing: 1,
+                boxShadow: "3px 3px 0 #000",
+                transition: "all 0.1s"
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = "translate(-1px, -1px)"; e.currentTarget.style.boxShadow = "4px 4px 0 #000"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "3px 3px 0 #000"; }}
+            >
+              Download Card
+            </button>
+          </div>
         </div>
 
         <div style={{ width: "100%", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 420px), 1fr))", gap: 24, marginTop: 40 }}>
@@ -841,6 +1069,47 @@ export default function ATSScore({ existingResumeData }) {
             </div>
           )}
         </div>
+
+        {/* Invite Friends Block */}
+        <div style={{
+          border: "2px solid #000",
+          boxShadow: "6px 6px 0px #000",
+          padding: "32px 28px",
+          background: "#fff",
+          marginTop: 48,
+          boxSizing: "border-box",
+          maxWidth: 600,
+          margin: "48px auto 0 auto",
+          textAlign: "center"
+        }}>
+          <h3 style={{ fontSize: 16, fontWeight: 900, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8, marginTop: 0 }}>
+            Invite a Friend
+          </h3>
+          <p style={{ color: "#555", fontSize: 14, margin: "0 0 20px 0", lineHeight: 1.6 }}>
+            Know someone applying for internships or jobs? Help them improve their resume.
+          </p>
+          <button
+            onClick={handleInviteFriends}
+            style={{
+              background: "#000",
+              color: "#fff",
+              border: "2px solid #000",
+              padding: "12px 24px",
+              fontSize: 13,
+              fontWeight: 800,
+              cursor: "pointer",
+              textTransform: "uppercase",
+              letterSpacing: 1,
+              boxShadow: "4px 4px 0 #000",
+              transition: "all 0.1s"
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = "translate(-2px, -2px)"; e.currentTarget.style.boxShadow = "6px 6px 0 #000"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "4px 4px 0 #000"; }}
+          >
+            Invite Friends
+          </button>
+        </div>
+
         <HowAtsWorks />
       </Page>
     );
