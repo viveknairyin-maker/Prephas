@@ -51,6 +51,16 @@ function Navbar() {
             >
               Home
             </a>
+            <Link
+              className={`font-body-md text-body-md transition-opacity hover:opacity-70 ${
+                location.pathname.startsWith('/blog')
+                  ? 'text-primary font-bold border-b-2 border-primary'
+                  : 'text-secondary'
+              }`}
+              to="/blog"
+            >
+              Blog
+            </Link>
             {user && (
               <>
                 <Link
@@ -170,6 +180,19 @@ function Navbar() {
             <span className="material-symbols-outlined text-xl flex-shrink-0">home</span>
             Home
           </a>
+
+          <Link
+            className={`flex items-center gap-3 px-6 py-4 hover:bg-zinc-50 transition-colors font-body-md border-b border-primary/5 min-h-[52px] ${
+              location.pathname.startsWith('/blog')
+                ? 'text-primary font-semibold bg-zinc-50'
+                : 'text-secondary'
+            }`}
+            to="/blog"
+            onClick={closeMenu}
+          >
+            <span className="material-symbols-outlined text-xl flex-shrink-0">article</span>
+            Blog
+          </Link>
 
           {user && (
             <>

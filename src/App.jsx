@@ -15,6 +15,8 @@ import JobMatchPage from './pages/JobMatchPage';
 import TemplatesPage from './pages/TemplatesPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsPage from './pages/TermsPage';
+import BlogListPage from './pages/BlogListPage';
+import BlogPostPage from './pages/BlogPostPage';
 
 // Component to handle automatic page tracking on route changes
 function AnalyticsTracker() {
@@ -107,6 +109,10 @@ function App() {
 
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="/terms-and-conditions" element={<TermsPage />} />
+          
+          {/* Blog Routes */}
+          <Route path="/blog" element={<BlogListPage />} />
+          <Route path="/blog/:slug" element={<BlogPostPage />} />
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

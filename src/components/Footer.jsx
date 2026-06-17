@@ -18,7 +18,7 @@ function Footer() {
             <Link to="/resume-builder" style={{ color: "#ccc", fontSize: 13, textDecoration: "none" }}>Resume Builder</Link>
             <Link to="/ats-analyzer" style={{ color: "#ccc", fontSize: 13, textDecoration: "none" }}>ATS Analyzer</Link>
             <Link to="/templates" style={{ color: "#ccc", fontSize: 13, textDecoration: "none" }}>Templates</Link>
-
+            <Link to="/blog" style={{ color: "#ccc", fontSize: 13, textDecoration: "none" }}>Blog</Link>
           </div>
         </div>
         <div>
