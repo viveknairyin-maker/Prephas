@@ -17,8 +17,13 @@ export const BLANK_RESUME = {
     name: "Your Name",
     email: "you@email.com",
     phone: "+91 00000 00000",
-    linkedin: "linkedin.com/in/yourname",
     location: "City, India",
+  },
+  links: {
+    linkedin: "linkedin.com/in/yourname",
+    github: "",
+    portfolio: "",
+    leetcode: "",
   },
   summary:
     "A motivated professional with a passion for building great products and solving real-world problems. Seeking opportunities to grow and contribute.",

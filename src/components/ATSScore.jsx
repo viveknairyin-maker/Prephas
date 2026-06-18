@@ -266,8 +266,19 @@ export default function ATSScore({ existingResumeData }) {
     try {
       const parsedData = await parseResumeFromText(rawText);
       
+      const links = parsedData.links || { linkedin: '', github: '', portfolio: '', leetcode: '' };
+      if (parsedData.personalInfo?.linkedin && !links.linkedin) {
+        links.linkedin = parsedData.personalInfo.linkedin;
+      }
+
       const resumeData = {
-        personalInfo: parsedData.personalInfo || { name: '', email: '', phone: '', linkedin: '', location: '', role: '' },
+        personalInfo: {
+          name: parsedData.personalInfo?.name || '',
+          email: parsedData.personalInfo?.email || '',
+          phone: parsedData.personalInfo?.phone || '',
+          location: parsedData.personalInfo?.location || '',
+          role: parsedData.personalInfo?.role || ''
+        },
         summary: parsedData.summary || '',
         experience: parsedData.experience || [],
         education: parsedData.education || [],
@@ -276,7 +287,7 @@ export default function ATSScore({ existingResumeData }) {
         achievements: parsedData.achievements || [],
         certifications: parsedData.certifications || [],
         languages: parsedData.languages || [],
-        links: parsedData.links || { linkedin: '', github: '', portfolio: '', leetcode: '' },
+        links: links,
         atsScore: result?.score || 0,
         updatedAt: new Date().toISOString()
       };

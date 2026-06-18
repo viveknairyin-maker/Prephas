@@ -98,7 +98,7 @@ function ResumeBuilderPage() {
             source: 'blank',
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
-            personalInfo: { name: '', email: '', phone: '', linkedin: '', location: '', role: '' },
+            personalInfo: { name: '', email: '', phone: '', location: '', role: '' },
             summary: '',
             experience: [],
             education: [],
@@ -1200,16 +1200,6 @@ service cloud.firestore {
                       value={resume?.personalInfo?.location || ''}
                       onChange={(e) => updatePersonalInfo('location', e.target.value)}
                       placeholder="New York, NY"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="font-label-sm text-label-sm uppercase">LinkedIn URL</label>
-                    <input 
-                      className="w-full border border-primary bg-transparent p-3 focus:ring-0 focus:border-black font-body-md"
-                      type="text" 
-                      value={resume?.personalInfo?.linkedin || ''}
-                      onChange={(e) => updatePersonalInfo('linkedin', e.target.value)}
-                      placeholder="linkedin.com/in/alex"
                     />
                   </div>
                 </div>
